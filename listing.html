@@ -1170,7 +1170,8 @@ function buildMockupLayout(){
     mapOpen:{lo:'ເປີດໃນ Google Maps',en:'Open in Google Maps',zh:'在谷歌地图中打开'},
     video  :{lo:'ວິດີໂອນຳຊົມ',en:'Property walk-through',zh:'实景视频'},
     verified:{lo:'ກວດສອບແລ້ວ',en:'Verified',zh:'平台已核验'},
-    inquire:{lo:'ສອບຖາມລາຄາ',en:'Inquire for price',zh:'意向询价'}
+    inquire:{lo:'ສອບຖາມລາຄາ',en:'Inquire for price',zh:'意向询价'},
+    rentalTerms:{lo:'ເງື່ອນໄຂການເຊົ່າ',en:'Rental Terms',zh:'租赁条款'}
   };
 
   var I={
@@ -1211,6 +1212,20 @@ function buildMockupLayout(){
 
   var pdetailHtml=detailFacts.secondary.length
     ? '<div class="pdetail-list">'+detailFacts.secondary.map(function(f){
+        return '<div class="pdetail-row"><span class="pdetail-icon">'+esc(f.icon)+'</span><span class="pdetail-lbl">'+esc(f.label)+'</span><span class="pdetail-val">'+esc(String(f.value))+'</span></div>';
+      }).join('')+'</div>'
+    : '';
+
+  // ── Rental Terms card (Apartment/Condo only) — a dedicated card, not
+  // folded into pdetailHtml above, since the product spec calls for its
+  // own heading and a specific fact order/combination (dropdown + note,
+  // included-service checkboxes as individual rows). Renders nothing when
+  // getRentalTermsFacts() returns no facts — every field on the listing is
+  // optional and empty ones are simply absent from the array already, so
+  // there's no per-field "hide if empty" branching needed here.
+  var rentalTermsFacts=(typeof getRentalTermsFacts==='function')?getRentalTermsFacts(data.property_type,data,lang):[];
+  var rentalTermsHtml=rentalTermsFacts.length
+    ? '<div class="pdetail-list"><span class="section-label">'+L.rentalTerms[lang]+'</span>'+rentalTermsFacts.map(function(f){
         return '<div class="pdetail-row"><span class="pdetail-icon">'+esc(f.icon)+'</span><span class="pdetail-lbl">'+esc(f.label)+'</span><span class="pdetail-val">'+esc(String(f.value))+'</span></div>';
       }).join('')+'</div>'
     : '';
@@ -1335,6 +1350,7 @@ function buildMockupLayout(){
     '<p class="body-narrative">'+resolvedDesc+'</p>'+
     amenityRowHtml+
     pdetailHtml+
+    rentalTermsHtml+
     '</div>'
   );
 

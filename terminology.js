@@ -158,6 +158,237 @@ var BEST_USE_OPTIONS = [
 ];
 function _bestUse() { return {id:'f-best-use', column:'land_best_use', kind:'multi_checkbox', label:{en:'Best Use', lo:'ການນຳໃຊ້ທີ່ດີທີ່ສຸດ', zh:'最佳用途'}, options:BEST_USE_OPTIONS}; }
 
+// ── Rental Terms (Phase 3 — apartment/condo) ───────────────────────────
+// Structured pricing/utilities/services/pet-policy fields, kept in their
+// own registry rather than merged into PROPERTY_TYPE_FIELDS above, because
+// they render as a grouped "Rental Terms" section with subheadings
+// (`section`) and a few conditional companion fields, neither of which the
+// generic Property Details grid supports.
+//
+// `section` groups a field under one of RENTAL_TERMS_SECTIONS' subheadings.
+// `showWhen: {parent: '<field id>', values: [...]}` means: only show this
+// field (and only save it) when the named parent field's current value is
+// one of `values` — used for the utility fixed-fee/extra-fee amounts and
+// every dropdown's Custom note.
+//
+// Requires the 20260720100000_rental_terms.sql migration applied first —
+// same rule as Land's Phase 2 fields above: don't wire a field here before
+// its column exists, PostgREST rejects unknown-column payloads outright.
+var MIN_LEASE_TERM_OPTIONS = [
+  {value:'',              label:{en:'Not specified',  lo:'ບໍ່ໄດ້ລະບຸ',      zh:'未指定'}},
+  {value:'month_to_month',label:{en:'Month-to-month', lo:'ເດືອນຕໍ່ເດືອນ',   zh:'按月'}},
+  {value:'3_months',      label:{en:'3 months',       lo:'3 ເດືອນ',        zh:'3个月'}},
+  {value:'6_months',      label:{en:'6 months',       lo:'6 ເດືອນ',        zh:'6个月'}},
+  {value:'12_months',     label:{en:'12 months',      lo:'12 ເດືອນ',       zh:'12个月'}},
+  {value:'24_months',     label:{en:'24 months',      lo:'24 ເດືອນ',       zh:'24个月'}},
+  {value:'custom',        label:{en:'Custom',         lo:'ກຳນົດເອງ',       zh:'自定义'}}
+];
+
+var ELECTRICITY_TERMS_OPTIONS = [
+  {value:'',                label:{en:'Not specified',    lo:'ບໍ່ໄດ້ລະບຸ',            zh:'未指定'}},
+  {value:'included',        label:{en:'Included',         lo:'ລວມຢູ່ໃນຄ່າເຊົ່າ',      zh:'包含在租金内'}},
+  {value:'government_meter',label:{en:'Government Meter', lo:'ມິເຕີລັດ',              zh:'政府电表'}},
+  {value:'fixed_fee',       label:{en:'Fixed Monthly Fee',lo:'ຄ່າທຳນຽມຄົງທີ່ລາຍເດືອນ', zh:'固定月费'}},
+  {value:'custom',          label:{en:'Custom',           lo:'ກຳນົດເອງ',              zh:'自定义'}}
+];
+// Water uses the exact same option set as Electricity — same real-world
+// billing arrangements (included / government meter / fixed fee / custom).
+var WATER_TERMS_OPTIONS = ELECTRICITY_TERMS_OPTIONS;
+
+var INTERNET_TERMS_OPTIONS = [
+  {value:'',                      label:{en:'Not specified',          lo:'ບໍ່ໄດ້ລະບຸ',              zh:'未指定'}},
+  {value:'included',              label:{en:'Included',               lo:'ລວມຢູ່ໃນຄ່າເຊົ່າ',        zh:'包含在租金内'}},
+  {value:'available_tenant_pays', label:{en:'Available (Tenant Pays)',lo:'ມີໃຫ້ (ຜູ້ເຊົ່າຈ່າຍເອງ)', zh:'可安装(租户自付)'}},
+  {value:'not_available',        label:{en:'Not Available',          lo:'ບໍ່ມີ',                  zh:'不可用'}},
+  {value:'custom',                label:{en:'Custom',                 lo:'ກຳນົດເອງ',               zh:'自定义'}}
+];
+
+var TRASH_TERMS_OPTIONS = [
+  {value:'',             label:{en:'Not specified', lo:'ບໍ່ໄດ້ລະບຸ',       zh:'未指定'}},
+  {value:'included',     label:{en:'Included',      lo:'ລວມຢູ່ໃນຄ່າເຊົ່າ', zh:'包含在租金内'}},
+  {value:'extra_fee',    label:{en:'Extra Fee',     lo:'ຄ່າທຳນຽມເພີ່ມ',   zh:'额外收费'}},
+  {value:'not_included', label:{en:'Not Included',  lo:'ບໍ່ລວມ',          zh:'不包含'}},
+  {value:'custom',       label:{en:'Custom',        lo:'ກຳນົດເອງ',        zh:'自定义'}}
+];
+
+// Leading blank option is "not specified" (agent hasn't filled this in —
+// stays hidden on the display card), distinct from the real 'none' value
+// (agent explicitly recorded that no cleaning/linen service is provided —
+// shown on the card, same convention as pet_policy's 'no_pets').
+var CLEANING_SERVICE_OPTIONS = [
+  {value:'',        label:{en:'Not specified', lo:'ບໍ່ໄດ້ລະບຸ',    zh:'未指定'}},
+  {value:'none',    label:{en:'None',        lo:'ບໍ່ມີ',        zh:'无'}},
+  {value:'1x_week', label:{en:'1x per week', lo:'1 ຄັ້ງ/ອາທິດ', zh:'每周1次'}},
+  {value:'2x_week', label:{en:'2x per week', lo:'2 ຄັ້ງ/ອາທິດ', zh:'每周2次'}},
+  {value:'3x_week', label:{en:'3x per week', lo:'3 ຄັ້ງ/ອາທິດ', zh:'每周3次'}},
+  {value:'daily',   label:{en:'Daily',       lo:'ທຸກໆມື້',      zh:'每天'}},
+  {value:'custom',  label:{en:'Custom',      lo:'ກຳນົດເອງ',     zh:'自定义'}}
+];
+
+var LINEN_CHANGE_OPTIONS = [
+  {value:'',             label:{en:'Not specified', lo:'ບໍ່ໄດ້ລະບຸ',      zh:'未指定'}},
+  {value:'none',         label:{en:'None',         lo:'ບໍ່ມີ',           zh:'无'}},
+  {value:'weekly',       label:{en:'Weekly',       lo:'ລາຍອາທິດ',       zh:'每周'}},
+  {value:'twice_weekly', label:{en:'Twice Weekly', lo:'ອາທິດລະ 2 ຄັ້ງ', zh:'每周两次'}},
+  {value:'daily',        label:{en:'Daily',        lo:'ທຸກໆມື້',        zh:'每天'}},
+  {value:'custom',       label:{en:'Custom',       lo:'ກຳນົດເອງ',       zh:'自定义'}}
+];
+
+var INCLUDED_SERVICES_OPTIONS = [
+  {value:'parking',            label:{en:'Parking Included',   lo:'ລວມບ່ອນຈອດລົດ',      zh:'含停车位'}},
+  {value:'security',           label:{en:'Security',           lo:'ຄວາມປອດໄພ',          zh:'安保'}},
+  {value:'reception',          label:{en:'Reception',          lo:'ພະນັກງານຕ້ອນຮັບ',    zh:'前台服务'}},
+  {value:'swimming_pool',      label:{en:'Swimming Pool',      lo:'ສະລອຍນ້ຳ',           zh:'游泳池'}},
+  {value:'gym',                label:{en:'Gym',                lo:'ຫ້ອງອອກກຳລັງກາຍ',    zh:'健身房'}},
+  {value:'garden_maintenance', label:{en:'Garden Maintenance', lo:'ບຳລຸງຮັກສາສວນ',      zh:'花园维护'}},
+  {value:'pool_maintenance',   label:{en:'Pool Maintenance',   lo:'ບຳລຸງຮັກສາສະລອຍນ້ຳ', zh:'泳池维护'}}
+];
+
+var PET_POLICY_OPTIONS = [
+  {value:'',               label:{en:'Not specified',   lo:'ບໍ່ໄດ້ລະບຸ',                zh:'未指定'}},
+  {value:'pets_allowed',   label:{en:'Pets Allowed',    lo:'ອະນຸຍາດສັດລ້ຽງ',            zh:'允许宠物'}},
+  {value:'cats_only',      label:{en:'Cats Only',       lo:'ອະນຸຍາດສະເພາະແມວ',          zh:'仅限猫咪'}},
+  {value:'small_pets_only',label:{en:'Small Pets Only', lo:'ອະນຸຍາດສະເພາະສັດລ້ຽງນ້ອຍ',  zh:'仅限小型宠物'}},
+  {value:'no_pets',        label:{en:'No Pets',         lo:'ບໍ່ອະນຸຍາດສັດລ້ຽງ',         zh:'不允许宠物'}},
+  {value:'custom',         label:{en:'Custom',          lo:'ກຳນົດເອງ',                 zh:'自定义'}}
+];
+
+function _rtSecurityDeposit()      { return {id:'rt-security-deposit',       column:'security_deposit',      kind:'number', section:'pricing', label:{en:'Security Deposit ($)',lo:'ເງິນມັດຈຳ ($)',zh:'押金($)'}, min:0, placeholder:'300'}; }
+function _rtSecurityDepositNote()  { return {id:'rt-security-deposit-note',  column:'security_deposit_note', kind:'text',   section:'pricing', label:{en:'Deposit Note',lo:'ໝາຍເຫດເງິນມັດຈຳ',zh:'押金备注'}, placeholder:"e.g. 1 month's rent"}; }
+function _rtAdvanceRent()          { return {id:'rt-advance-rent',           column:'advance_rent_months',   kind:'number', section:'pricing', label:{en:'Advance Rent (months)',lo:'ຄ່າເຊົ່າລ່ວງໜ້າ (ເດືອນ)',zh:'预付租金(月)'}, min:0, placeholder:'2'}; }
+function _rtMinLeaseTerm()         { return {id:'rt-lease-term-min',         column:'lease_term_min',        kind:'select', section:'pricing', label:{en:'Minimum Lease Term',lo:'ໄລຍະເຊົ່າຂັ້ນຕ່ຳ',zh:'最短租期'}, options:MIN_LEASE_TERM_OPTIONS}; }
+function _rtMinLeaseTermCustom()   { return {id:'rt-lease-term-min-custom',  column:'lease_term_min_custom', kind:'text',   section:'pricing', label:{en:'Custom Lease Term',lo:'ໄລຍະເຊົ່າກຳນົດເອງ',zh:'自定义租期'}, placeholder:'e.g. 18 months', showWhen:{parent:'rt-lease-term-min', values:['custom']}}; }
+
+function _rtElectricity()          { return {id:'rt-electricity',      column:'electricity_terms',    kind:'select', section:'utilities', label:{en:'Electricity',lo:'ໄຟຟ້າ',zh:'电费'}, options:ELECTRICITY_TERMS_OPTIONS}; }
+function _rtElectricityNote()      { return {id:'rt-electricity-note', column:'electricity_fee_note', kind:'text',   section:'utilities', label:{en:'Electricity Fee / Notes',lo:'ຄ່າໄຟຟ້າ / ໝາຍເຫດ',zh:'电费/备注'}, placeholder:'e.g. $50/month', showWhen:{parent:'rt-electricity', values:['fixed_fee','custom']}}; }
+function _rtWater()                { return {id:'rt-water',      column:'water_terms',    kind:'select', section:'utilities', label:{en:'Water',lo:'ນ້ຳປະປາ',zh:'水费'}, options:WATER_TERMS_OPTIONS}; }
+function _rtWaterNote()            { return {id:'rt-water-note', column:'water_fee_note', kind:'text',   section:'utilities', label:{en:'Water Fee / Notes',lo:'ຄ່ານ້ຳ / ໝາຍເຫດ',zh:'水费/备注'}, placeholder:'e.g. $10/month', showWhen:{parent:'rt-water', values:['fixed_fee','custom']}}; }
+function _rtInternet()             { return {id:'rt-internet',      column:'internet_terms', kind:'select', section:'utilities', label:{en:'Internet',lo:'ອິນເຕີເນັດ',zh:'网络'}, options:INTERNET_TERMS_OPTIONS}; }
+function _rtInternetNote()         { return {id:'rt-internet-note', column:'internet_note',  kind:'text',   section:'utilities', label:{en:'Internet Notes',lo:'ໝາຍເຫດອິນເຕີເນັດ',zh:'网络备注'}, placeholder:'e.g. Fiber, tenant sets up own plan', showWhen:{parent:'rt-internet', values:['custom']}}; }
+function _rtTrash()                { return {id:'rt-trash',      column:'trash_terms', kind:'select', section:'utilities', label:{en:'Trash Collection',lo:'ການເກັບຂີ້ເຫຍື້ອ',zh:'垃圾清运'}, options:TRASH_TERMS_OPTIONS}; }
+function _rtTrashNote()            { return {id:'rt-trash-note', column:'trash_note',  kind:'text',   section:'utilities', label:{en:'Trash Fee / Notes',lo:'ຄ່າຂີ້ເຫຍື້ອ / ໝາຍເຫດ',zh:'垃圾费/备注'}, placeholder:'e.g. $5/month', showWhen:{parent:'rt-trash', values:['extra_fee','custom']}}; }
+
+function _rtCleaningService()      { return {id:'rt-cleaning-service',       column:'cleaning_service',      kind:'select', section:'included_services', label:{en:'Cleaning Service',lo:'ບໍລິການທຳຄວາມສະອາດ',zh:'保洁服务'}, options:CLEANING_SERVICE_OPTIONS}; }
+function _rtCleaningServiceNote()  { return {id:'rt-cleaning-service-note',  column:'cleaning_service_note', kind:'text',   section:'included_services', label:{en:'Cleaning Notes',lo:'ໝາຍເຫດການທຳຄວາມສະອາດ',zh:'保洁备注'}, placeholder:'e.g. every other day', showWhen:{parent:'rt-cleaning-service', values:['custom']}}; }
+function _rtLinenChange()          { return {id:'rt-linen-change',           column:'linen_change',          kind:'select', section:'included_services', label:{en:'Linen Change',lo:'ການປ່ຽນຜ້າປູ',zh:'更换床单'}, options:LINEN_CHANGE_OPTIONS}; }
+function _rtLinenChangeNote()      { return {id:'rt-linen-change-note',      column:'linen_change_note',     kind:'text',   section:'included_services', label:{en:'Linen Notes',lo:'ໝາຍເຫດຜ້າປູ',zh:'床单备注'}, placeholder:'e.g. bi-weekly', showWhen:{parent:'rt-linen-change', values:['custom']}}; }
+function _rtIncludedServices()     { return {id:'rt-included-services', column:'included_services', kind:'multi_checkbox', section:'included_services', label:{en:'Included Services',lo:'ບໍລິການທີ່ລວມ',zh:'包含服务'}, options:INCLUDED_SERVICES_OPTIONS}; }
+
+function _rtPetPolicy()            { return {id:'rt-pet-policy',      column:'pet_policy',      kind:'select', section:'pet_policy', label:{en:'Pet Policy',lo:'ນະໂຍບາຍສັດລ້ຽງ',zh:'宠物政策'}, options:PET_POLICY_OPTIONS}; }
+function _rtPetPolicyNote()        { return {id:'rt-pet-policy-note', column:'pet_policy_note', kind:'text',   section:'pet_policy', label:{en:'Pet Policy Notes',lo:'ໝາຍເຫດນະໂຍບາຍສັດລ້ຽງ',zh:'宠物政策备注'}, placeholder:'e.g. max 1 cat under 5kg', showWhen:{parent:'rt-pet-policy', values:['custom']}}; }
+
+function _rtKeyDeposit()  { return {id:'rt-key-deposit',  column:'key_deposit',        kind:'number', section:'additional_fees', label:{en:'Key Deposit ($)',lo:'ເງິນມັດຈຳກະແຈ ($)',zh:'钥匙押金($)'}, min:0, placeholder:'20'}; }
+function _rtCleaningFee() { return {id:'rt-cleaning-fee', column:'cleaning_fee',       kind:'number', section:'additional_fees', label:{en:'Cleaning Fee ($)',lo:'ຄ່າທຳຄວາມສະອາດ ($)',zh:'清洁费($)'}, min:0, placeholder:'30'}; }
+function _rtAdminFee()    { return {id:'rt-admin-fee',    column:'administration_fee', kind:'number', section:'additional_fees', label:{en:'Administration Fee ($)',lo:'ຄ່າທຳນຽມບໍລິຫານ ($)',zh:'管理费($)'}, min:0, placeholder:'25'}; }
+
+// Subheadings the Rental Terms section is grouped into, in display order.
+var RENTAL_TERMS_SECTIONS = [
+  {key:'pricing',           label:{en:'Pricing',           lo:'ລາຄາ',              zh:'价格'}},
+  {key:'utilities',         label:{en:'Utilities',         lo:'ສາທາລະນູປະໂພກ',      zh:'水电网'}},
+  {key:'included_services', label:{en:'Included Services', lo:'ບໍລິການທີ່ລວມ',      zh:'包含服务'}},
+  {key:'pet_policy',        label:{en:'Pet Policy',        lo:'ນະໂຍບາຍສັດລ້ຽງ',     zh:'宠物政策'}},
+  {key:'additional_fees',   label:{en:'Additional Fees',   lo:'ຄ່າທຳນຽມເພີ່ມເຕີມ',  zh:'额外费用'}}
+];
+
+var RENTAL_TERMS_FIELDS = [
+  _rtSecurityDeposit(), _rtSecurityDepositNote(), _rtAdvanceRent(), _rtMinLeaseTerm(), _rtMinLeaseTermCustom(),
+  _rtElectricity(), _rtElectricityNote(), _rtWater(), _rtWaterNote(), _rtInternet(), _rtInternetNote(), _rtTrash(), _rtTrashNote(),
+  _rtCleaningService(), _rtCleaningServiceNote(), _rtLinenChange(), _rtLinenChangeNote(), _rtIncludedServices(),
+  _rtPetPolicy(), _rtPetPolicyNote(),
+  _rtKeyDeposit(), _rtCleaningFee(), _rtAdminFee()
+];
+
+// Which property types show the Rental Terms section — apartment/condo
+// only, per product scope. Extending coverage to another type later is a
+// one-line addition here (the render/populate/save functions are generic
+// over whatever this map contains).
+var PROPERTY_TYPE_RENTAL_TERMS = {
+  apartment: RENTAL_TERMS_FIELDS,
+  condo:     RENTAL_TERMS_FIELDS
+};
+
+function _findRentalFieldDef(fieldId) {
+  for (var i = 0; i < RENTAL_TERMS_FIELDS.length; i++) {
+    if (RENTAL_TERMS_FIELDS[i].id === fieldId) return RENTAL_TERMS_FIELDS[i];
+  }
+  return null;
+}
+
+// Resolves one Rental Terms field, plus its optional showWhen-linked note
+// field, into a single display string, e.g. "Fixed Monthly Fee — $50/month".
+// Reuses resolveFieldDisplayValue() (defined below) for the actual
+// select/plain-value formatting so this stays a thin combinator, not a
+// second value-formatting implementation.
+function _rentalFactValue(fieldId, noteFieldId, row, lang) {
+  var def = _findRentalFieldDef(fieldId);
+  if (!def) return null;
+  var val = resolveFieldDisplayValue(def, row, lang);
+  if (val === null) return null;
+  if (noteFieldId) {
+    var noteDef = _findRentalFieldDef(noteFieldId);
+    var noteVal = noteDef ? resolveFieldDisplayValue(noteDef, row, lang) : null;
+    if (noteVal) val = val + ' — ' + noteVal;
+  }
+  return val;
+}
+
+// Rental Terms card facts for the listing detail page — a dedicated card
+// (not folded into getDetailFacts()'s generic list) because the product
+// spec calls for a specific fact order and a few combined lines (dropdown
+// + its note, included-service checkboxes shown individually). Hides any
+// field with no value, per spec ("Hide any empty fields automatically").
+function getRentalTermsFacts(typeKey, row, lang) {
+  if (!PROPERTY_TYPE_RENTAL_TERMS[typeKey] || !row) return [];
+  var L = function(en, lo, zh) { return lang === 'lo' ? lo : (lang === 'zh' ? zh : en); };
+  var out = [];
+  function addFact(icon, label, value) {
+    if (value === null || value === undefined || value === '') return;
+    out.push({icon: icon, label: label, value: value});
+  }
+
+  // Rent itself (existing rent_price/rent_period columns) leads the card —
+  // deposit/lease-length/etc. read oddly without the rent they relate to.
+  if (row.rent_price) {
+    addFact('💵', L('Rent','ຄ່າເຊົ່າ','租金'), row.rent_price + (row.rent_period ? '/' + row.rent_period : ''));
+  }
+
+  addFact('🔒', L('Deposit','ເງິນມັດຈຳ','押金'),
+    (row.security_deposit !== null && row.security_deposit !== undefined && row.security_deposit !== '')
+      ? ('$' + row.security_deposit + (row.security_deposit_note ? ' (' + row.security_deposit_note + ')' : ''))
+      : null);
+
+  addFact('📆', L('Advance Rent','ຄ່າເຊົ່າລ່ວງໜ້າ','预付租金'),
+    (row.advance_rent_months !== null && row.advance_rent_months !== undefined && row.advance_rent_months !== '')
+      ? (row.advance_rent_months + ' ' + L('months','ເດືອນ','个月'))
+      : null);
+
+  addFact('📋', L('Minimum Lease','ໄລຍະເຊົ່າຂັ້ນຕ່ຳ','最短租期'), _rentalFactValue('rt-lease-term-min', 'rt-lease-term-min-custom', row, lang));
+  addFact('⚡', L('Electricity','ໄຟຟ້າ','电费'), _rentalFactValue('rt-electricity', 'rt-electricity-note', row, lang));
+  addFact('🚰', L('Water','ນ້ຳປະປາ','水费'), _rentalFactValue('rt-water', 'rt-water-note', row, lang));
+  addFact('📶', L('Internet','ອິນເຕີເນັດ','网络'), _rentalFactValue('rt-internet', 'rt-internet-note', row, lang));
+  addFact('🗑️', L('Trash Collection','ການເກັບຂີ້ເຫຍື້ອ','垃圾清运'), _rentalFactValue('rt-trash', 'rt-trash-note', row, lang));
+  addFact('🧹', L('Cleaning','ທຳຄວາມສະອາດ','保洁'), _rentalFactValue('rt-cleaning-service', 'rt-cleaning-service-note', row, lang));
+  addFact('🛏️', L('Linen Change','ການປ່ຽນຜ້າປູ','更换床单'), _rentalFactValue('rt-linen-change', 'rt-linen-change-note', row, lang));
+
+  var included = Array.isArray(row.included_services) ? row.included_services : [];
+  INCLUDED_SERVICES_OPTIONS.forEach(function(opt) {
+    if (included.indexOf(opt.value) === -1) return;
+    if (opt.value === 'parking') {
+      addFact('🚗', L('Parking','ບ່ອນຈອດລົດ','停车位'), L('Included','ລວມຢູ່','已包含'));
+    } else {
+      addFact('✅', opt.label[lang] || opt.label.en, L('Yes','ແມ່ນ','是'));
+    }
+  });
+
+  addFact('🐾', L('Pets','ສັດລ້ຽງ','宠物'), _rentalFactValue('rt-pet-policy', 'rt-pet-policy-note', row, lang));
+
+  addFact('🔑', L('Key Deposit','ເງິນມັດຈຳກະແຈ','钥匙押金'), (row.key_deposit !== null && row.key_deposit !== undefined && row.key_deposit !== '') ? ('$' + row.key_deposit) : null);
+  addFact('🧽', L('Cleaning Fee','ຄ່າທຳຄວາມສະອາດ','清洁费'), (row.cleaning_fee !== null && row.cleaning_fee !== undefined && row.cleaning_fee !== '') ? ('$' + row.cleaning_fee) : null);
+  addFact('📝', L('Administration Fee','ຄ່າທຳນຽມບໍລິຫານ','管理费'), (row.administration_fee !== null && row.administration_fee !== undefined && row.administration_fee !== '') ? ('$' + row.administration_fee) : null);
+
+  return out;
+}
+
 var PROPERTY_TYPE_FIELDS = {
 
   house: [

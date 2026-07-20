@@ -73,6 +73,17 @@ body{
   margin-bottom:20px;
 }
 
+.section-sub{
+  font-size:13px;
+  font-weight:700;
+  color:var(--muted);
+  margin:20px 0 10px;
+}
+
+.section-sub:first-child{
+  margin-top:0;
+}
+
 .field{
   margin-bottom:18px;
 }
@@ -283,7 +294,7 @@ label{
 
   <div class="field">
     <label>ປະເພດ</label>
-    <select class="select" id="propertyType" onchange="renderPropertyTypeFields(this.value)"></select>
+    <select class="select" id="propertyType" onchange="renderPropertyTypeFields(this.value); renderRentalTermsFields(this.value);"></select>
   </div>
 
   <div class="field">
@@ -327,6 +338,20 @@ label{
        No wrapping .field class here — each rendered field is its own
        .field div, matching this page's single-column layout. -->
   <div id="property-details-grid"></div>
+
+</div>
+
+<!-- RENTAL TERMS — rendered dynamically from PROPERTY_TYPE_RENTAL_TERMS
+     (terminology.js) for Apartment/Condo only; see
+     renderRentalTermsFields() below. Hidden entirely for every other
+     property type. -->
+<div class="section" id="rental-terms-section" style="display:none;">
+
+  <div class="section-title">
+    ເງື່ອນໄຂການເຊົ່າ
+  </div>
+
+  <div id="rental-terms-fields"></div>
 
 </div>
 
@@ -697,6 +722,114 @@ function buildTypedFieldsPayload(typeKey){
   return out;
 }
 
+// ── Rental Terms (terminology.js: PROPERTY_TYPE_RENTAL_TERMS) ─────────────
+// Separate from renderPropertyTypeFields() above because this section
+// renders grouped subheadings (Pricing/Utilities/Included Services/Pet
+// Policy/Additional Fees) and has conditional companion fields (showWhen),
+// neither of which the generic Details grid supports. Only apartment/condo
+// have an entry in PROPERTY_TYPE_RENTAL_TERMS; every other type hides the
+// whole section. No .grid wrapper here — this page is single-column
+// throughout, same as property-details-grid above.
+function renderRentalTermField(f){
+  if(f.kind === 'select'){
+    const opts = f.options.map(function(o){ return '<option value="' + o.value + '">' + o.label.lo + '</option>'; }).join('');
+    return '<div class="field" id="' + f.id + '-wrap"><label>' + f.label.lo + '</label><select class="select" id="' + f.id + '" onchange="updateRentalTermsVisibility()">' + opts + '</select></div>';
+  }
+  if(f.kind === 'multi_checkbox'){
+    const items = f.options.map(function(o){ return '<label class="feature"><input type="checkbox" value="' + o.value + '">' + o.label.lo + '</label>'; }).join('');
+    return '<div class="field" id="' + f.id + '-wrap"><label>' + f.label.lo + '</label><div class="features" id="' + f.id + '-grid">' + items + '</div></div>';
+  }
+  return '<div class="field" id="' + f.id + '-wrap"><label>' + f.label.lo + '</label><input type="' + (f.kind === 'text' ? 'text' : 'number') + '" class="input" id="' + f.id + '"' +
+    (f.min != null ? ' min="' + f.min + '"' : '') + (f.max != null ? ' max="' + f.max + '"' : '') +
+    (f.placeholder ? ' placeholder="' + f.placeholder + '"' : '') + '></div>';
+}
+
+function renderRentalTermsFields(typeKey){
+  const wrap = document.getElementById('rental-terms-section');
+  const body = document.getElementById('rental-terms-fields');
+  if(!wrap || !body) return;
+  const fields = PROPERTY_TYPE_RENTAL_TERMS[typeKey];
+  if(!fields){ wrap.style.display = 'none'; body.innerHTML = ''; return; }
+  wrap.style.display = '';
+
+  const multiFields = fields.filter(function(f){ return f.kind === 'multi_checkbox'; });
+  const prevMulti = {};
+  multiFields.forEach(function(f){ prevMulti[f.id] = getCheckedMultiKeys(f.id + '-grid'); });
+
+  body.innerHTML = RENTAL_TERMS_SECTIONS.map(function(sec){
+    const secFields = fields.filter(function(f){ return f.section === sec.key; });
+    if(!secFields.length) return '';
+    return '<p class="section-sub">' + sec.label.lo + '</p>' + secFields.map(renderRentalTermField).join('');
+  }).join('');
+
+  multiFields.forEach(function(f){
+    const container = document.getElementById(f.id + '-grid');
+    if(!container) return;
+    (prevMulti[f.id] || []).forEach(function(v){
+      const cb = container.querySelector('input[value="' + v + '"]');
+      if(cb) cb.checked = true;
+    });
+  });
+
+  updateRentalTermsVisibility();
+}
+
+// Shows/hides each showWhen-linked companion field based on its parent
+// select's current value.
+function updateRentalTermsVisibility(){
+  RENTAL_TERMS_FIELDS.forEach(function(f){
+    if(!f.showWhen) return;
+    const wrapEl = document.getElementById(f.id + '-wrap');
+    const parentEl = document.getElementById(f.showWhen.parent);
+    if(!wrapEl || !parentEl) return;
+    wrapEl.style.display = f.showWhen.values.indexOf(parentEl.value) !== -1 ? '' : 'none';
+  });
+}
+
+function populateRentalTermsFields(typeKey, sourceRow){
+  const fields = PROPERTY_TYPE_RENTAL_TERMS[typeKey];
+  if(!fields) return;
+  fields.forEach(function(f){
+    if(!f.column) return;
+    if(f.kind === 'multi_checkbox'){
+      const container = document.getElementById(f.id + '-grid');
+      if(!container) return;
+      const values = Array.isArray(sourceRow && sourceRow[f.column]) ? sourceRow[f.column] : [];
+      container.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
+        cb.checked = values.indexOf(cb.value) !== -1;
+      });
+      return;
+    }
+    const el = document.getElementById(f.id);
+    if(!el) return;
+    const v = sourceRow ? sourceRow[f.column] : null;
+    el.value = (v != null ? v : '');
+  });
+  updateRentalTermsVisibility();
+}
+
+// Builds the Rental Terms portion of the save payload. Nulls every column
+// when the current type has no Rental Terms section, and nulls a showWhen
+// field currently hidden by its parent's value — same convention as
+// buildTypedFieldsPayload().
+function buildRentalTermsPayload(typeKey){
+  const active = PROPERTY_TYPE_RENTAL_TERMS[typeKey] || null;
+  const out = {};
+  RENTAL_TERMS_FIELDS.forEach(function(f){
+    if(!f.column) return;
+    if(!active){ out[f.column] = null; return; }
+    if(f.showWhen){
+      const parentEl = document.getElementById(f.showWhen.parent);
+      if(!parentEl || f.showWhen.values.indexOf(parentEl.value) === -1){ out[f.column] = null; return; }
+    }
+    if(f.kind === 'multi_checkbox'){ out[f.column] = getCheckedMultiKeys(f.id + '-grid'); return; }
+    const el = document.getElementById(f.id);
+    if(!el){ out[f.column] = null; return; }
+    out[f.column] = f.kind === 'number' ? (parseFloat(el.value) || null) : (el.value.trim() || null);
+  });
+  return out;
+}
+
 async function loadProperty(){
 
   const { data,error } =
@@ -737,6 +870,8 @@ async function loadProperty(){
 
   renderPropertyTypeFields(data.property_type || '', data.amenities || []);
   populateTypedFields(data.property_type || '', data);
+  renderRentalTermsFields(data.property_type || '');
+  populateRentalTermsFields(data.property_type || '', data);
 
   editingContactId = data.contact_id || null;
   document.getElementById('contactName').value =
@@ -981,7 +1116,8 @@ async function saveProperty(){
 
     contact_id: editingContactId,
 
-    ...buildTypedFieldsPayload(propertyType)
+    ...buildTypedFieldsPayload(propertyType),
+    ...buildRentalTermsPayload(propertyType)
 
   };
 

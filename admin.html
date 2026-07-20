@@ -355,7 +355,7 @@ body{font-family:'DM Sans',sans-serif;font-size:15px;background:var(--warm);colo
           <div class="form-grid">
             <div class="form-group">
               <label class="form-label">Property Type <span class="required">*</span></label>
-              <select class="form-select" id="f-type" onchange="renderPropertyTypeFields(this.value)">
+              <select class="form-select" id="f-type" onchange="renderPropertyTypeFields(this.value); renderRentalTermsFields(this.value);">
                 <option value="">Select type</option>
                 <option value="house">House</option>
                 <option value="townhouse">Townhouse</option>
@@ -515,21 +515,29 @@ body{font-family:'DM Sans',sans-serif;font-size:15px;background:var(--warm);colo
           <div class="form-grid-3" id="property-details-grid"></div>
         </div>
 
+        <!-- RENTAL TERMS — rendered dynamically from PROPERTY_TYPE_RENTAL_TERMS
+             (terminology.js) for Apartment/Condo only; see
+             renderRentalTermsFields(). Hidden entirely for every other type. -->
+        <div class="form-section" id="rental-terms-section" style="display:none;">
+          <p class="form-section-title">&#9316; Rental Terms <span style="color:var(--ink-muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; Apartment &amp; Condo only</span></p>
+          <div id="rental-terms-fields"></div>
+        </div>
+
         <!-- FEATURES -->
         <div class="form-section">
-          <p class="form-section-title">&#9316; Features <span style="color:var(--ink-muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; Editorial list on the listing page</span></p>
+          <p class="form-section-title">&#9317; Features <span style="color:var(--ink-muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; Editorial list on the listing page</span></p>
           <div class="check-grid" id="features-grid"></div>
         </div>
 
         <!-- AMENITIES -->
         <div class="form-section">
-          <p class="form-section-title">&#9317; Amenities <span style="color:var(--ink-muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; Quick-scan icon row below description</span></p>
+          <p class="form-section-title">&#9318; Amenities <span style="color:var(--ink-muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; Quick-scan icon row below description</span></p>
           <div class="check-grid" id="amenities-grid"></div>
         </div>
 
         <!-- LOCATION -->
         <div class="form-section">
-          <p class="form-section-title">&#9318; Location</p>
+          <p class="form-section-title">&#9319; Location</p>
           <div class="form-grid">
             <div class="form-group">
               <label class="form-label">District <span class="required">*</span></label>
@@ -563,7 +571,7 @@ body{font-family:'DM Sans',sans-serif;font-size:15px;background:var(--warm);colo
 
         <!-- PRESENTATION -->
         <div class="form-section">
-          <p class="form-section-title">&#9319; Presentation</p>
+          <p class="form-section-title">&#9320; Presentation</p>
           <p class="form-section-sub">Highlight Pills <span style="color:var(--ink-muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; Teal pills shown in listing sidebar</span></p>
           <div class="tag-grid" id="highlights-preset"></div>
           <div class="tag-grid" id="highlights-custom" style="margin-top:8px;"></div>
@@ -593,7 +601,7 @@ body{font-family:'DM Sans',sans-serif;font-size:15px;background:var(--warm);colo
 
         <!-- MEDIA -->
         <div class="form-section">
-          <p class="form-section-title">&#9320; Photos &amp; Video</p>
+          <p class="form-section-title">&#9321; Photos &amp; Video</p>
           <div class="form-group">
             <label class="form-label">Property Images</label>
             <div class="upload-zone" id="upload-zone" onclick="document.getElementById('img-file-input').click()">
@@ -628,7 +636,7 @@ body{font-family:'DM Sans',sans-serif;font-size:15px;background:var(--warm);colo
 
         <!-- BUYER CONTACT (mandatory — who the buyer should actually call) -->
         <div class="form-section">
-          <p class="form-section-title">&#9321; Buyer Contact <span style="color:var(--red,#c0392b);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; required, shown to buyers regardless of Platform Identity below</span></p>
+          <p class="form-section-title">&#9322; Buyer Contact <span style="color:var(--red,#c0392b);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; required, shown to buyers regardless of Platform Identity below</span></p>
           <div class="form-grid">
             <div class="form-group">
               <label class="form-label">Contact Role *</label>
@@ -669,7 +677,7 @@ body{font-family:'DM Sans',sans-serif;font-size:15px;background:var(--warm);colo
 
         <!-- PLATFORM IDENTITY / MANAGED BY (optional — internal attribution + Agent Profile branding) -->
         <div class="form-section">
-          <p class="form-section-title">&#9322; Platform Identity / Managed By <span style="color:var(--teal);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; optional; links this listing to a Pintag Agent Profile for branding/CRM, independent of Buyer Contact above</span></p>
+          <p class="form-section-title">&#9323; Platform Identity / Managed By <span style="color:var(--teal);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; optional; links this listing to a Pintag Agent Profile for branding/CRM, independent of Buyer Contact above</span></p>
           <div class="form-group form-full">
             <label class="form-label">Agent</label>
             <div class="agent-select-row">
@@ -701,7 +709,7 @@ body{font-family:'DM Sans',sans-serif;font-size:15px;background:var(--warm);colo
 
         <!-- UNIT TYPES (optional — Multi-Unit Buildings, Phase 1) -->
         <div class="form-section">
-          <p class="form-section-title">&#9323; Unit Types <span style="color:var(--teal);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; optional; add one per variant (Studio, 1BR, 2BR...) to turn this listing into a multi-unit building. Leave empty for a normal single listing.</span></p>
+          <p class="form-section-title">&#9324; Unit Types <span style="color:var(--teal);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">&#8212; optional; add one per variant (Studio, 1BR, 2BR...) to turn this listing into a multi-unit building. Leave empty for a normal single listing.</span></p>
           <div id="unit-types-list" class="unit-types-list"></div>
           <button type="button" class="btn-add-row" onclick="addUnitType()">+ Add Unit Type</button>
         </div>
@@ -1027,6 +1035,121 @@ function buildTypedFieldsPayload(typeKey) {
 function getFieldValueSafe(id) {
   const el = document.getElementById(id);
   return el ? el.value : '';
+}
+
+// ── Rental Terms (terminology.js: PROPERTY_TYPE_RENTAL_TERMS) ─────────────
+// Separate from renderPropertyTypeFields()/renderTypedField() above because
+// this section renders grouped subheadings (Pricing/Utilities/Included
+// Services/Pet Policy/Additional Fees) and has conditional companion
+// fields (showWhen), neither of which the generic Property Details grid
+// supports. Only apartment/condo have an entry in PROPERTY_TYPE_RENTAL_TERMS
+// today; every other type hides the whole section.
+function renderRentalTermField(f) {
+  if (f.kind === 'select') {
+    const opts = f.options.map(o => `<option value="${esc(o.value)}">${esc(o.label.en)}</option>`).join('');
+    return `<div class="form-group" id="${f.id}-wrap"><label class="form-label">${esc(f.label.en)}</label>
+      <select class="form-select" id="${f.id}" onchange="updateRentalTermsVisibility()">${opts}</select></div>`;
+  }
+  if (f.kind === 'multi_checkbox') {
+    return `<div class="form-group form-full" id="${f.id}-wrap"><label class="form-label">${esc(f.label.en)}</label>
+      <div class="check-grid" id="${f.id}-grid"></div></div>`;
+  }
+  return `<div class="form-group" id="${f.id}-wrap"><label class="form-label">${esc(f.label.en)}</label>
+    <input class="form-input" id="${f.id}" type="${f.kind === 'text' ? 'text' : 'number'}"
+      ${f.min != null ? `min="${f.min}"` : ''} ${f.max != null ? `max="${f.max}"` : ''}
+      ${f.placeholder ? `placeholder="${esc(f.placeholder)}"` : ''}>
+    </div>`;
+}
+
+function renderRentalTermsFields(typeKey) {
+  const wrap = document.getElementById('rental-terms-section');
+  const body = document.getElementById('rental-terms-fields');
+  if (!wrap || !body) return;
+  const fields = PROPERTY_TYPE_RENTAL_TERMS[typeKey];
+  if (!fields) { wrap.style.display = 'none'; body.innerHTML = ''; return; }
+  wrap.style.display = '';
+
+  // Same across-a-type-switch preservation as renderPropertyTypeFields()
+  // does for Features/Amenities — innerHTML wipes checkbox state that
+  // would otherwise be silently dropped.
+  const multiFields = fields.filter(f => f.kind === 'multi_checkbox');
+  const prevMulti = {};
+  multiFields.forEach(f => { prevMulti[f.id] = getCheckedKeys(f.id + '-grid'); });
+
+  body.innerHTML = RENTAL_TERMS_SECTIONS.map(sec => {
+    const secFields = fields.filter(f => f.section === sec.key);
+    if (!secFields.length) return '';
+    return `<p class="form-section-sub">${esc(sec.label.en)}</p>
+      <div class="form-grid-3">${secFields.map(renderRentalTermField).join('')}</div>`;
+  }).join('');
+
+  multiFields.forEach(f => {
+    initCheckGrid(f.id + '-grid', optionsToRegistry(f.options));
+    setChecked(f.id + '-grid', prevMulti[f.id] || []);
+  });
+
+  updateRentalTermsVisibility();
+}
+
+// Shows/hides each showWhen-linked companion field based on its parent
+// select's current value — same show/hide-by-style.display approach as
+// onTransactionChange(), generalized across every Rental Terms field that
+// declares showWhen in terminology.js instead of one-off wiring per field.
+function updateRentalTermsVisibility() {
+  RENTAL_TERMS_FIELDS.forEach(f => {
+    if (!f.showWhen) return;
+    const wrapEl = document.getElementById(f.id + '-wrap');
+    const parentEl = document.getElementById(f.showWhen.parent);
+    if (!wrapEl || !parentEl) return;
+    wrapEl.style.display = f.showWhen.values.includes(parentEl.value) ? '' : 'none';
+  });
+}
+
+// Caller must have already called renderRentalTermsFields(typeKey) for the
+// SAME typeKey so the right inputs exist in the DOM first — same contract
+// as populateTypedFields().
+function populateRentalTermsFields(typeKey, sourceRow) {
+  const fields = PROPERTY_TYPE_RENTAL_TERMS[typeKey];
+  if (!fields) return;
+  fields.forEach(f => {
+    if (!f.column) return;
+    if (f.kind === 'multi_checkbox') {
+      const raw = sourceRow && sourceRow[f.column];
+      const values = Array.isArray(raw) ? raw : (Array.isArray(fv(raw)) ? fv(raw) : []);
+      setChecked(f.id + '-grid', values);
+      return;
+    }
+    const el = document.getElementById(f.id);
+    if (!el) return;
+    const v = sourceRow ? fv(sourceRow[f.column]) : null;
+    el.value = (v != null ? v : '');
+  });
+  updateRentalTermsVisibility();
+}
+
+// Builds the Rental Terms portion of the save payload. Nulls every Rental
+// Terms column when the current type has no Rental Terms section (e.g.
+// switching Condo → House) so stale rental data doesn't linger on a type it
+// no longer applies to — same convention as buildTypedFieldsPayload(). A
+// showWhen field that's currently hidden (its parent isn't set to a
+// triggering value) is nulled too, so an abandoned Custom note never
+// outlives the dropdown value that justified showing it.
+function buildRentalTermsPayload(typeKey) {
+  const active = PROPERTY_TYPE_RENTAL_TERMS[typeKey] || null;
+  const out = {};
+  RENTAL_TERMS_FIELDS.forEach(f => {
+    if (!f.column) return;
+    if (!active) { out[f.column] = null; return; }
+    if (f.showWhen) {
+      const parentEl = document.getElementById(f.showWhen.parent);
+      if (!parentEl || !f.showWhen.values.includes(parentEl.value)) { out[f.column] = null; return; }
+    }
+    if (f.kind === 'multi_checkbox') { out[f.column] = getCheckedKeys(f.id + '-grid'); return; }
+    const el = document.getElementById(f.id);
+    if (!el) { out[f.column] = null; return; }
+    out[f.column] = f.kind === 'number' ? (parseFloat(el.value) || null) : (el.value.trim() || null);
+  });
+  return out;
 }
 
 // ── Highlight pills ──────────────────────────────────────────────
@@ -1918,6 +2041,7 @@ function showForm(id) {
     // must be re-rendered explicitly for the blank state (also clears
     // features/amenities, which form.reset() likewise doesn't touch).
     renderPropertyTypeFields('');
+    renderRentalTermsFields('');
     setHighlights([]);
     customTags = [];
     populateExistingImages([]);
@@ -1954,6 +2078,7 @@ async function editListing(id) {
 
   document.getElementById('f-type').value        = p.property_type || '';
   renderPropertyTypeFields(p.property_type || '');
+  renderRentalTermsFields(p.property_type || '');
   document.getElementById('f-style').value       = p.property_style || '';
   document.getElementById('f-transaction').value = p.transaction_type || '';
   onTransactionChange();
@@ -1983,6 +2108,7 @@ async function editListing(id) {
   document.getElementById('f-desc-zh').value     = p.description_zh || p.desc_zh || '';
 
   populateTypedFields(p.property_type || '', p);
+  populateRentalTermsFields(p.property_type || '', p);
 
   const rawFeatures = Array.isArray(p.features)
     ? p.features.map(f => typeof f === 'string' ? f : (f.key || f.label_en || f.name || ''))
@@ -2184,6 +2310,7 @@ async function saveListing(e) {
     description_lo:          document.getElementById('f-desc-lo').value.trim() || null,
     description_zh:          document.getElementById('f-desc-zh').value.trim() || null,
     ...buildTypedFieldsPayload(document.getElementById('f-type').value),
+    ...buildRentalTermsPayload(document.getElementById('f-type').value),
     features:          features.length ? features : null,
     amenities:         amenities.length ? amenities : null,
     district_en:       districtEn || null,
@@ -2953,6 +3080,7 @@ function populateFormFromImport(data) {
   // Populate form fields (form-panel may be hidden — values are set directly)
   document.getElementById('f-type').value        = fv(data.property_type) || '';
   renderPropertyTypeFields(fv(data.property_type) || '');
+  renderRentalTermsFields(fv(data.property_type) || '');
   document.getElementById('f-style').value       = fv(data.property_style) || '';
   applyConfidence('f-style', data.property_style);
   document.getElementById('f-transaction').value = fv(data.transaction_type) || 'for_sale';
@@ -2984,6 +3112,7 @@ function populateFormFromImport(data) {
   document.getElementById('f-desc-zh').value     = data.description_zh || '';
 
   populateTypedFields(fv(data.property_type) || '', data);
+  populateRentalTermsFields(fv(data.property_type) || '', data);
   ['f-bedrooms','f-bathrooms','f-sqm','f-sqm-land','f-furnished'].forEach(id => {
     const src = { 'f-bedrooms':data.bedrooms, 'f-bathrooms':data.bathrooms, 'f-sqm':data.sqm, 'f-sqm-land':data.sqm_land, 'f-furnished':data.furnished }[id];
     applyConfidence(id, src);
@@ -3143,6 +3272,7 @@ async function publishDraft() {
 
 // ── INIT ──────────────────────────────────────────────────────────
 renderPropertyTypeFields(document.getElementById('f-type').value || '');
+renderRentalTermsFields(document.getElementById('f-type').value || '');
 initHighlightPresets();
 </script>
 </body>
