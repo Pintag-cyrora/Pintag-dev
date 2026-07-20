@@ -328,6 +328,9 @@ nav{
   display:flex;align-items:center;gap:3px;
   font-size:10.5px;color:rgba(255,255,255,0.55);
 }
+.card-rental-summary{
+  font-size:10.5px;color:rgba(255,255,255,0.55);margin:4px 0 0;
+}
 
 /* loading shimmer */
 .card-shimmer{
@@ -665,6 +668,11 @@ function renderCards(props, lang) {
     // here to match this page's more compact card.
     const cardFacts = (typeof getCardFacts === 'function') ? getCardFacts(p.property_type, p, lang) : [];
     const specs = cardFacts.map(f => '<span class="card-spec">' + f.icon + ' ' + esc(String(f.value)) + '</span>');
+    // Compact Rental Terms summary (Apartment/Condo only), same
+    // schema-driven source as `specs` above — absent for any listing with
+    // no Rental Terms filled in.
+    const rentalSummary = (typeof getRentalTermsSummary === 'function') ? getRentalTermsSummary(p.property_type, p, lang) : '';
+    const rentalSummaryHtml = rentalSummary ? '<div class="card-rental-summary">' + esc(rentalSummary) + '</div>' : '';
     const priceUnit = (!isSale && !isSor && p.price_display) ? '<span class="card-price-unit">' + perMo[lang] + '</span>' : '';
     const sorPriceHtml = isSor && (p.sale_price || p.rent_price)
       ? (p.sale_price ? esc(p.sale_price) : '') + (p.sale_price && p.rent_price ? ' / ' : '') + (p.rent_price ? esc(p.rent_price) : '')
@@ -694,6 +702,7 @@ function renderCards(props, lang) {
         '</div>' +
         '<div class="card-loc">' + PIN_SVG + (district ? district + ', ' : '') + cityL[lang] + '</div>' +
         (specs.length ? '<div class="card-specs">' + specs.join('') + '</div>' : '') +
+        rentalSummaryHtml +
         agentHtml +
       '</div>' +
     '</a>';

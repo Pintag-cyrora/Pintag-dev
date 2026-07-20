@@ -166,6 +166,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;height:calc(52px + env(safe-
 .pdetail-icon{width:26px;height:26px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;background:rgba(45,140,140,0.03);}
 .pdetail-lbl{color:var(--ink-muted);flex:1;}
 .pdetail-val{font-weight:500;color:var(--ink);}
+.pdetail-total{border-bottom:none;margin-top:4px;padding-top:12px;border-top:1px solid var(--border);}
+.pdetail-total .pdetail-lbl{color:var(--ink);font-weight:600;}
+.pdetail-total .pdetail-val{font-size:15px;font-weight:700;}
 /* Features — editorial, premium spacing */
 .features-list{display:flex;flex-direction:column;gap:0;}
 .feature-item{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:400;color:var(--ink-soft);padding:11px 0;border-bottom:1px solid var(--border);line-height:1.4;}
@@ -1171,7 +1174,9 @@ function buildMockupLayout(){
     video  :{lo:'ວິດີໂອນຳຊົມ',en:'Property walk-through',zh:'实景视频'},
     verified:{lo:'ກວດສອບແລ້ວ',en:'Verified',zh:'平台已核验'},
     inquire:{lo:'ສອບຖາມລາຄາ',en:'Inquire for price',zh:'意向询价'},
-    rentalTerms:{lo:'ເງື່ອນໄຂການເຊົ່າ',en:'Rental Terms',zh:'租赁条款'}
+    rentalTerms:{lo:'ເງື່ອນໄຂການເຊົ່າ',en:'Rental Terms',zh:'租赁条款'},
+    moveInCost:{lo:'ຄ່າໃຊ້ຈ່າຍໃນການຍ້າຍເຂົ້າ (ປະມານ)',en:'Estimated Move-in Cost',zh:'预估入住费用'},
+    total:{lo:'ລວມທັງໝົດ',en:'Total',zh:'总计'}
   };
 
   var I={
@@ -1228,6 +1233,20 @@ function buildMockupLayout(){
     ? '<div class="pdetail-list"><span class="section-label">'+L.rentalTerms[lang]+'</span>'+rentalTermsFacts.map(function(f){
         return '<div class="pdetail-row"><span class="pdetail-icon">'+esc(f.icon)+'</span><span class="pdetail-lbl">'+esc(f.label)+'</span><span class="pdetail-val">'+esc(String(f.value))+'</span></div>';
       }).join('')+'</div>'
+    : '';
+
+  // ── Estimated Move-in Cost — automatically summed from the same Rental
+  // Terms fields (first month's rent + advance rent + deposit + one-time
+  // fees), itemized rather than a bare total so a buyer can see exactly
+  // what it's counting. getEstimatedMoveInCost() returns null when there's
+  // nothing to estimate (no rent, no fees at all) — rendered as nothing,
+  // same "hide if empty" convention as the rest of this card.
+  var moveInCost=(typeof getEstimatedMoveInCost==='function')?getEstimatedMoveInCost(data):null;
+  var moveInCostHtml=moveInCost
+    ? '<div class="pdetail-list"><span class="section-label">'+L.moveInCost[lang]+'</span>'+moveInCost.breakdown.map(function(b){
+        var lbl=(MOVE_IN_COST_LABELS[b.key]&&MOVE_IN_COST_LABELS[b.key][lang])||b.key;
+        return '<div class="pdetail-row"><span class="pdetail-lbl">'+esc(lbl)+'</span><span class="pdetail-val">$'+esc(String(Math.round(b.amount)))+'</span></div>';
+      }).join('')+'<div class="pdetail-row pdetail-total"><span class="pdetail-lbl">'+L.total[lang]+'</span><span class="pdetail-val">$'+esc(String(Math.round(moveInCost.total)))+'</span></div>'+'</div>'
     : '';
 
   var typeBadgeText=isSor?(lang==='lo'?'ຊື້ / ເຊົ່າ':lang==='zh'?'售/租':' Sale or Rent'):isSale?(lang==='lo'?'ຂາຍ':lang==='zh'?'出售':'For Sale'):(lang==='lo'?'ໃຫ້ເຊົ່າ':lang==='zh'?'出租':'For Rent');
@@ -1351,6 +1370,7 @@ function buildMockupLayout(){
     amenityRowHtml+
     pdetailHtml+
     rentalTermsHtml+
+    moveInCostHtml+
     '</div>'
   );
 

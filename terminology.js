@@ -253,9 +253,13 @@ var PET_POLICY_OPTIONS = [
   {value:'custom',         label:{en:'Custom',          lo:'ກຳນົດເອງ',                 zh:'自定义'}}
 ];
 
-function _rtSecurityDeposit()      { return {id:'rt-security-deposit',       column:'security_deposit',      kind:'number', section:'pricing', label:{en:'Security Deposit ($)',lo:'ເງິນມັດຈຳ ($)',zh:'押金($)'}, min:0, placeholder:'300'}; }
+// affectsMoveInCost flags the handful of fields getEstimatedMoveInCost()
+// actually sums — admin.html's live "Estimated Move-in Cost" preview hooks
+// an oninput handler onto exactly these, instead of every Rental Terms
+// field, by checking this flag in renderRentalTermField().
+function _rtSecurityDeposit()      { return {id:'rt-security-deposit',       column:'security_deposit',      kind:'number', section:'pricing', label:{en:'Security Deposit ($)',lo:'ເງິນມັດຈຳ ($)',zh:'押金($)'}, min:0, placeholder:'300', affectsMoveInCost:true}; }
 function _rtSecurityDepositNote()  { return {id:'rt-security-deposit-note',  column:'security_deposit_note', kind:'text',   section:'pricing', label:{en:'Deposit Note',lo:'ໝາຍເຫດເງິນມັດຈຳ',zh:'押金备注'}, placeholder:"e.g. 1 month's rent"}; }
-function _rtAdvanceRent()          { return {id:'rt-advance-rent',           column:'advance_rent_months',   kind:'number', section:'pricing', label:{en:'Advance Rent (months)',lo:'ຄ່າເຊົ່າລ່ວງໜ້າ (ເດືອນ)',zh:'预付租金(月)'}, min:0, placeholder:'2'}; }
+function _rtAdvanceRent()          { return {id:'rt-advance-rent',           column:'advance_rent_months',   kind:'number', section:'pricing', label:{en:'Advance Rent (months)',lo:'ຄ່າເຊົ່າລ່ວງໜ້າ (ເດືອນ)',zh:'预付租金(月)'}, min:0, placeholder:'2', affectsMoveInCost:true}; }
 function _rtMinLeaseTerm()         { return {id:'rt-lease-term-min',         column:'lease_term_min',        kind:'select', section:'pricing', label:{en:'Minimum Lease Term',lo:'ໄລຍະເຊົ່າຂັ້ນຕ່ຳ',zh:'最短租期'}, options:MIN_LEASE_TERM_OPTIONS}; }
 function _rtMinLeaseTermCustom()   { return {id:'rt-lease-term-min-custom',  column:'lease_term_min_custom', kind:'text',   section:'pricing', label:{en:'Custom Lease Term',lo:'ໄລຍະເຊົ່າກຳນົດເອງ',zh:'自定义租期'}, placeholder:'e.g. 18 months', showWhen:{parent:'rt-lease-term-min', values:['custom']}}; }
 
@@ -277,9 +281,9 @@ function _rtIncludedServices()     { return {id:'rt-included-services', column:'
 function _rtPetPolicy()            { return {id:'rt-pet-policy',      column:'pet_policy',      kind:'select', section:'pet_policy', label:{en:'Pet Policy',lo:'ນະໂຍບາຍສັດລ້ຽງ',zh:'宠物政策'}, options:PET_POLICY_OPTIONS}; }
 function _rtPetPolicyNote()        { return {id:'rt-pet-policy-note', column:'pet_policy_note', kind:'text',   section:'pet_policy', label:{en:'Pet Policy Notes',lo:'ໝາຍເຫດນະໂຍບາຍສັດລ້ຽງ',zh:'宠物政策备注'}, placeholder:'e.g. max 1 cat under 5kg', showWhen:{parent:'rt-pet-policy', values:['custom']}}; }
 
-function _rtKeyDeposit()  { return {id:'rt-key-deposit',  column:'key_deposit',        kind:'number', section:'additional_fees', label:{en:'Key Deposit ($)',lo:'ເງິນມັດຈຳກະແຈ ($)',zh:'钥匙押金($)'}, min:0, placeholder:'20'}; }
-function _rtCleaningFee() { return {id:'rt-cleaning-fee', column:'cleaning_fee',       kind:'number', section:'additional_fees', label:{en:'Cleaning Fee ($)',lo:'ຄ່າທຳຄວາມສະອາດ ($)',zh:'清洁费($)'}, min:0, placeholder:'30'}; }
-function _rtAdminFee()    { return {id:'rt-admin-fee',    column:'administration_fee', kind:'number', section:'additional_fees', label:{en:'Administration Fee ($)',lo:'ຄ່າທຳນຽມບໍລິຫານ ($)',zh:'管理费($)'}, min:0, placeholder:'25'}; }
+function _rtKeyDeposit()  { return {id:'rt-key-deposit',  column:'key_deposit',        kind:'number', section:'additional_fees', label:{en:'Key Deposit ($)',lo:'ເງິນມັດຈຳກະແຈ ($)',zh:'钥匙押金($)'}, min:0, placeholder:'20', affectsMoveInCost:true}; }
+function _rtCleaningFee() { return {id:'rt-cleaning-fee', column:'cleaning_fee',       kind:'number', section:'additional_fees', label:{en:'Cleaning Fee ($)',lo:'ຄ່າທຳຄວາມສະອາດ ($)',zh:'清洁费($)'}, min:0, placeholder:'30', affectsMoveInCost:true}; }
+function _rtAdminFee()    { return {id:'rt-admin-fee',    column:'administration_fee', kind:'number', section:'additional_fees', label:{en:'Administration Fee ($)',lo:'ຄ່າທຳນຽມບໍລິຫານ ($)',zh:'管理费($)'}, min:0, placeholder:'25', affectsMoveInCost:true}; }
 
 // Subheadings the Rental Terms section is grouped into, in display order.
 var RENTAL_TERMS_SECTIONS = [
@@ -337,6 +341,21 @@ function _rentalFactValue(fieldId, noteFieldId, row, lang) {
 // spec calls for a specific fact order and a few combined lines (dropdown
 // + its note, included-service checkboxes shown individually). Hides any
 // field with no value, per spec ("Hide any empty fields automatically").
+// The rent amount actually worth displaying/computing with. `rent_price` is
+// only ever populated for sale_or_rent listings (admin.html's saveListing()
+// writes it exclusively from f-rent-price, which is itself only shown for
+// sale_or_rent) — a plain for_rent listing's rent amount lives in
+// price_display instead (same source listing.html's own price block reads
+// for non-sale_or_rent listings). Falling back to price_display here means
+// the Rent line and Estimated Move-in Cost both work for ordinary For Rent
+// listings, not just dual-price Sale-or-Rent ones.
+function _resolveRentAmount(row) {
+  if (!row) return null;
+  if (row.rent_price) return row.rent_price;
+  if (row.transaction_type === 'for_rent' && row.price_display) return row.price_display;
+  return null;
+}
+
 function getRentalTermsFacts(typeKey, row, lang) {
   if (!PROPERTY_TYPE_RENTAL_TERMS[typeKey] || !row) return [];
   var L = function(en, lo, zh) { return lang === 'lo' ? lo : (lang === 'zh' ? zh : en); };
@@ -346,10 +365,11 @@ function getRentalTermsFacts(typeKey, row, lang) {
     out.push({icon: icon, label: label, value: value});
   }
 
-  // Rent itself (existing rent_price/rent_period columns) leads the card —
-  // deposit/lease-length/etc. read oddly without the rent they relate to.
-  if (row.rent_price) {
-    addFact('💵', L('Rent','ຄ່າເຊົ່າ','租金'), row.rent_price + (row.rent_period ? '/' + row.rent_period : ''));
+  // Rent itself leads the card — deposit/lease-length/etc. read oddly
+  // without the rent they relate to.
+  var rentAmount = _resolveRentAmount(row);
+  if (rentAmount) {
+    addFact('💵', L('Rent','ຄ່າເຊົ່າ','租金'), rentAmount + (row.rent_period ? '/' + row.rent_period : ''));
   }
 
   addFact('🔒', L('Deposit','ເງິນມັດຈຳ','押金'),
@@ -387,6 +407,142 @@ function getRentalTermsFacts(typeKey, row, lang) {
   addFact('📝', L('Administration Fee','ຄ່າທຳນຽມບໍລິຫານ','管理费'), (row.administration_fee !== null && row.administration_fee !== undefined && row.administration_fee !== '') ? ('$' + row.administration_fee) : null);
 
   return out;
+}
+
+// Strips a free-text money field (e.g. "$450", "450,000 LAK") down to its
+// leading numeric value. rent_price/price_display etc. are plain `text`
+// columns, not numeric (see 20260720000000_unit_types.sql's note on why —
+// staff type "$550,000" as-is, no numeric parsing on save), so anything
+// that needs to compute with rent has to parse it defensively rather than
+// assume a clean number.
+function _parseMoneyText(v) {
+  if (v === null || v === undefined || v === '') return 0;
+  if (typeof v === 'number') return v;
+  var n = parseFloat(String(v).replace(/[^0-9.]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+
+// Trilingual labels for getEstimatedMoveInCost()'s breakdown line items —
+// kept separate from RENTAL_TERMS_FIELDS since these aren't form fields,
+// just display labels for a derived/computed figure.
+var MOVE_IN_COST_LABELS = {
+  first_month_rent:   {en:"First Month's Rent",  lo:'ຄ່າເຊົ່າເດືອນທຳອິດ',   zh:'首月租金'},
+  advance_rent:        {en:'Advance Rent',         lo:'ຄ່າເຊົ່າລ່ວງໜ້າ',      zh:'预付租金'},
+  security_deposit:    {en:'Security Deposit',     lo:'ເງິນມັດຈຳ',           zh:'押金'},
+  key_deposit:         {en:'Key Deposit',          lo:'ເງິນມັດຈຳກະແຈ',       zh:'钥匙押金'},
+  cleaning_fee:        {en:'Cleaning Fee',         lo:'ຄ່າທຳຄວາມສະອາດ',      zh:'清洁费'},
+  administration_fee:  {en:'Administration Fee',   lo:'ຄ່າທຳນຽມບໍລິຫານ',      zh:'管理费'}
+};
+
+// Automatically calculated Estimated Move-in Cost: first month's rent +
+// advance rent (assumed to be additional prepaid months on top of the
+// move-in month, matching how landlords typically quote "1 month advance +
+// 2 months deposit") + security deposit + the one-time fees. Returns null
+// when there's nothing to estimate (no rent and no fees at all) rather than
+// a misleading $0, and otherwise a breakdown array (for a transparent
+// itemized display, not just an opaque total agents have to trust blindly)
+// plus the summed total.
+function getEstimatedMoveInCost(row) {
+  if (!row) return null;
+  var rent = _parseMoneyText(_resolveRentAmount(row));
+  var advanceMonths = _parseMoneyText(row.advance_rent_months);
+  var breakdown = [];
+
+  if (rent) breakdown.push({key: 'first_month_rent', amount: rent});
+  if (advanceMonths && rent) breakdown.push({key: 'advance_rent', amount: advanceMonths * rent});
+  if (row.security_deposit !== null && row.security_deposit !== undefined && row.security_deposit !== '') {
+    breakdown.push({key: 'security_deposit', amount: _parseMoneyText(row.security_deposit)});
+  }
+  if (row.key_deposit !== null && row.key_deposit !== undefined && row.key_deposit !== '') {
+    breakdown.push({key: 'key_deposit', amount: _parseMoneyText(row.key_deposit)});
+  }
+  if (row.cleaning_fee !== null && row.cleaning_fee !== undefined && row.cleaning_fee !== '') {
+    breakdown.push({key: 'cleaning_fee', amount: _parseMoneyText(row.cleaning_fee)});
+  }
+  if (row.administration_fee !== null && row.administration_fee !== undefined && row.administration_fee !== '') {
+    breakdown.push({key: 'administration_fee', amount: _parseMoneyText(row.administration_fee)});
+  }
+
+  if (!breakdown.length) return null;
+  var total = breakdown.reduce(function (sum, b) { return sum + b.amount; }, 0);
+  return {breakdown: breakdown, total: total};
+}
+
+// ── Rental Terms filters (Future Filtering Support) ─────────────────────
+// Pure predicates over a properties (or resolved unit-type) row, one per
+// filter named in the product spec. Client-side listings.html/index.html
+// filtering works by fetching the full table and filtering in JS (no
+// supabase-js `.eq()`/`.contains()` builder in this codebase — see
+// listings.html's loadListings()/renderListings()), so these are plain
+// boolean functions rather than query fragments; a future server-side
+// search would translate each one to `column = 'included'` or
+// `included_services @> '["parking"]'` against the indexes already added
+// in 20260720100000_rental_terms.sql.
+var RENTAL_TERMS_FILTERS = {
+  electricityIncluded: function (row) { return !!row && row.electricity_terms === 'included'; },
+  waterIncluded:       function (row) { return !!row && row.water_terms === 'included'; },
+  internetIncluded:    function (row) { return !!row && row.internet_terms === 'included'; },
+  trashIncluded:       function (row) { return !!row && row.trash_terms === 'included'; },
+  parkingIncluded:          function (row) { return _hasIncludedService(row, 'parking'); },
+  securityIncluded:         function (row) { return _hasIncludedService(row, 'security'); },
+  receptionIncluded:        function (row) { return _hasIncludedService(row, 'reception'); },
+  swimmingPoolIncluded:     function (row) { return _hasIncludedService(row, 'swimming_pool'); },
+  gymIncluded:              function (row) { return _hasIncludedService(row, 'gym'); },
+  gardenMaintenanceIncluded:function (row) { return _hasIncludedService(row, 'garden_maintenance'); },
+  poolMaintenanceIncluded:  function (row) { return _hasIncludedService(row, 'pool_maintenance'); },
+  // Any policy that permits at least some pet, as opposed to 'no_pets' /
+  // blank (not specified) / 'custom' (ambiguous — could go either way, so
+  // deliberately excluded from a simple yes/no filter).
+  petsAllowed: function (row) {
+    return !!row && ['pets_allowed', 'cats_only', 'small_pets_only'].indexOf(row.pet_policy) !== -1;
+  },
+  // Cleaning Service is a value filter, not a yes/no one — pass the exact
+  // CLEANING_SERVICE_OPTIONS value to match (e.g. 'daily'), or omit `freq`
+  // to ask "is any cleaning service provided at all" (anything but blank/
+  // 'none').
+  cleaningService: function (row, freq) {
+    if (!row) return false;
+    if (freq) return row.cleaning_service === freq;
+    return !!row.cleaning_service && row.cleaning_service !== 'none';
+  }
+};
+function _hasIncludedService(row, key) {
+  return !!row && Array.isArray(row.included_services) && row.included_services.indexOf(key) !== -1;
+}
+
+// Compact one-line Rental Terms summary for listing cards/search results —
+// a short "Deposit $300 · 12mo min · Pets OK" string, distinct from
+// getRentalTermsFacts()'s full itemized card on the detail page. Builds the
+// most decision-relevant facts in priority order (deposit, minimum lease,
+// then whichever utilities/pets are set) and caps it at 4, joined with
+// " · " — same separator convention as _utUpdateSummary()'s Unit Type card
+// summary in admin.html. Returns '' (not null) so callers can do a simple
+// truthiness check before rendering a separator/bullet in front of it.
+function getRentalTermsSummary(typeKey, row, lang) {
+  if (!PROPERTY_TYPE_RENTAL_TERMS[typeKey] || !row) return '';
+  var L = function (en, lo, zh) { return lang === 'lo' ? lo : (lang === 'zh' ? zh : en); };
+  var parts = [];
+
+  if (row.security_deposit !== null && row.security_deposit !== undefined && row.security_deposit !== '') {
+    parts.push(L('Deposit', 'ມັດຈຳ', '押金') + ' $' + row.security_deposit);
+  }
+  var leaseVal = _rentalFactValue('rt-lease-term-min', null, row, lang);
+  if (leaseVal) {
+    parts.push(row.lease_term_min === 'month_to_month' ? leaseVal : (leaseVal + ' ' + L('min', 'ຂັ້ນຕ່ຳ', '起租')));
+  }
+  if (RENTAL_TERMS_FILTERS.electricityIncluded(row) && RENTAL_TERMS_FILTERS.waterIncluded(row)) {
+    parts.push(L('Utilities Included', 'ລວມນ້ຳໄຟ', '水电全包'));
+  } else if (RENTAL_TERMS_FILTERS.electricityIncluded(row)) {
+    parts.push(L('Electricity Included', 'ລວມໄຟຟ້າ', '含电费'));
+  } else if (RENTAL_TERMS_FILTERS.waterIncluded(row)) {
+    parts.push(L('Water Included', 'ລວມນ້ຳປະປາ', '含水费'));
+  }
+  if (RENTAL_TERMS_FILTERS.internetIncluded(row)) parts.push(L('Internet Included', 'ລວມອິນເຕີເນັດ', '含网络'));
+  if (RENTAL_TERMS_FILTERS.parkingIncluded(row)) parts.push(L('Parking', 'ບ່ອນຈອດລົດ', '停车位'));
+  if (row.pet_policy === 'pets_allowed') parts.push(L('Pets OK', 'ຮັບສັດລ້ຽງ', '可养宠物'));
+  else if (row.pet_policy === 'no_pets') parts.push(L('No Pets', 'ບໍ່ຮັບສັດລ້ຽງ', '不可养宠物'));
+
+  return parts.slice(0, 4).join(' · ');
 }
 
 var PROPERTY_TYPE_FIELDS = {
@@ -672,6 +828,43 @@ function resolveUnitType(property, unitType) {
     images: (Array.isArray(unitType.images) && unitType.images.length) ? unitType.images : (property.images || []),
     isAvailable:    unitType.is_available,
     availableCount: unitType.available_count,
-    sortOrder:      unitType.sort_order
+    sortOrder:      unitType.sort_order,
+    // Rental Terms (20260720110000_rental_terms_unit_type_overrides.sql) —
+    // same pick() fallback as every field above; a unit type only needs to
+    // set the ones that genuinely differ from the building (e.g. a larger
+    // unit with a higher deposit, or the one unit where pets aren't
+    // allowed). RENTAL_TERMS_FIELDS is walked directly rather than listing
+    // every column by hand here, so adding a new Rental Terms field to that
+    // registry gets an override resolved automatically without a second
+    // edit in this function.
+    rentalTerms: (function () {
+      var out = {};
+      RENTAL_TERMS_FIELDS.forEach(function (f) {
+        if (f.column) out[f.column] = pick(f.column);
+      });
+      return out;
+    })()
   };
+}
+
+// Convenience for Rental Terms display consumers: resolveUnitType() above
+// returns camelCase fields (its existing shape, left unchanged so nothing
+// that already calls it breaks), but getRentalTermsFacts() expects a plain
+// row-shaped object keyed by column name, same shape as a raw properties
+// row. This layers a unit type's resolved Rental Terms overrides over the
+// building's own rent_price/rent_period (the two Rental Terms card facts
+// that live outside RENTAL_TERMS_FIELDS) so a caller can go straight to
+// getRentalTermsFacts(typeKey, getResolvedRentalTermsRow(property, unitType), lang)
+// instead of re-deriving this shape itself.
+function getResolvedRentalTermsRow(property, unitType) {
+  var resolved = resolveUnitType(property, unitType);
+  var row = Object.assign({}, resolved.rentalTerms);
+  row.rent_price = resolved.rentPrice;
+  row.rent_period = resolved.rentPeriod;
+  // _resolveRentAmount()'s for_rent/price_display fallback needs both of
+  // these — neither is itself a Rental Terms field, so Object.assign above
+  // doesn't pick them up from resolved.rentalTerms.
+  row.price_display = resolved.priceDisplay;
+  row.transaction_type = property.transaction_type;
+  return row;
 }

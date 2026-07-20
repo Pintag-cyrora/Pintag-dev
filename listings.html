@@ -280,6 +280,11 @@ nav{
 .card-spec{font-size:11px;font-weight:400;color:var(--ink-muted);display:inline-flex;align-items:center;gap:4px;}
 .card-spec span{font-weight:500;color:var(--ink-soft);}
 
+/* Compact Rental Terms summary (getRentalTermsSummary() in terminology.js)
+   — Apartment/Condo rentals only, e.g. "Deposit $300 · 12mo min · Pets OK".
+   Same muted caption weight as .card-loc, sits just below the specs row. */
+.card-rental-summary{font-size:11px;color:var(--ink-muted);margin:0 0 14px;}
+
 /* 3-4 top-priority amenity icons (see amenities.js AMENITY_PRIORITY) —
    icon-only for compactness, label available via title/aria-label. */
 .card-amenities{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
@@ -549,6 +554,19 @@ nav{
         <option value="price_asc"  data-lo="ລາຄາ: ຕ່ຳ→ສູງ"  data-en="Price: Low→High" data-zh="价格: 低→高">ລາຄາ: ຕ່ຳ→ສູງ</option>
         <option value="price_desc" data-lo="ລາຄາ: ສູງ→ຕ່ຳ"  data-en="Price: High→Low" data-zh="价格: 高→低">ລາຄາ: ສູງ→ຕ່ຳ</option>
       </select>
+      <!-- Rental Terms: Cleaning Service — only meaningful for Apartment/
+           Condo rentals (terminology.js: CLEANING_SERVICE_OPTIONS), but a
+           plain equality filter like Sort's own <select>, not a boolean
+           toggle, so it lives alongside sort-select rather than the
+           tx-toggle/avail-toggle button groups above. -->
+      <select class="sort-select" id="cleaning-filter" onchange="setCleaningFilter(this.value)" data-track="filter-cleaning" data-track-type="select" data-track-label="Filter: Cleaning Service">
+        <option value="all"      data-lo="ບໍລິການທຳຄວາມສະອາດ: ທັງໝົດ" data-en="Cleaning: Any"       data-zh="保洁: 不限">ບໍລິການທຳຄວາມສະອາດ: ທັງໝົດ</option>
+        <option value="1x_week"  data-lo="ອາທິດລະ 1 ຄັ້ງ"             data-en="1x per week"         data-zh="每周1次">ອາທິດລະ 1 ຄັ້ງ</option>
+        <option value="2x_week"  data-lo="ອາທິດລະ 2 ຄັ້ງ"             data-en="2x per week"         data-zh="每周2次">ອາທິດລະ 2 ຄັ້ງ</option>
+        <option value="3x_week"  data-lo="ອາທິດລະ 3 ຄັ້ງ"             data-en="3x per week"         data-zh="每周3次">ອາທິດລະ 3 ຄັ້ງ</option>
+        <option value="daily"    data-lo="ທຸກໆມື້"                    data-en="Daily"               data-zh="每天">ທຸກໆມື້</option>
+        <option value="none"     data-lo="ບໍ່ມີ"                      data-en="None"                data-zh="无">ບໍ່ມີ</option>
+      </select>
       <div class="view-toggle">
         <button class="vt-btn active" id="btn-list" onclick="showListView()" data-track="view-toggle-list" data-track-type="toggle" data-track-label="View: List">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
@@ -631,6 +649,12 @@ let currentTxFilter = 'all';
 let currentTypeFilter = 'all';
 let currentSort = 'newest';
 let currentAvailOnly = false;
+// Cleaning Service — only meaningful for Apartment/Condo rentals with
+// Rental Terms filled in (see terminology.js: RENTAL_TERMS_FIELDS,
+// CLEANING_SERVICE_OPTIONS), but combines via AND with the other filters
+// the same way — non-matching listing types simply never match a specific
+// frequency, same as any other filter combination.
+let currentCleaningFilter = 'all';
 
 // "Available Only" excludes sold/rented/under_offer; a null/undefined/
 // literal 'available' status all count as available (matches getBadgeHtml's
@@ -643,6 +667,13 @@ function setAvailFilter(val, btn) {
   currentAvailOnly = (val === 'available');
   document.querySelectorAll('.avail-btn').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
+  closeMapPreview();
+  if (_viewMode === 'map') renderMap();
+  else renderListings();
+}
+
+function setCleaningFilter(val) {
+  currentCleaningFilter = val;
   closeMapPreview();
   if (_viewMode === 'map') renderMap();
   else renderListings();
@@ -915,7 +946,8 @@ function renderMap() {
     var matchesTx = currentTxFilter === 'all' || p.transaction_type === currentTxFilter;
     var matchesType = currentTypeFilter === 'all' || p.property_type === currentTypeFilter;
     var matchesAvail = !currentAvailOnly || isAvailableStatus(p);
-    return matchesTx && matchesType && matchesAvail;
+    var matchesCleaning = currentCleaningFilter === 'all' || (typeof RENTAL_TERMS_FILTERS !== 'undefined' && RENTAL_TERMS_FILTERS.cleaningService(p, currentCleaningFilter));
+    return matchesTx && matchesType && matchesAvail && matchesCleaning;
   });
 
   filtered.forEach(function(p) {
@@ -1079,7 +1111,7 @@ function scheduleBehavioralEvents(sorted) {
       result_count: sorted.length
     });
     if (!sorted.length) return;
-    var filtersSnapshot = { tx: currentTxFilter, type: currentTypeFilter, avail: currentAvailOnly, sort: currentSort };
+    var filtersSnapshot = { tx: currentTxFilter, type: currentTypeFilter, avail: currentAvailOnly, sort: currentSort, cleaning: currentCleaningFilter };
     var rows = sorted.filter(function(p){ return p.id; }).map(function(p, idx){
       return {
         property_id: p.id,
@@ -1099,7 +1131,8 @@ function renderListings() {
     var matchesTx = currentTxFilter === 'all' || p.transaction_type === currentTxFilter;
     var matchesType = currentTypeFilter === 'all' || p.property_type === currentTypeFilter;
     var matchesAvail = !currentAvailOnly || isAvailableStatus(p);
-    return matchesTx && matchesType && matchesAvail;
+    var matchesCleaning = currentCleaningFilter === 'all' || (typeof RENTAL_TERMS_FILTERS !== 'undefined' && RENTAL_TERMS_FILTERS.cleaningService(p, currentCleaningFilter));
+    return matchesTx && matchesType && matchesAvail && matchesCleaning;
   });
   var sorted = sortProperties(filtered);
 
@@ -1231,6 +1264,13 @@ function renderListings() {
         }).join('') + '</div>'
       : '';
 
+    // Compact Rental Terms summary (Apartment/Condo only) — e.g. "Deposit
+    // $300 · 12mo min · Pets OK". Same schema-driven source as specsHtml
+    // above (terminology.js), so it's automatically absent for any type/
+    // listing with no Rental Terms filled in.
+    var rentalSummary = (typeof getRentalTermsSummary === 'function') ? getRentalTermsSummary(p.property_type, p, lang) : '';
+    var rentalSummaryHtml = rentalSummary ? '<p class="card-rental-summary">' + esc(rentalSummary) + '</p>' : '';
+
     var perMo = { lo: '/ ເດືອນ', en: '/ month', zh: '/ 月' };
     var rawPrice = esc((p.price_display || '').replace(/\s*\/\s*(ເດືອນ|mo|月|month)\s*/i, '').trim());
     var priceHtml;
@@ -1284,6 +1324,7 @@ function renderListings() {
         '</p>' +
         (specsHtml ? '<div class="card-specs">' + specsHtml + '</div>' : '') +
         amenitiesHtml +
+        rentalSummaryHtml +
         priceHtml +
         getAgentHtml(p) +
         actLineHtml +
@@ -1307,11 +1348,13 @@ function renderListings() {
 
 function updateSortLabels() {
   var lang = getCurrentLang();
-  var sel = document.getElementById('sort-select');
-  if (!sel) return;
-  Array.from(sel.options).forEach(function(opt){
-    var label = opt.getAttribute('data-' + lang);
-    if (label) opt.text = label;
+  ['sort-select', 'cleaning-filter'].forEach(function(id){
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    Array.from(sel.options).forEach(function(opt){
+      var label = opt.getAttribute('data-' + lang);
+      if (label) opt.text = label;
+    });
   });
 }
 
