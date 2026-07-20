@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src * data: blob:; connect-src https://*.supabase.co; frame-src 'none'; object-src 'none';">
+<title>Pintag · Agent Setup</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--teal:#2D8C8C;--ink:#1A2428;--muted:#7A9098;--warm:#F7F3EC;--border:rgba(26,36,40,0.1);--red:#C0392B;--green:#166534;}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--warm);color:var(--ink);padding:40px 20px 80px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:640px;margin:0 auto;}
+h1{font-size:22px;font-weight:700;letter-spacing:-0.02em;margin-bottom:4px;}
+.sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:16px;}
+.card-title{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;}
+.field{margin-bottom:16px;}
+.field:last-child{margin-bottom:0;}
+label{display:block;font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+input[type=text],input[type=password],input[type=tel],textarea,select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink);outline:none;transition:border-color 0.15s;}
+input:focus,textarea:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(45,140,140,0.08);}
+textarea{resize:vertical;min-height:80px;line-height:1.5;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.hint{font-size:11px;color:var(--muted);margin-top:4px;}
+.preview-avatar{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--border);margin-top:10px;display:none;}
+.checkbox-row{display:flex;align-items:center;gap:10px;}
+.checkbox-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--teal);cursor:pointer;flex-shrink:0;}
+.checkbox-row label{margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);font-weight:500;cursor:pointer;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 28px;border-radius:7px;font-size:15px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background 0.15s;width:100%;}
+.btn-primary{background:var(--teal);color:#fff;}
+.btn-primary:hover{background:#269090;}
+.btn-primary:disabled{opacity:0.5;cursor:default;}
+.btn-sm{width:auto;padding:8px 18px;font-size:13px;}
+.btn-ghost{background:transparent;color:var(--teal);border:1px solid rgba(45,140,140,0.3);width:auto;padding:8px 16px;font-size:13px;}
+.btn-ghost:hover{background:rgba(45,140,140,0.06);}
+.step{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(26,36,40,0.05);}
+.step:last-child{border-bottom:none;}
+.step-icon{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:1px;}
+.step-icon.wait{background:rgba(26,36,40,0.07);color:var(--muted);}
+.step-icon.spin{background:rgba(45,140,140,0.12);color:var(--teal);}
+.step-icon.ok{background:#DCFCE7;color:var(--green);}
+.step-icon.err{background:#FEE2E2;color:var(--red);}
+.step-label{font-size:13px;color:var(--ink);line-height:1.4;}
+.step-detail{font-size:11px;color:var(--muted);margin-top:3px;word-break:break-all;}
+.steps{margin-top:4px;}
+.status-box{margin-top:16px;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.7;white-space:pre-wrap;display:none;}
+.status-box.success{background:#F0FDF4;border:1px solid #BBF7D0;color:var(--green);display:block;}
+.status-box.error{background:#FEF2F2;border:1px solid #FECACA;color:var(--red);display:block;}
+.uuid-row{display:flex;gap:8px;align-items:center;}
+.uuid-row input{flex:1;font-size:12px;font-family:monospace;}
+.uuid-row button{flex-shrink:0;}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+/* Mode tabs */
+.mode-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.mode-tab{flex:1;padding:11px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:var(--muted);font-family:inherit;transition:all 0.15s;}
+.mode-tab.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+.mode-tab:hover:not(.active){background:rgba(45,140,140,0.05);color:var(--ink);}
+/* Agent summary */
+.agent-summary-row{display:flex;align-items:center;gap:14px;padding:14px 0 0;border-top:1px solid var(--border);margin-top:14px;}
+.agent-avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--border);flex-shrink:0;}
+.agent-avatar-placeholder{width:52px;height:52px;border-radius:50%;background:rgba(45,140,140,0.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;color:var(--teal);font-weight:700;}
+/* Listings grid */
+.listing-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(26,36,40,0.05);}
+.listing-row:last-child{border-bottom:none;}
+.listing-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--teal);flex-shrink:0;cursor:pointer;}
+.listing-row input[type=checkbox]:disabled{opacity:0.4;cursor:default;}
+.listing-info{flex:1;min-width:0;}
+.listing-title{font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.listing-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:0.04em;margin-left:4px;}
+.tag-draft{background:rgba(122,144,152,0.12);color:var(--muted);}
+.tag-other{background:rgba(192,57,43,0.08);color:var(--red);}
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;outline:none;transition:border-color 0.15s;background:#fff;}
+.search-input:focus{border-color:var(--teal);}
+.listings-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.listings-count{font-size:11px;color:var(--muted);}
+.select-actions{display:flex;gap:8px;margin-bottom:10px;}
+.select-action-btn{font-size:11px;color:var(--teal);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;text-decoration:underline;}
+/* Edit profile section */
+.edit-toggle{font-size:12px;color:var(--teal);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:inherit;padding:0;}
+@media(max-width:520px){.row2{grid-template-columns:1fr;}}
+/* Agent photo upload */
+.photo-upload-zone{display:flex;flex-direction:column;gap:10px;}
+.avatar-preview-wrap{display:flex;align-items:center;}
+.avatar-lg{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border);}
+.avatar-lg-ph{width:80px;height:80px;border-radius:50%;background:rgba(45,140,140,0.1);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--teal);font-weight:700;border:2px solid var(--border);}
+.photo-upload-btns{display:flex;gap:8px;}
+.btn-danger{color:var(--red)!important;border-color:rgba(192,57,43,0.3)!important;}
+.btn-danger:hover{background:rgba(192,57,43,0.06)!important;}
+.upload-bar{height:4px;background:rgba(26,36,40,0.1);border-radius:2px;overflow:hidden;}
+.upload-bar-fill{height:100%;background:var(--teal);border-radius:2px;width:0%;transition:width 0.3s;}
+.upload-bar-status{font-size:11px;color:var(--muted);margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Pintag · Agent Setup</h1>
+  <p class="sub">Create agents or manage existing agents and their listing assignments</p>
+
+  <!-- LOGIN -->
+  <div class="card" id="login-card">
+    <div class="card-title">Admin Sign-In</div>
+    <div class="field">
+      <label for="pw-input">Admin Password</label>
+      <input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" id="login-btn" onclick="signIn()">Sign In</button>
+    <div class="status-box error" id="login-err"></div>
+  </div>
+
+  <!-- MAIN (hidden until signed in) -->
+  <div id="form-wrap" style="display:none;">
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tab-existing" onclick="switchMode('existing')">Existing Agent</button>
+      <button class="mode-tab" id="tab-new" onclick="switchMode('new')">+ New Agent</button>
+    </div>
+
+    <!-- ═══ EXISTING AGENT MODE ═══ -->
+    <div id="mode-existing">
+
+      <!-- Agent Selector -->
+      <div class="card">
+        <div class="card-title">Select Agent</div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="f-agent-select">Agent</label>
+          <select id="f-agent-select" onchange="onAgentSelect()">
+            <option value="">— Choose an agent —</option>
+          </select>
+        </div>
+
+        <!-- Agent Summary (shown when selected) -->
+        <div id="agent-summary" style="display:none;">
+          <div class="agent-summary-row">
+            <div id="agent-avatar-wrap"></div>
+            <div style="flex:1;min-width:0;">
+              <div id="agent-summary-name" style="font-size:15px;font-weight:600;"></div>
+              <div id="agent-summary-meta" style="font-size:12px;color:var(--muted);margin-top:3px;"></div>
+            </div>
+            <button class="edit-toggle" onclick="toggleEditProfile()">Edit Profile</button>
+          </div>
+
+          <!-- Inline Edit Profile (hidden by default) -->
+          <div id="edit-profile-wrap" style="display:none;margin-top:16px;border-top:1px solid var(--border);padding-top:16px;">
+            <div class="row2">
+              <div class="field">
+                <label>Name (English)</label>
+                <input type="text" id="ep-name-en" placeholder="Agent Name">
+              </div>
+              <div class="field">
+                <label>Name (Lao)</label>
+                <input type="text" id="ep-name-lo" placeholder="ຊື່ພາສາລາວ">
+              </div>
+            </div>
+            <div class="field">
+              <label>Bio (English)</label>
+              <textarea id="ep-bio-en" placeholder="Agent biography..."></textarea>
+            </div>
+            <div class="field">
+              <label>Bio (Lao)</label>
+              <textarea id="ep-bio-lo" placeholder="ລາຍລະອຽດ..."></textarea>
+            </div>
+            <div class="row2">
+              <div class="field">
+                <label>WhatsApp</label>
+                <input type="tel" id="ep-whatsapp" placeholder="02055465929">
+              </div>
+              <div class="field">
+                <label>Agency Name</label>
+                <input type="text" id="ep-agency" placeholder="Pintag">
+              </div>
+            </div>
+            <div class="field">
+              <label>Agent Photo</label>
+              <div class="photo-upload-zone">
+                <div class="avatar-preview-wrap">
+                  <img id="ep-avatar-img" class="avatar-lg" style="display:none;" alt="">
+                  <div id="ep-avatar-ph" class="avatar-lg-ph">?</div>
+                </div>
+                <div class="photo-upload-btns">
+                  <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('ep-photo-file').click()">Upload Photo</button>
+                  <button type="button" class="btn btn-ghost btn-sm btn-danger" id="ep-remove-btn" onclick="clearEpPhoto()" style="display:none;">Remove</button>
+                </div>
+                <input type="file" id="ep-photo-file" accept="image/*,.heic,.heif" style="display:none;" onchange="onEpPhotoSelected(this)">
+                <div id="ep-photo-bar-wrap" style="display:none;">
+                  <div class="upload-bar"><div class="upload-bar-fill" id="ep-photo-bar-fill"></div></div>
+                  <div class="upload-bar-status" id="ep-photo-bar-status"></div>
+                </div>
+                <input type="hidden" id="ep-photo" value="">
+              </div>
+              <p class="hint">JPG or PNG · max 5 MB · Upload a new photo to replace the current one</p>
+            </div>
+            <div class="field">
+              <div class="checkbox-row">
+                <input type="checkbox" id="ep-verified">
+                <label for="ep-verified" style="text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;">Verified Agent badge</label>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:4px;" onclick="saveAgentProfile()">Save Profile</button>
+            <div class="status-box" id="edit-profile-status" style="margin-top:10px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listings Assignment (shown when agent selected) -->
+      <div class="card" id="listings-card" style="display:none;">
+        <div class="card-title" style="margin-bottom:12px;">
+          Assign Listings
+          <span id="assigned-count" style="font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);margin-left:6px;"></span>
+        </div>
+        <div class="search-wrap">
+          <input type="text" class="search-input" id="listing-search" placeholder="Search by title or district…" oninput="filterListings()">
+        </div>
+        <div class="select-actions">
+          <button class="select-action-btn" onclick="selectAllVisible()">Select all visible</button>
+          <span style="color:var(--border);margin:0 2px;">·</span>
+          <button class="select-action-btn" onclick="deselectAllVisible()">Deselect all visible</button>
+        </div>
+        <div id="listings-grid"></div>
+        <div id="listings-empty" style="display:none;font-size:13px;color:var(--muted);padding:12px 0;">No listings match your search.</div>
+      </div>
+
+      <!-- Save button -->
+      <button class="btn btn-primary" id="save-assignments-btn" style="display:none;" onclick="saveAssignments()">Save Assignments</button>
+
+      <!-- Assignment Progress -->
+      <div class="card" id="assign-progress-card" style="display:none;margin-top:16px;">
+        <div class="card-title">Progress</div>
+        <div class="steps" id="assign-steps"></div>
+        <div class="status-box" id="assign-status"></div>
+      </div>
+
+    </div><!-- /mode-existing -->
+
+    <!-- ═══ NEW AGENT MODE ═══ -->
+    <div id="mode-new" style="display:none;">
+
+      <!-- Agent Details -->
+      <div class="card">
+        <div class="card-title">Agent Details</div>
+
+        <div class="field">
+          <label>Agent UUID</label>
+          <div class="uuid-row">
+            <input type="text" id="f-id" placeholder="Auto-generated" style="color:var(--muted);">
+            <button class="btn btn-primary btn-sm" onclick="genUUID()">New UUID</button>
+          </div>
+          <p class="hint">Leave as-is to create a new agent, or paste an existing UUID to update. This UUID is independent of any login — leaving it auto-generated creates an "unclaimed" party record with no linked Supabase Auth account; the agent can be linked to a real login later once they sign up.</p>
+        </div>
+
+        <div class="field">
+          <label>Slug (URL key)</label>
+          <input type="text" id="f-slug" placeholder="e.g. viengkhone-phomthavong">
+          <p class="hint">Lowercase, hyphens only — auto-fills from English name.</p>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label>Name (English)</label>
+            <input type="text" id="f-name-en" placeholder="Viengkhone Phomthavong" oninput="autoSlug()">
+          </div>
+          <div class="field">
+            <label>Name (Lao)</label>
+            <input type="text" id="f-name-lo" placeholder="ວຽງຄອນ ພົມທະວົງ">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Bio (Lao) — shown first on profile</label>
+          <textarea id="f-bio-lo" placeholder="ລາຍລະອຽດກ່ຽວກັບຕົວແທນ..."></textarea>
+        </div>
+        <div class="field">
+          <label>Bio (English)</label>
+          <textarea id="f-bio-en" placeholder="Agent biography in English..."></textarea>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label>WhatsApp Number</label>
+            <input type="tel" id="f-whatsapp" placeholder="02055465929">
+          </div>
+          <div class="field">
+            <label>Agency Name</label>
+            <input type="text" id="f-agency" placeholder="Pintag" value="Pintag">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Agent Photo</label>
+          <div class="photo-upload-zone">
+            <div class="avatar-preview-wrap">
+              <img id="new-avatar-img" class="avatar-lg" style="display:none;" alt="">
+              <div id="new-avatar-ph" class="avatar-lg-ph">?</div>
+            </div>
+            <div class="photo-upload-btns">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('new-photo-file').click()">Upload Photo</button>
+              <button type="button" class="btn btn-ghost btn-sm btn-danger" id="new-remove-btn" onclick="clearNewPhoto()" style="display:none;">Remove</button>
+            </div>
+            <input type="file" id="new-photo-file" accept="image/*,.heic,.heif" style="display:none;" onchange="onNewPhotoSelected(this)">
+            <div id="new-photo-bar-wrap" style="display:none;">
+              <div class="upload-bar"><div class="upload-bar-fill" id="new-photo-bar-fill"></div></div>
+              <div class="upload-bar-status" id="new-photo-bar-status"></div>
+            </div>
+            <input type="hidden" id="f-photo" value="">
+          </div>
+          <p class="hint">JPG or PNG · max 5 MB</p>
+        </div>
+
+        <div class="field">
+          <div class="checkbox-row">
+            <input type="checkbox" id="f-verified" checked>
+            <label for="f-verified">Verified Agent badge</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listing Assignment -->
+      <div class="card">
+        <div class="card-title">Assign Listings (optional)</div>
+        <div class="field">
+          <label>Listing Slugs — one per line</label>
+          <textarea id="f-listings" rows="4" placeholder="modern-4-bedroom-fully-furnished-house-for-sale-near-sikhai--574108&#10;another-listing-slug"></textarea>
+          <p class="hint">These listings will have their Platform Identity (managed_by_party_id) and Buyer Contact linked to this agent.</p>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="run-btn" onclick="runSetup()">Save Agent &amp; Assign Listings</button>
+
+      <!-- Progress -->
+      <div class="card" id="progress-card" style="display:none;margin-top:16px;">
+        <div class="card-title">Progress</div>
+        <div class="steps" id="steps-list"></div>
+        <div class="status-box" id="final-status"></div>
+      </div>
+
+    </div><!-- /mode-new -->
+
+  </div><!-- /form-wrap -->
+</div>
+
+<script src="config.js"></script>
+<script src="dev-banner.js"></script>
+<script>
+const SUPABASE_URL  = window.PINTAG.supabaseUrl;
+const SUPABASE_ANON = window.PINTAG.anonKey;
+const ADMIN_EMAIL   = 'admin@pintag.io';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+function esc(s){if(s==null)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+var _token = null;
+var _agents = [];
+var _agentMap = {}; // id → agent
+var _allListings = [];
+var _selectedAgent = null;
+var _initialAssigned = new Set();
+var _currentMode = 'existing';
+
+// ── Helpers ──────────────────────────────────────────────────────────
+function genUUID() {
+  var id = typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c=='x'?r:(r&0x3|0x8);
+        return v.toString(16);
+      });
+  document.getElementById('f-id').value = id;
+}
+
+function autoSlug() {
+  var name = document.getElementById('f-name-en').value;
+  var slug = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  document.getElementById('f-slug').value = slug;
+}
+
+// ── Agent Photo Upload ────────────────────────────────────────────────
+var MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+
+async function uploadAgentPhoto(file, agentId, fillId, wrapId, statusId) {
+  var wrap   = document.getElementById(wrapId);
+  var fill   = document.getElementById(fillId);
+  var status = document.getElementById(statusId);
+
+  console.log('[upload] file:', file.name, file.type, file.size, 'agentId:', agentId);
+
+  if (!file.type.startsWith('image/') && !['image/heic','image/heif'].includes(file.type) && file.type !== '') {
+    wrap.style.display = 'block'; fill.style.background = 'var(--red)'; fill.style.width = '100%';
+    status.textContent = 'Only image files are allowed.';
+    return null;
+  }
+  if (file.size > MAX_PHOTO_BYTES) {
+    wrap.style.display = 'block'; fill.style.background = 'var(--red)'; fill.style.width = '100%';
+    status.textContent = 'File too large — max 5 MB.';
+    return null;
+  }
+  if (!agentId) {
+    wrap.style.display = 'block'; fill.style.background = 'var(--red)'; fill.style.width = '100%';
+    status.textContent = '✗ No agent ID — save agent first';
+    console.error('[upload] agentId is empty');
+    return null;
+  }
+
+  // Check auth session before uploading
+  var { data: sessionData } = await sb.auth.getSession();
+  var session = sessionData && sessionData.session;
+  console.log('[upload] session present:', !!session, 'role:', session ? session.user.role : 'none');
+  if (!session) {
+    wrap.style.display = 'block'; fill.style.background = 'var(--red)'; fill.style.width = '100%';
+    status.textContent = '✗ Not signed in — refresh and sign in again';
+    console.error('[upload] No active session');
+    return null;
+  }
+
+  wrap.style.display = 'block';
+  fill.style.background = 'var(--teal)';
+  fill.style.width = '20%';
+  status.textContent = 'Uploading…';
+
+  var ext  = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  var uploadPath = 'agents/' + agentId + '/' + Date.now() + '.' + ext;
+  var contentType = file.type || 'image/jpeg';
+
+  console.log('[upload] path:', uploadPath, 'contentType:', contentType);
+  console.log('[upload] uploading to bucket: property-images');
+
+  var { data: uploadData, error: uploadError } = await sb.storage
+    .from('property-images')
+    .upload(uploadPath, file, { contentType, upsert: true });
+
+  console.log('[upload] result:', { data: uploadData, error: uploadError });
+
+  if (uploadError) {
+    fill.style.width = '100%'; fill.style.background = 'var(--red)';
+    var code = uploadError.statusCode ? ' [' + uploadError.statusCode + ']' : '';
+    status.textContent = '✗' + code + ': ' + uploadError.message;
+    console.error('[upload] error detail:', JSON.stringify(uploadError));
+    return null;
+  }
+
+  fill.style.width = '100%';
+  status.textContent = '✓ Uploaded';
+  var { data: urlData } = sb.storage.from('property-images').getPublicUrl(uploadPath);
+  console.log('[upload] public URL:', urlData.publicUrl);
+  return urlData.publicUrl;
+}
+
+function showAvatarPreview(imgId, phId, src) {
+  var img = document.getElementById(imgId);
+  var ph  = document.getElementById(phId);
+  img.src = src; img.style.display = 'block'; ph.style.display = 'none';
+  img.onerror = function() { img.style.display = 'none'; ph.style.display = 'flex'; };
+}
+
+async function onNewPhotoSelected(input) {
+  var file = input.files[0]; input.value = '';
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) { showAvatarPreview('new-avatar-img', 'new-avatar-ph', e.target.result); };
+  reader.readAsDataURL(file);
+  if (!document.getElementById('f-id').value.trim()) genUUID();
+  var agentId = document.getElementById('f-id').value.trim();
+  var url = await uploadAgentPhoto(file, agentId, 'new-photo-bar-fill', 'new-photo-bar-wrap', 'new-photo-bar-status');
+  if (url) {
+    document.getElementById('f-photo').value = url;
+    document.getElementById('new-remove-btn').style.display = 'inline-flex';
+  } else {
+    document.getElementById('new-avatar-img').style.display = 'none';
+    document.getElementById('new-avatar-ph').style.display = 'flex';
+  }
+}
+
+function clearNewPhoto() {
+  document.getElementById('f-photo').value = '';
+  document.getElementById('new-avatar-img').style.display = 'none';
+  document.getElementById('new-avatar-ph').style.display = 'flex';
+  document.getElementById('new-remove-btn').style.display = 'none';
+  document.getElementById('new-photo-bar-wrap').style.display = 'none';
+}
+
+async function onEpPhotoSelected(input) {
+  var file = input.files[0]; input.value = '';
+  if (!file || !_selectedAgent) return;
+  var reader = new FileReader();
+  reader.onload = function(e) { showAvatarPreview('ep-avatar-img', 'ep-avatar-ph', e.target.result); };
+  reader.readAsDataURL(file);
+  var url = await uploadAgentPhoto(file, _selectedAgent.id, 'ep-photo-bar-fill', 'ep-photo-bar-wrap', 'ep-photo-bar-status');
+  if (url) {
+    document.getElementById('ep-photo').value = url;
+    document.getElementById('ep-remove-btn').style.display = 'inline-flex';
+  } else {
+    if (_selectedAgent.photo_url) { showAvatarPreview('ep-avatar-img', 'ep-avatar-ph', _selectedAgent.photo_url); }
+    else { document.getElementById('ep-avatar-img').style.display = 'none'; document.getElementById('ep-avatar-ph').style.display = 'flex'; }
+  }
+}
+
+function clearEpPhoto() {
+  document.getElementById('ep-photo').value = '';
+  document.getElementById('ep-avatar-img').style.display = 'none';
+  document.getElementById('ep-avatar-ph').style.display = 'flex';
+  document.getElementById('ep-remove-btn').style.display = 'none';
+  document.getElementById('ep-photo-bar-wrap').style.display = 'none';
+}
+
+function addStep(id, text, containerId) {
+  containerId = containerId || 'steps-list';
+  var list = document.getElementById(containerId);
+  var div = document.createElement('div');
+  div.className = 'step'; div.id = 'step-' + id;
+  div.innerHTML =
+    '<div class="step-icon wait" id="icon-'+id+'">·</div>' +
+    '<div><div class="step-label">'+text+'</div><div class="step-detail" id="detail-'+id+'"></div></div>';
+  list.appendChild(div);
+}
+
+function setStep(id, state, detail) {
+  var icon = document.getElementById('icon-' + id);
+  var det  = document.getElementById('detail-' + id);
+  if (icon) {
+    icon.className = 'step-icon ' + state;
+    icon.textContent = state==='ok'?'✓':state==='err'?'✗':state==='spin'?'…':'·';
+  }
+  if (det && detail !== undefined) det.textContent = detail;
+}
+
+async function sbApi(method, path, body, extraHeaders) {
+  var headers = {
+    'Content-Type': 'application/json',
+    'apikey': SUPABASE_ANON,
+    'Authorization': 'Bearer ' + _token,
+    'Prefer': 'return=minimal'
+  };
+  if (extraHeaders) Object.assign(headers, extraHeaders);
+
+  async function doFetch() {
+    return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+      method, headers,
+      body: body ? JSON.stringify(body) : undefined
+    });
+  }
+
+  var res = await doFetch();
+
+  if (res.status === 401) {
+    var { data: refreshed } = await sb.auth.refreshSession();
+    if (refreshed && refreshed.session) {
+      _token = refreshed.session.access_token;
+      headers['Authorization'] = 'Bearer ' + _token;
+      res = await doFetch();
+    }
+  }
+
+  if (!res.ok) {
+    var txt = await res.text();
+    var parsed = null;
+    try { parsed = JSON.parse(txt); } catch(_) {}
+    var msg = parsed ? (parsed.message || parsed.error || txt) : txt;
+    var code = parsed && parsed.code ? ' [code:' + parsed.code + ']' : '';
+    console.error('sbApi error', method, path, res.status, txt);
+    if (res.status === 401) throw new Error('HTTP 401: Session expired — please refresh and sign in again.');
+    if ((res.status === 403) && msg.toLowerCase().includes('row-level security')) {
+      var tableName = 'agents';
+      if (msg.includes('"properties"') || path.startsWith('properties')) tableName = 'properties';
+      var rlsSql = tableName === 'properties'
+        ? 'CREATE POLICY "Admin update properties" ON properties FOR UPDATE TO authenticated USING (true) WITH CHECK (true);\nCREATE POLICY "Admin insert properties" ON properties FOR INSERT TO authenticated WITH CHECK (true);\nCREATE POLICY "Admin select properties" ON properties FOR SELECT TO authenticated USING (true);'
+        : 'CREATE POLICY "Admin insert agents" ON agents FOR INSERT TO authenticated WITH CHECK (true);\nCREATE POLICY "Admin update agents" ON agents FOR UPDATE TO authenticated USING (true) WITH CHECK (true);\nCREATE POLICY "Admin select agents" ON agents FOR SELECT TO authenticated USING (true);';
+      throw new Error('RLS denied on table: ' + tableName + '\nRun in Supabase SQL editor:\n' + rlsSql);
+    }
+    throw new Error('HTTP ' + res.status + code + ': ' + msg);
+  }
+  var text = await res.text();
+  return text ? JSON.parse(text) : [];
+}
+
+// ── Sign in ───────────────────────────────────────────────────────────
+async function signIn() {
+  var pw  = document.getElementById('pw-input').value.trim();
+  var btn = document.getElementById('login-btn');
+  var err = document.getElementById('login-err');
+  err.style.display = 'none';
+  if (!pw) { err.textContent = 'Enter the admin password.'; err.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  var { data, error } = await sb.auth.signInWithPassword({ email: ADMIN_EMAIL, password: pw });
+  btn.disabled = false; btn.textContent = 'Sign In';
+  if (error) { err.textContent = 'Sign-in failed: ' + error.message; err.style.display = 'block'; return; }
+  _token = data.session.access_token;
+  document.getElementById('login-card').style.display = 'none';
+  document.getElementById('form-wrap').style.display = 'block';
+  genUUID();
+  await loadAgentsAndListings();
+}
+
+// ── Mode switching ────────────────────────────────────────────────────
+function switchMode(mode) {
+  _currentMode = mode;
+  document.getElementById('mode-existing').style.display = mode === 'existing' ? 'block' : 'none';
+  document.getElementById('mode-new').style.display      = mode === 'new'      ? 'block' : 'none';
+  document.getElementById('tab-existing').className = 'mode-tab' + (mode === 'existing' ? ' active' : '');
+  document.getElementById('tab-new').className      = 'mode-tab' + (mode === 'new'      ? ' active' : '');
+}
+
+// ── Load agents + listings ────────────────────────────────────────────
+async function loadAgentsAndListings() {
+  try {
+    _agents = await sbApi('GET', 'parties?type=eq.agent&select=id,name_en,name_lo,slug,photo_url,whatsapp,agency_name,is_verified,bio_en,bio_lo&order=name_en.asc', null);
+    _agentMap = {};
+    _agents.forEach(function(a) { _agentMap[a.id] = a; });
+
+    var sel = document.getElementById('f-agent-select');
+    sel.innerHTML = '<option value="">— Choose an agent —</option>';
+    _agents.forEach(function(a) {
+      var opt = document.createElement('option');
+      opt.value = a.id;
+      opt.textContent = a.name_en + (a.agency_name ? ' · ' + a.agency_name : '');
+      sel.appendChild(opt);
+    });
+
+    // Alias managed_by_party_id back to agent_id client-side so the rest of
+    // this file's local bookkeeping (which predates the Platform Identity
+    // rename) doesn't need to change.
+    _allListings = await sbApi('GET', 'properties?select=id,slug,title_en,district_en,status,agent_id:managed_by_party_id&order=created_at.desc&limit=500', null);
+  } catch(e) {
+    console.error('Failed to load agents/listings:', e);
+  }
+}
+
+// ── Existing agent selection ──────────────────────────────────────────
+function onAgentSelect() {
+  var agentId = document.getElementById('f-agent-select').value;
+  var summaryEl = document.getElementById('agent-summary');
+  var listingsCard = document.getElementById('listings-card');
+  var saveBtn = document.getElementById('save-assignments-btn');
+  var progressCard = document.getElementById('assign-progress-card');
+
+  // Reset
+  progressCard.style.display = 'none';
+  document.getElementById('assign-steps').innerHTML = '';
+  document.getElementById('assign-status').className = 'status-box';
+  document.getElementById('edit-profile-wrap').style.display = 'none';
+  document.getElementById('edit-profile-status').className = 'status-box';
+
+  if (!agentId) {
+    summaryEl.style.display = 'none';
+    listingsCard.style.display = 'none';
+    saveBtn.style.display = 'none';
+    _selectedAgent = null;
+    return;
+  }
+
+  _selectedAgent = _agentMap[agentId];
+  renderAgentSummary();
+  renderListingsGrid();
+  summaryEl.style.display = 'block';
+  listingsCard.style.display = 'block';
+  saveBtn.style.display = 'flex';
+}
+
+function renderAgentSummary() {
+  var a = _selectedAgent;
+  var assigned = _allListings.filter(function(l) { return l.agent_id === a.id; });
+  _initialAssigned = new Set(assigned.map(function(l) { return l.id; }));
+
+  // Avatar
+  var avatarWrap = document.getElementById('agent-avatar-wrap');
+  if (a.photo_url) {
+    var initial = esc((a.name_en[0]||'?').toUpperCase());
+    avatarWrap.innerHTML = '<img class="agent-avatar" src="' + esc(a.photo_url) + '" onerror="this.parentElement.innerHTML=\'<div class=agent-avatar-placeholder>' + initial + '</div>\'" alt="">';
+  } else {
+    avatarWrap.innerHTML = '<div class="agent-avatar-placeholder">' + esc(a.name_en[0]||'?') + '</div>';
+  }
+
+  document.getElementById('agent-summary-name').textContent = a.name_en + (a.name_lo ? ' · ' + a.name_lo : '');
+  document.getElementById('agent-summary-meta').textContent =
+    (a.agency_name || 'Pintag') + ' · ' + assigned.length + ' listing' + (assigned.length !== 1 ? 's' : '') + ' assigned';
+
+  // Pre-fill edit form
+  document.getElementById('ep-name-en').value  = a.name_en  || '';
+  document.getElementById('ep-name-lo').value  = a.name_lo  || '';
+  document.getElementById('ep-bio-en').value   = a.bio_en   || '';
+  document.getElementById('ep-bio-lo').value   = a.bio_lo   || '';
+  document.getElementById('ep-whatsapp').value = a.whatsapp || '';
+  document.getElementById('ep-agency').value   = a.agency_name || 'Pintag';
+  document.getElementById('ep-photo').value    = a.photo_url || '';
+  document.getElementById('ep-verified').checked = !!a.is_verified;
+  var epImg = document.getElementById('ep-avatar-img');
+  var epPh  = document.getElementById('ep-avatar-ph');
+  var epRem = document.getElementById('ep-remove-btn');
+  document.getElementById('ep-photo-bar-wrap').style.display = 'none';
+  if (a.photo_url) {
+    epImg.src = a.photo_url; epImg.style.display = 'block'; epPh.style.display = 'none'; epRem.style.display = 'inline-flex';
+    epImg.onerror = function() { epImg.style.display = 'none'; epPh.style.display = 'flex'; };
+  } else {
+    epImg.style.display = 'none'; epPh.style.display = 'flex'; epRem.style.display = 'none';
+    epPh.textContent = a.name_en ? a.name_en[0].toUpperCase() : '?';
+  }
+
+  updateAssignedCount();
+}
+
+function toggleEditProfile() {
+  var wrap = document.getElementById('edit-profile-wrap');
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+}
+
+function renderListingsGrid() {
+  var search = (document.getElementById('listing-search').value || '').toLowerCase();
+  var grid = document.getElementById('listings-grid');
+  var empty = document.getElementById('listings-empty');
+  var a = _selectedAgent;
+
+  var filtered = _allListings.filter(function(l) {
+    if (!search) return true;
+    var title = (l.title_en || l.slug || '').toLowerCase();
+    var district = (l.district_en || '').toLowerCase();
+    return title.includes(search) || district.includes(search);
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  var html = '';
+  filtered.forEach(function(l) {
+    var isAssigned = l.agent_id === a.id;
+    var otherAgent = l.agent_id && l.agent_id !== a.id ? _agentMap[l.agent_id] : null;
+    var title = l.title_en || l.slug || '(no title)';
+    var district = l.district_en || '';
+    var statusTag = l.status === 'draft' ? '<span class="tag tag-draft">draft</span>' : '';
+    var otherTag = otherAgent ? '<span class="tag tag-other">→ ' + esc(otherAgent.name_en) + '</span>' : '';
+    var safeId = esc(l.id);
+    var safeTitle = esc(title);
+    var safeDistrict = esc(district);
+    var metaParts = [safeDistrict].filter(Boolean);
+
+    html += '<div class="listing-row" data-id="' + safeId + '">' +
+      '<input type="checkbox" id="lc-' + safeId + '" data-listing-id="' + safeId + '" ' + (isAssigned ? 'checked' : '') + ' onchange="updateAssignedCount()">' +
+      '<div class="listing-info">' +
+        '<div class="listing-title"><label for="lc-' + safeId + '" style="cursor:pointer;font-weight:500;">' + safeTitle + '</label>' + statusTag + otherTag + '</div>' +
+        (metaParts.length ? '<div class="listing-meta">' + metaParts.join(' · ') + '</div>' : '') +
+      '</div>' +
+      '</div>';
+  });
+  grid.innerHTML = html;
+  updateAssignedCount();
+}
+
+function filterListings() {
+  if (!_selectedAgent) return;
+  renderListingsGrid();
+}
+
+function updateAssignedCount() {
+  var checked = document.querySelectorAll('#listings-grid input[type=checkbox]:checked').length;
+  document.getElementById('assigned-count').textContent = '(' + checked + ' selected)';
+}
+
+function selectAllVisible() {
+  document.querySelectorAll('#listings-grid input[type=checkbox]').forEach(function(cb) {
+    cb.checked = true;
+  });
+  updateAssignedCount();
+}
+
+function deselectAllVisible() {
+  document.querySelectorAll('#listings-grid input[type=checkbox]').forEach(function(cb) {
+    cb.checked = false;
+  });
+  updateAssignedCount();
+}
+
+// ── Save Assignments ──────────────────────────────────────────────────
+async function saveAssignments() {
+  if (!_selectedAgent) return;
+  var a = _selectedAgent;
+  var photoUrl = a.photo_url || null;
+
+  var checkboxes = document.querySelectorAll('#listings-grid input[type=checkbox]');
+  var toAssign   = [];
+  var toUnassign = [];
+
+  checkboxes.forEach(function(cb) {
+    var listingId = cb.dataset.listingId;
+    var listing = _allListings.find(function(l) { return l.id === listingId; });
+    if (!listing) return;
+    if (cb.checked && !_initialAssigned.has(listingId)) {
+      toAssign.push(listing);
+    } else if (!cb.checked && _initialAssigned.has(listingId)) {
+      toUnassign.push(listing);
+    }
+  });
+
+  if (toAssign.length === 0 && toUnassign.length === 0) {
+    var stat = document.getElementById('assign-status');
+    stat.className = 'status-box success';
+    stat.textContent = '✓ No changes to save.';
+    document.getElementById('assign-progress-card').style.display = 'block';
+    return;
+  }
+
+  var btn = document.getElementById('save-assignments-btn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  var progCard = document.getElementById('assign-progress-card');
+  progCard.style.display = 'block';
+  document.getElementById('assign-steps').innerHTML = '';
+  document.getElementById('assign-status').className = 'status-box';
+
+  toAssign.forEach(function(l, i) { addStep('a'+i, 'Assign: ' + (l.title_en || l.slug), 'assign-steps'); });
+  toUnassign.forEach(function(l, i) { addStep('u'+i, 'Remove: ' + (l.title_en || l.slug), 'assign-steps'); });
+
+  try {
+    // Assigning an agent here also makes them the Buyer Contact for these
+    // listings (matches the original tool's intent — the agent both manages
+    // the listing and is who the buyer should call). Reuse one shared
+    // "default" contacts row per agent instead of writing a fresh row per
+    // listing, so editing the agent's phone later updates all of them —
+    // the same dedup pattern the contacts table exists for.
+    var defaultContactId = null;
+    if (toAssign.length > 0) {
+      var existing = await sbApi('GET', 'contacts?party_id=eq.' + encodeURIComponent(a.id) + '&role=eq.agent&select=id&limit=1', null);
+      if (Array.isArray(existing) && existing.length) {
+        defaultContactId = existing[0].id;
+        await sbApi('PATCH', 'contacts?id=eq.' + encodeURIComponent(defaultContactId), {
+          name: a.name_en, phone: a.whatsapp || null, whatsapp: a.whatsapp || null
+        });
+      } else {
+        var createdContact = await sbApi('POST', 'contacts', {
+          role: 'agent', name: a.name_en, phone: a.whatsapp || null, whatsapp: a.whatsapp || null, party_id: a.id
+        });
+        defaultContactId = Array.isArray(createdContact) ? createdContact[0].id : createdContact.id;
+      }
+    }
+
+    for (var i = 0; i < toAssign.length; i++) {
+      var l = toAssign[i];
+      setStep('a'+i, 'spin');
+      await sbApi('PATCH', 'properties?id=eq.' + encodeURIComponent(l.id), {
+        managed_by_party_id: a.id,
+        contact_id:          defaultContactId
+      });
+      setStep('a'+i, 'ok', 'assigned');
+    }
+
+    for (var j = 0; j < toUnassign.length; j++) {
+      var lu = toUnassign[j];
+      setStep('u'+j, 'spin');
+      // Only clear the Platform Identity link — buyers still need someone
+      // to contact, so contact_id (mandatory) is left untouched here.
+      await sbApi('PATCH', 'properties?id=eq.' + encodeURIComponent(lu.id), {
+        managed_by_party_id: null
+      });
+      setStep('u'+j, 'ok', 'removed');
+    }
+
+    // Update local state
+    checkboxes.forEach(function(cb) {
+      var listingId = cb.dataset.listingId;
+      var listing = _allListings.find(function(l) { return l.id === listingId; });
+      if (listing) listing.agent_id = cb.checked ? a.id : null;
+    });
+    _initialAssigned = new Set(
+      _allListings.filter(function(l) { return l.agent_id === a.id; }).map(function(l) { return l.id; })
+    );
+    renderAgentSummary();
+
+    var fin = document.getElementById('assign-status');
+    fin.className = 'status-box success';
+    fin.textContent = '✓ Saved — ' + toAssign.length + ' assigned, ' + toUnassign.length + ' removed.';
+  } catch(err) {
+    var fin2 = document.getElementById('assign-status');
+    fin2.className = 'status-box error';
+    fin2.textContent = '✗ ' + err.message;
+  }
+
+  btn.disabled = false; btn.textContent = 'Save Assignments';
+}
+
+// ── Save Agent Profile (inline edit) ─────────────────────────────────
+async function saveAgentProfile() {
+  if (!_selectedAgent) return;
+  var a = _selectedAgent;
+  var nameEn = document.getElementById('ep-name-en').value.trim();
+  if (!nameEn) { alert('English name is required.'); return; }
+
+  var photoVal = document.getElementById('ep-photo').value.trim();
+  var photoUrl = photoVal ? (photoVal.startsWith('http') ? photoVal : 'https://www.pintag.io/' + photoVal) : null;
+
+  var statEl = document.getElementById('edit-profile-status');
+  statEl.className = 'status-box'; statEl.style.display = '';
+
+  try {
+    var payload = {
+      name_en:     nameEn,
+      name_lo:     document.getElementById('ep-name-lo').value.trim()  || null,
+      bio_en:      document.getElementById('ep-bio-en').value.trim()   || null,
+      bio_lo:      document.getElementById('ep-bio-lo').value.trim()   || null,
+      whatsapp:    document.getElementById('ep-whatsapp').value.trim() || null,
+      agency_name: document.getElementById('ep-agency').value.trim()   || 'Pintag',
+      photo_url:   photoUrl,
+      is_verified: document.getElementById('ep-verified').checked
+    };
+    await sbApi('PATCH', 'parties?id=eq.' + encodeURIComponent(a.id), payload);
+
+    // Update local cache
+    Object.assign(a, payload);
+    _agentMap[a.id] = a;
+
+    // Refresh dropdown label
+    var sel = document.getElementById('f-agent-select');
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === a.id) {
+        sel.options[i].textContent = a.name_en + (a.agency_name ? ' · ' + a.agency_name : '');
+        break;
+      }
+    }
+
+    renderAgentSummary();
+    statEl.className = 'status-box success';
+    statEl.textContent = '✓ Profile updated.';
+  } catch(err) {
+    statEl.className = 'status-box error';
+    statEl.textContent = '✗ ' + err.message;
+  }
+}
+
+// ── New Agent setup ───────────────────────────────────────────────────
+async function runSetup() {
+  var agentId   = document.getElementById('f-id').value.trim();
+  var slug      = document.getElementById('f-slug').value.trim();
+  var nameEn    = document.getElementById('f-name-en').value.trim();
+  var nameLo    = document.getElementById('f-name-lo').value.trim();
+  var bioLo     = document.getElementById('f-bio-lo').value.trim();
+  var bioEn     = document.getElementById('f-bio-en').value.trim();
+  var whatsapp  = document.getElementById('f-whatsapp').value.trim();
+  var agency    = document.getElementById('f-agency').value.trim() || 'Pintag';
+  var photoFile = document.getElementById('f-photo').value.trim();
+  var verified  = document.getElementById('f-verified').checked;
+  var listingRaw = document.getElementById('f-listings').value.trim();
+  var listings  = listingRaw ? listingRaw.split('\n').map(function(s){return s.trim();}).filter(Boolean) : [];
+
+  if (!agentId || !slug || !nameEn) {
+    alert('UUID, Slug and English Name are required.');
+    return;
+  }
+
+  var photoUrl = photoFile
+    ? (photoFile.startsWith('http') ? photoFile : 'https://www.pintag.io/' + photoFile)
+    : null;
+
+  document.getElementById('run-btn').disabled = true;
+  var prog = document.getElementById('progress-card');
+  prog.style.display = 'block';
+  document.getElementById('steps-list').innerHTML = '';
+  document.getElementById('final-status').className = 'status-box';
+  document.getElementById('final-status').style.display = '';
+
+  addStep('agent', 'Upsert agent record');
+  listings.forEach(function(ls, i) { addStep('ls'+i, 'Assign listing: '+ls); });
+  addStep('verify', 'Verify');
+
+  try {
+    setStep('agent', 'spin');
+    var agentPayload = {
+      id:          agentId,
+      slug:        slug,
+      name_en:     nameEn,
+      name_lo:     nameLo || null,
+      bio_en:      bioEn  || null,
+      bio_lo:      bioLo  || null,
+      whatsapp:    whatsapp || null,
+      photo_url:   photoUrl,
+      is_verified: verified,
+      agency_name: agency,
+      languages:   ['Lao','English']
+    };
+    try {
+      await sbApi('POST', 'parties', agentPayload);
+    } catch(insertErr) {
+      if (insertErr.message.startsWith('HTTP 409') || insertErr.message.includes('duplicate')) {
+        await sbApi('PATCH', 'parties?id=eq.' + encodeURIComponent(agentId), agentPayload);
+      } else { throw insertErr; }
+    }
+    setStep('agent', 'ok', nameEn + ' · slug=' + slug);
+
+    // Reuse one shared "default" contacts row for this agent (same dedup
+    // pattern as the bulk-assign tool above) instead of a fresh row per
+    // listing, so future phone/name edits update every listing at once.
+    var newAgentContactId = null;
+    if (listings.length > 0) {
+      var existingContact = await sbApi('GET', 'contacts?party_id=eq.' + encodeURIComponent(agentId) + '&role=eq.agent&select=id&limit=1', null);
+      if (Array.isArray(existingContact) && existingContact.length) {
+        newAgentContactId = existingContact[0].id;
+        await sbApi('PATCH', 'contacts?id=eq.' + encodeURIComponent(newAgentContactId), {
+          name: nameEn, phone: whatsapp || null, whatsapp: whatsapp || null
+        });
+      } else {
+        var createdContact = await sbApi('POST', 'contacts', {
+          role: 'agent', name: nameEn, phone: whatsapp || null, whatsapp: whatsapp || null, party_id: agentId
+        });
+        newAgentContactId = Array.isArray(createdContact) ? createdContact[0].id : createdContact.id;
+      }
+    }
+
+    for (var i = 0; i < listings.length; i++) {
+      var ls = listings[i];
+      setStep('ls'+i, 'spin');
+      var patch = {
+        managed_by_party_id: agentId,
+        contact_id:          newAgentContactId
+      };
+      await sbApi('PATCH', 'properties?slug=eq.' + encodeURIComponent(ls), patch);
+      setStep('ls'+i, 'ok', 'managed_by_party_id and contact_id set');
+    }
+
+    setStep('verify', 'ok', 'Saved successfully');
+
+    var fin = document.getElementById('final-status');
+    fin.className = 'status-box success';
+    fin.textContent = '✓ Done!\n\nProfile: https://www.pintag.io/agents.html?slug=' + slug + (photoUrl ? '\nPhoto:   ' + photoUrl : '');
+
+    // Refresh agent list so new agent appears in existing mode
+    await loadAgentsAndListings();
+
+  } catch(err) {
+    var errStep = ['agent','verify'].concat(listings.map(function(_,i){return 'ls'+i;}))
+      .find(function(s){ var el=document.getElementById('icon-'+s); return el&&el.classList.contains('spin'); });
+    if (errStep) setStep(errStep, 'err', err.message);
+    var fin2 = document.getElementById('final-status');
+    fin2.className = 'status-box error';
+    fin2.textContent = '✗ ' + err.message + '\n\n(Check browser console for full details — press F12 → Console)';
+  }
+
+  document.getElementById('run-btn').disabled = false;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('pw-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') signIn();
+  });
+  sb.auth.refreshSession().then(function(res) {
+    var session = res.data && res.data.session;
+    if (session) {
+      _token = session.access_token;
+      document.getElementById('login-card').style.display = 'none';
+      document.getElementById('form-wrap').style.display = 'block';
+      genUUID();
+      loadAgentsAndListings();
+    }
+  });
+});
+</script>
+</body>
+</html>

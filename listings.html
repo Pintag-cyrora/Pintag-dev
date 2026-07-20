@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com https://unpkg.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src https://*.supabase.co; frame-src 'none'; object-src 'none';">
+<title>Pintag · ຊັບສິນໃນວຽງຈັນ</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --teal:#2D8C8C;--teal-light:#38A8A8;--teal-mark:rgba(45,140,140,0.18);
+  --ink:#1A2024;--ink-soft:#4A5558;--ink-muted:#8C9598;
+  --warm:#F7F3EC;--off:#F2EDE4;--white:#fff;
+  --border:rgba(26,32,36,0.07);--border-mid:rgba(26,32,36,0.10);
+  --r-card:3px;
+}
+
+/* ─── BODY — topographic atmosphere ─────────────────────────────────── */
+body{
+  font-family:'DM Sans',sans-serif;font-weight:400;font-size:14px;line-height:1.7;
+  background-color:var(--warm);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500'%3E%3Cpath d='M0 40C200 30 600 50 800 40M0 110C200 100 600 120 800 110M0 180C200 170 600 190 800 180M0 250C200 240 600 260 800 250M0 320C200 310 600 330 800 320M0 390C200 380 600 400 800 390M0 460C200 450 600 470 800 460' fill='none' stroke='%231A2024' stroke-width='0.4' stroke-opacity='0.032'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:800px 500px;
+  color:var(--ink);-webkit-font-smoothing:antialiased;
+}
+
+/* ─── LANGUAGE ───────────────────────────────────────────────────────── */
+.lo{display:block;}.en{display:none;}.zh{display:none;}
+.lo-i{display:inline;}.en-i{display:none;}.zh-i{display:none;}
+body.lang-en .lo{display:none;}body.lang-en .en{display:block;}body.lang-en .zh{display:none;}
+body.lang-en .lo-i{display:none;}body.lang-en .en-i{display:inline;}body.lang-en .zh-i{display:none;}
+body.lang-zh .lo{display:none;}body.lang-zh .en{display:none;}body.lang-zh .zh{display:block;}
+body.lang-zh .lo-i{display:none;}body.lang-zh .en-i{display:none;}body.lang-zh .zh-i{display:inline;}
+
+/* ─── NAV ────────────────────────────────────────────────────────────── */
+nav{
+  position:sticky;top:0;z-index:200;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  background:rgba(247,243,236,0.96);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-wordmark{font-size:16px;font-weight:500;color:var(--ink);letter-spacing:-0.01em;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.lang-switcher{display:flex;gap:2px;background:rgba(26,32,36,0.05);border:1px solid var(--border);border-radius:3px;padding:3px;}
+.lang-btn{font-size:11px;font-weight:400;padding:4px 10px;border:none;background:transparent;color:var(--ink-muted);cursor:pointer;border-radius:2px;transition:all 0.2s;font-family:'DM Sans',sans-serif;letter-spacing:0.02em;}
+.lang-btn.active{background:var(--ink);color:#fff;}
+.nav-home{font-size:12px;font-weight:400;color:var(--ink-muted);text-decoration:none;letter-spacing:0.03em;}
+.nav-home:hover{color:var(--teal);}
+
+/* ─── PAGE HEADER ────────────────────────────────────────────────────── */
+.page-header{background:var(--white);border-bottom:1px solid var(--border);padding:36px 48px 0;}
+.page-header-inner{max-width:1200px;margin:0 auto;}
+.page-title-wrap{margin-bottom:6px;}
+.page-title-bar{display:block;width:20px;height:1.5px;background:var(--teal);margin-bottom:12px;opacity:0.7;}
+.page-title{font-size:clamp(22px,3.5vw,32px);font-weight:300;color:var(--ink);letter-spacing:-0.015em;display:inline;line-height:1.2;}
+.page-title-dot{display:inline-block;width:5px;height:5px;background:var(--teal);border-radius:50%;margin-left:5px;vertical-align:middle;position:relative;top:-2px;opacity:0.8;}
+.page-count{font-size:12px;font-weight:400;color:var(--ink-muted);margin-bottom:18px;margin-top:6px;letter-spacing:0.01em;}
+
+/* ─── TRUST STRIP ────────────────────────────────────────────────────── */
+.trust-strip{
+  display:flex;gap:24px;flex-wrap:wrap;
+  padding:10px 0;
+  border-top:1px solid rgba(26,32,36,0.04);
+}
+.trust-item{
+  display:flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:400;color:var(--ink-muted);
+  opacity:0.6;letter-spacing:0.02em;
+}
+.trust-dot{width:3px;height:3px;background:var(--teal);border-radius:50%;flex-shrink:0;opacity:0.45;}
+
+/* TELEMETRY — hidden */
+.telemetry-strip{display:none;}
+
+/* ─── FILTER BAR ─────────────────────────────────────────────────────── */
+.filter-bar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 48px;}
+.filter-bar-inner{max-width:1200px;margin:0 auto;}
+.filter-bar-row{display:flex;align-items:center;gap:10px;}
+.filter-bar-row + .filter-bar-row{margin-top:10px;}
+
+/* Rent/Sale — the primary, highest-priority control on this page. Visually
+   dominant (larger buttons, teal fill on active) so it reads as the first
+   decision a visitor makes, not an equal-weight pill among property types. */
+.tx-toggle{display:flex;gap:6px;width:100%;}
+.tx-btn{
+  flex:1;font-size:13px;font-weight:500;padding:11px 16px;
+  border-radius:3px;
+  border:1px solid var(--border-mid);background:var(--white);color:var(--ink-soft);
+  cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;
+  letter-spacing:0.01em;text-align:center;
+}
+.tx-btn.active{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:0 2px 10px rgba(45,140,140,0.25);}
+.tx-btn:hover:not(.active){background:rgba(45,140,140,0.06);border-color:rgba(45,140,140,0.28);}
+
+.filters{display:flex;gap:6px;flex:1;overflow-x:auto;scrollbar-width:none;}
+.filters::-webkit-scrollbar{display:none;}
+.filter-btn{
+  font-size:11px;font-weight:400;padding:5px 14px;
+  border-radius:2px;
+  border:1px solid var(--border);background:transparent;color:var(--ink-muted);
+  cursor:pointer;white-space:nowrap;transition:all 0.2s;
+  font-family:'DM Sans',sans-serif;flex-shrink:0;letter-spacing:0.02em;
+}
+.filter-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.filter-btn:hover:not(.active){background:rgba(26,32,36,0.04);border-color:rgba(26,32,36,0.15);}
+.filter-sep{width:1px;height:18px;background:var(--border);flex-shrink:0;}
+
+/* All Listings / Available Only — a visible status toggle in its own
+   control, not a pill buried inside .filters. */
+.avail-toggle{display:flex;gap:2px;background:rgba(26,32,36,0.05);border:1px solid var(--border);border-radius:3px;padding:3px;flex-shrink:0;}
+.avail-btn{font-size:11px;font-weight:400;padding:4px 10px;border:none;background:transparent;color:var(--ink-muted);cursor:pointer;border-radius:2px;transition:all 0.2s;font-family:'DM Sans',sans-serif;white-space:nowrap;letter-spacing:0.02em;}
+.avail-btn.active{background:var(--ink);color:#fff;}
+.avail-btn:hover:not(.active){background:rgba(26,32,36,0.06);}
+.sort-select{
+  font-size:11px;font-weight:400;padding:5px 24px 5px 10px;
+  border-radius:2px;
+  border:1px solid var(--border);background:transparent;color:var(--ink-muted);
+  cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;
+  appearance:none;-webkit-appearance:none;letter-spacing:0.02em;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%238C9598' stroke-width='1.5'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;
+  background-color:transparent;
+}
+
+/* ─── CONTENT WRAPPER ────────────────────────────────────────────────── */
+.page-content{max-width:1200px;margin:0 auto;padding:40px 48px 80px;}
+
+/* ─── GRID — editorial 12-col spatial rhythm ────────────────────────── */
+.listings-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:28px;
+  row-gap:36px;
+}
+
+/* ─── STANDARD CARD — spans 4 columns ───────────────────────────────── */
+.prop-card{
+  grid-column:span 4;
+  background:var(--white);
+  border-radius:var(--r-card);
+  border:1px solid var(--border);
+  text-decoration:none;display:block;
+  transition:border-color 0.3s,box-shadow 0.3s;
+  overflow:hidden;
+}
+.prop-card:hover{
+  border-color:rgba(26,32,36,0.14);
+  box-shadow:0 6px 28px rgba(26,32,36,0.05);
+}
+
+/* ─── FEATURED CARD — editorial split, 8+4 col or full width ───────── */
+.prop-card.is-featured{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:1.85fr 1fr;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-card);
+  overflow:hidden;
+}
+.prop-card.is-featured:hover{
+  border-color:rgba(26,32,36,0.14);
+  box-shadow:0 8px 32px rgba(26,32,36,0.06);
+}
+
+/* ─── IMAGE AREAS ────────────────────────────────────────────────────── */
+.prop-card-img{
+  position:relative;overflow:hidden;
+  background:var(--off);
+  aspect-ratio:4/3;
+}
+.prop-card.is-featured .prop-card-img{
+  aspect-ratio:unset;
+  height:auto;min-height:360px;
+}
+.prop-card.is-featured .prop-card-img img{
+  position:absolute;inset:0;width:100%;height:100%;
+}
+.prop-card-img img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.prop-card:hover .prop-card-img img{transform:scale(1.025);}
+.prop-card-no-img{
+  width:100%;height:100%;
+  background:linear-gradient(145deg,#E8E3DB,#D8D3CB);
+}
+
+/* ─── OVERLAYS — quiet, image-first ─────────────────────────────────── */
+.ov-tl{position:absolute;top:12px;left:12px;z-index:2;}
+.ov-tr{position:absolute;top:12px;right:12px;z-index:2;}
+.ov-br{position:absolute;bottom:12px;right:12px;z-index:2;}
+.ov-bl{position:absolute;bottom:12px;left:12px;z-index:2;}
+
+/* STATUS BADGES — high-contrast, mobile-first */
+.status-badge{
+  display:inline-block;
+  font-size:9px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;
+  padding:4px 9px;border-radius:3px;color:#fff;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:0 1px 5px rgba(0,0,0,0.22);
+}
+.badge-available{background:rgba(22,101,52,0.92);}
+.badge-curated{background:rgba(45,140,140,0.82);}
+.badge-new{background:rgba(26,32,36,0.82);}
+.badge-sale{background:rgba(148,116,4,0.86);}
+.badge-rent{background:rgba(55,72,78,0.86);}
+.badge-land{background:rgba(80,52,14,0.86);}
+.badge-sold{background:rgba(185,28,28,0.94);}
+.badge-rented{background:rgba(194,65,0,0.92);}
+.badge-offer{background:rgba(30,64,175,0.88);}
+@media(max-width:800px){
+  .status-badge{font-size:10px;padding:5px 10px;border-radius:4px;}
+}
+
+/* HEART BUTTON */
+.heart-btn{
+  width:28px;height:28px;
+  background:rgba(255,255,255,0.78);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.2s;
+}
+.heart-btn:hover{background:rgba(255,255,255,0.95);}
+.heart-btn.saved svg{stroke:#D94040;fill:#D94040;}
+.heart-btn svg{transition:stroke 0.15s,fill 0.15s;}
+
+/* PHOTO COUNT */
+.photo-count{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(0,0,0,0.36);color:#fff;
+  font-size:9px;font-weight:400;
+  padding:2px 7px;border-radius:10px;
+  letter-spacing:0.02em;
+}
+
+/* AI BADGE */
+.ai-badge{
+  display:inline-block;
+  background:rgba(45,140,140,0.60);color:#fff;
+  font-size:8px;font-weight:500;
+  padding:3px 8px;border-radius:2px;letter-spacing:0.05em;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+
+/* ─── CARD BODY — editorial metadata ────────────────────────────────── */
+.prop-card-body{padding:18px 20px 20px;}
+.prop-card.is-featured .prop-card-body{
+  padding:36px 40px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+
+.card-tag{
+  font-size:9px;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:8px;opacity:0.85;
+}
+.card-title{
+  font-size:14px;font-weight:400;color:var(--ink);
+  margin-bottom:6px;line-height:1.4;
+  letter-spacing:-0.005em;
+}
+.prop-card.is-featured .card-title{
+  font-size:22px;font-weight:300;margin-bottom:10px;
+  letter-spacing:-0.015em;line-height:1.25;
+}
+.card-loc{
+  font-size:11px;font-weight:400;color:var(--ink-muted);
+  margin-bottom:14px;display:flex;align-items:center;gap:5px;
+}
+.card-specs{
+  display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;
+}
+.card-spec{font-size:11px;font-weight:400;color:var(--ink-muted);display:inline-flex;align-items:center;gap:4px;}
+.card-spec span{font-weight:500;color:var(--ink-soft);}
+
+/* 3-4 top-priority amenity icons (see amenities.js AMENITY_PRIORITY) —
+   icon-only for compactness, label available via title/aria-label. */
+.card-amenities{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.card-amenity{
+  font-size:13px;line-height:1;opacity:0.82;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--off);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.card-price{
+  font-size:16px;font-weight:500;color:var(--ink);
+  letter-spacing:-0.01em;margin-bottom:14px;
+}
+.prop-card.is-featured .card-price{
+  font-size:24px;font-weight:400;letter-spacing:-0.02em;margin-bottom:20px;
+}
+.card-price-unit{font-size:11px;font-weight:400;color:var(--ink-muted);}
+.card-price-req{
+  font-size:12px;font-weight:400;color:var(--ink-muted);
+  font-style:italic;margin-bottom:14px;
+}
+.card-divider{height:1px;background:var(--border);margin:14px 0;}
+.card-agent{display:flex;align-items:center;gap:8px;}
+.agent-avatar{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--off);border:1px solid var(--border);
+  flex-shrink:0;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:500;color:var(--ink-muted);
+}
+.agent-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+.agent-name{font-size:11px;font-weight:400;color:var(--ink-muted);line-height:1.3;}
+.agent-platform{font-size:9.5px;font-weight:400;color:var(--teal);opacity:0.8;}
+
+/* ─── EMPTY / LOADING ────────────────────────────────────────────────── */
+.state-center{grid-column:1/-1;text-align:center;padding:100px 24px;color:var(--ink-muted);}
+.state-title{font-size:16px;font-weight:400;color:var(--ink-soft);margin-bottom:8px;}
+.loading-dots{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
+.loading-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);opacity:0.5;animation:dotPulse 1.4s ease-in-out infinite;}
+.loading-dot:nth-child(2){animation-delay:0.2s;}
+.loading-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes dotPulse{0%,100%{opacity:0.2;transform:scale(0.8);}50%{opacity:0.7;transform:scale(1.1);}}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────── */
+@media(max-width:1100px){
+  .page-content{padding:36px 36px 70px;}
+  .page-header{padding:32px 36px 0;}
+  .filter-bar{padding:12px 36px;}
+  nav{padding:0 36px;}
+  .listings-grid{gap:22px;row-gap:28px;}
+}
+@media(max-width:800px){
+  .listings-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;row-gap:24px;
+  }
+  .prop-card{grid-column:span 1;}
+  .prop-card.is-featured{
+    grid-column:1/-1;
+    grid-template-columns:1fr;
+  }
+  .prop-card.is-featured .prop-card-img{height:260px;min-height:0;}
+  .prop-card.is-featured .prop-card-body{padding:24px 24px;}
+  .prop-card.is-featured .card-title{font-size:18px;}
+  .prop-card.is-featured .card-price{font-size:18px;}
+  nav{padding:0 20px;height:56px;}
+  .page-header{padding:24px 20px 0;}
+  .filter-bar{padding:10px 20px;}
+  .page-content{padding:28px 20px 60px;}
+  .trust-strip{gap:14px;}
+
+  /* Second filter-bar row wraps for one-handed reach: scrollable type
+     pills get their own line, status/sort/view controls share the next. */
+  .filter-bar-row.filter-bar-row2{flex-wrap:wrap;row-gap:8px;}
+  .filter-bar-row2 .filters{flex:1 1 100%;order:1;}
+  .filter-bar-row2 .filter-sep{display:none;}
+  .filter-bar-row2 .avail-toggle{order:2;}
+  .filter-bar-row2 .sort-select{order:3;flex:1;min-width:0;}
+  .filter-bar-row2 .view-toggle{order:4;margin-left:0;}
+}
+@media(max-width:500px){
+  .listings-grid{
+    grid-template-columns:1fr;
+    gap:16px;row-gap:20px;
+  }
+  .prop-card{grid-column:span 1;}
+}
+
+/* ── VIEW TOGGLE ──────────────────────────────────── */
+.view-toggle{display:flex;gap:2px;background:rgba(26,32,36,0.05);border:1px solid var(--border);border-radius:3px;padding:3px;flex-shrink:0;margin-left:8px;}
+.vt-btn{font-size:11px;font-weight:400;padding:4px 12px;border:none;background:transparent;color:var(--ink-muted);cursor:pointer;border-radius:2px;transition:all 0.2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px;letter-spacing:0.02em;}
+.vt-btn.active{background:var(--ink);color:#fff;}
+.vt-btn:hover:not(.active){background:rgba(26,32,36,0.06);}
+
+/* ── MAP CONTAINER ────────────────────────────────── */
+#map-wrap{display:none;height:calc(100vh - 112px);min-height:500px;position:relative;}
+#map{width:100%;height:100%;}
+.leaflet-container{font-family:'DM Sans',sans-serif!important;}
+
+/* ── PRICE BUBBLES ────────────────────────────────── */
+.price-bubble{
+  background:var(--white);border:1.5px solid rgba(26,32,36,0.18);border-radius:20px;
+  padding:5px 10px;font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,0.10);cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:background 0.15s,color 0.15s,box-shadow 0.15s,transform 0.15s;user-select:none;
+}
+.price-bubble:hover{background:var(--ink);color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(0,0,0,0.20);transform:scale(1.07);}
+.price-bubble.pb-featured{background:var(--ink);color:#fff;border-color:transparent;}
+.price-bubble.pb-active{background:var(--teal)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 4px 16px rgba(45,140,140,0.35)!important;transform:scale(1.07);}
+
+/* ── MAP PREVIEW CARD (Airbnb style) ──────────────── */
+#map-preview{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  width:340px;max-width:calc(100vw - 24px);
+  background:var(--white);border-radius:12px;border:1px solid rgba(26,32,36,0.08);
+  box-shadow:0 12px 40px rgba(0,0,0,0.18);overflow:hidden;z-index:2000;display:none;
+  animation:mpIn 0.2s ease-out;
+}
+@keyframes mpIn{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+.mp-close{position:absolute;top:10px;right:10px;z-index:10;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.38);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;line-height:1;transition:background 0.15s;}
+.mp-close:hover{background:rgba(0,0,0,0.58);}
+.mp-img-wrap{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--off);}
+.mp-img-wrap img,.mp-img-wrap .prop-card-no-img{width:100%;height:100%;object-fit:cover;display:block;}
+.mp-img-badges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;}
+.mp-body{padding:13px 15px 15px;}
+.mp-price{font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-0.01em;margin-bottom:3px;}
+.mp-title{font-size:12px;color:var(--ink-soft);margin-bottom:6px;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.mp-specs{display:flex;gap:10px;font-size:11px;color:var(--ink-muted);margin-bottom:5px;flex-wrap:wrap;}
+.mp-loc{font-size:11px;color:var(--ink-muted);display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+.mp-act-badges{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.mp-agent-row{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-muted);border-top:1px solid var(--border);padding-top:10px;margin-top:2px;}
+.mp-activity-line{font-size:10px;color:var(--ink-muted);opacity:0.65;margin-top:5px;}
+.mp-view-btn{display:block;text-align:center;background:var(--ink);color:#fff;font-size:12px;font-weight:500;padding:10px;text-decoration:none;border-radius:6px;margin-top:11px;transition:background 0.15s;letter-spacing:0.02em;}
+.mp-view-btn:hover{background:var(--teal);}
+
+/* ── ACTIVITY BADGES ──────────────────────────────── */
+.act-badges{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.act-badge{font-size:9px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;padding:3px 7px;border-radius:3px;}
+.act-badge-new  {background:rgba(22,101,52,0.10);color:#15803D;border:1px solid rgba(22,101,52,0.18);}
+.act-badge-feat {background:rgba(161,110,0,0.10);color:#92400E;border:1px solid rgba(161,110,0,0.20);}
+.act-badge-vfy  {background:rgba(29,78,216,0.10);color:#1D4ED8;border:1px solid rgba(29,78,216,0.18);}
+.act-badge-drop {background:rgba(185,28,28,0.10);color:#B91C1C;border:1px solid rgba(185,28,28,0.18);}
+.act-badge-hot  {background:rgba(194,65,0,0.10); color:#C24100;border:1px solid rgba(194,65,0,0.20);}
+.act-badge-upd  {background:rgba(45,140,140,0.10);color:var(--teal);border:1px solid rgba(45,140,140,0.18);}
+.act-badge-resp {background:rgba(45,100,180,0.10);color:#1E5AB4;border:1px solid rgba(45,100,180,0.18);}
+.act-badge-val  {background:rgba(0,127,63,0.10);color:#0a7a3e;border:1px solid rgba(0,127,63,0.18);}
+
+/* NEW badge as image overlay (second badge below status) */
+.badge-new-listing{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:4px 8px;border-radius:3px;color:#fff;background:rgba(22,101,52,0.90);backdrop-filter:blur(8px);box-shadow:0 1px 4px rgba(0,0,0,0.18);margin-top:4px;}
+
+/* ACTIVITY LINE */
+.card-activity-line{font-size:10px;color:var(--ink-muted);opacity:0.65;margin-top:4px;}
+
+@media(max-width:800px){
+  #map-wrap{height:calc(100vh - 104px);}
+  #map-preview{bottom:12px;width:calc(100vw - 20px);border-radius:10px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="26" height="22" viewBox="0 0 46 38" fill="none" shape-rendering="geometricPrecision">
+      <circle cx="11" cy="10" r="8.5" fill="#38A8A8"/>
+      <circle cx="27" cy="14" r="3.5" fill="#1C2B32"/>
+    </svg>
+    <span class="nav-wordmark">Pintag</span>
+  </a>
+  <div class="nav-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('lo',this)">ລາວ</button>
+      <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+      <button class="lang-btn" onclick="setLang('zh',this)">中文</button>
+    </div>
+    <a href="index.html" class="nav-home">← <span class="lo-i">ໜ້າຫຼັກ</span><span class="en-i">Home</span><span class="zh-i">首页</span></a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-title-wrap">
+      <span class="page-title-bar"></span>
+      <h1 class="page-title">
+        <span class="lo-i">ຊັບສິນໃນວຽງຈັນ</span>
+        <span class="en-i">Properties in Vientiane</span>
+        <span class="zh-i">万象房源</span>
+      </h1><span class="page-title-dot"></span>
+    </div>
+    <p class="page-count" id="count-text">
+      <span class="lo-i">ກຳລັງໂຫຼດ...</span>
+      <span class="en-i">Loading...</span>
+      <span class="zh-i">加载中...</span>
+    </p>
+    <div class="trust-strip">
+      <div class="trust-item"><span class="trust-dot"></span><span class="lo-i">ຕົວແທນຢັ້ງຢືນ</span><span class="en-i">Verified agents</span><span class="zh-i">认证经纪</span></div>
+      <div class="trust-item"><span class="trust-dot"></span><span class="lo-i">AI ພາຊົມຮອບ</span><span class="en-i">AI walkthroughs</span><span class="zh-i">AI带看</span></div>
+      <div class="trust-item"><span class="trust-dot"></span><span class="lo-i">ອັບເດດທຸກວັນ</span><span class="en-i">Updated daily</span><span class="zh-i">每日更新</span></div>
+      <div class="trust-item"><span class="trust-dot"></span><span class="lo-i">3 ພາສາ</span><span class="en-i">3 languages</span><span class="zh-i">3种语言</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-bar-inner">
+    <!-- Priority 1: Rent/Sale is the first decision a visitor makes — kept
+         as its own prominent row, separate from the secondary property-type
+         pills below. Listing Type (this row) and Property Type (the row
+         below) are independent filter groups combined with AND logic via
+         setTxFilter()/setTypeFilter() and currentTxFilter/currentTypeFilter
+         — selecting one must never clear the other. -->
+    <div class="filter-bar-row">
+      <div class="tx-toggle" id="tx-toggle">
+        <button class="tx-btn active" data-filter="all" onclick="setTxFilter('all',this)" data-track="filter-transaction" data-track-type="filter" data-track-label="Transaction: All">
+          <span class="lo-i">ທັງໝົດ</span><span class="en-i">All</span><span class="zh-i">全部</span>
+        </button>
+        <button class="tx-btn" data-filter="for_rent" onclick="setTxFilter('for_rent',this)" data-track="filter-transaction" data-track-type="filter" data-track-label="Transaction: For Rent">
+          <span class="lo-i">ໃຫ້ເຊົ່າ</span><span class="en-i">For Rent</span><span class="zh-i">租房</span>
+        </button>
+        <button class="tx-btn" data-filter="for_sale" onclick="setTxFilter('for_sale',this)" data-track="filter-transaction" data-track-type="filter" data-track-label="Transaction: For Sale">
+          <span class="lo-i">ຂາຍ</span><span class="en-i">For Sale</span><span class="zh-i">出售</span>
+        </button>
+      </div>
+    </div>
+    <div class="filter-bar-row filter-bar-row2">
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all" onclick="setTypeFilter('all',this)" data-track="filter-property-type" data-track-type="filter" data-track-label="Type: All">
+          <span class="lo-i">ທັງໝົດ</span><span class="en-i">All Types</span><span class="zh-i">全部</span>
+        </button>
+        <button class="filter-btn" data-filter="house" onclick="setTypeFilter('house',this)" data-track="filter-property-type" data-track-type="filter" data-track-label="Type: House">
+          <span class="lo-i">ເຮືອນ</span><span class="en-i">House</span><span class="zh-i">住宅</span>
+        </button>
+        <button class="filter-btn" data-filter="townhouse" onclick="setTypeFilter('townhouse',this)" data-track="filter-property-type" data-track-type="filter" data-track-label="Type: Townhouse">
+          <span class="lo-i">ທາວເຮົາ</span><span class="en-i">Townhouse</span><span class="zh-i">联排别墅</span>
+        </button>
+        <button class="filter-btn" data-filter="villa" onclick="setTypeFilter('villa',this)" data-track="filter-property-type" data-track-type="filter" data-track-label="Type: Villa">
+          <span class="lo-i">ວິລລ່າ</span><span class="en-i">Villa</span><span class="zh-i">别墅</span>
+        </button>
+        <button class="filter-btn" data-filter="apartment" onclick="setTypeFilter('apartment',this)" data-track="filter-property-type" data-track-type="filter" data-track-label="Type: Apartment">
+          <span class="lo-i">ອາພາດເມັນ</span><span class="en-i">Apartment</span><span class="zh-i">公寓</span>
+        </button>
+        <button class="filter-btn" data-filter="condo" onclick="setTypeFilter('condo',this)" data-track="filter-property-type" data-track-type="filter" data-track-label="Type: Condo">
+          <span class="lo-i">ຄອນໂດ</span><span class="en-i">Condo</span><span class="zh-i">公寓楼</span>
+        </button>
+        <button class="filter-btn" data-filter="commercial" onclick="setTypeFilter('commercial',this)" data-track="filter-property-type" data-track-type="filter" data-track-label="Type: Commercial">
+          <span class="lo-i">ອາຄານພານິດ</span><span class="en-i">Commercial</span><span class="zh-i">商业</span>
+        </button>
+        <button class="filter-btn" data-filter="land" onclick="setTypeFilter('land',this)" data-track="filter-property-type" data-track-type="filter" data-track-label="Type: Land">
+          <span class="lo-i">ທີ່ດິນ</span><span class="en-i">Land</span><span class="zh-i">土地</span>
+        </button>
+      </div>
+      <div class="filter-sep"></div>
+      <!-- Priority 2: All Listings / Available Only — its own visible
+           control, not a pill hidden inside .filters. -->
+      <div class="avail-toggle" id="avail-toggle">
+        <button class="avail-btn active" data-avail="all" onclick="setAvailFilter('all',this)" data-track="filter-availability" data-track-type="filter" data-track-label="Availability: All Listings">
+          <span class="lo-i">ທັງໝົດ</span><span class="en-i">All Listings</span><span class="zh-i">全部</span>
+        </button>
+        <button class="avail-btn" data-avail="available" onclick="setAvailFilter('available',this)" data-track="filter-availability" data-track-type="filter" data-track-label="Availability: Available Only">
+          <span class="lo-i">ວ່າງເທົ່ານັ້ນ</span><span class="en-i">Available Only</span><span class="zh-i">仅在售/租</span>
+        </button>
+      </div>
+      <div class="filter-sep"></div>
+      <select class="sort-select" id="sort-select" onchange="setSort(this.value)" data-track="sort-select" data-track-type="select" data-track-label="Sort listings">
+        <option value="newest"     data-lo="ໃໝ່ສຸດ"         data-en="Newest"          data-zh="最新">ໃໝ່ສຸດ</option>
+        <option value="featured"   data-lo="ຄັດເລືອກ"        data-en="Featured"        data-zh="精选">ຄັດເລືອກ</option>
+        <option value="price_asc"  data-lo="ລາຄາ: ຕ່ຳ→ສູງ"  data-en="Price: Low→High" data-zh="价格: 低→高">ລາຄາ: ຕ່ຳ→ສູງ</option>
+        <option value="price_desc" data-lo="ລາຄາ: ສູງ→ຕ່ຳ"  data-en="Price: High→Low" data-zh="价格: 高→低">ລາຄາ: ສູງ→ຕ່ຳ</option>
+      </select>
+      <div class="view-toggle">
+        <button class="vt-btn active" id="btn-list" onclick="showListView()" data-track="view-toggle-list" data-track-type="toggle" data-track-label="View: List">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span class="lo-i">ລາຍການ</span><span class="en-i">List</span><span class="zh-i">列表</span>
+        </button>
+        <button class="vt-btn" id="btn-map" onclick="showMapView()" data-track="view-toggle-map" data-track-type="toggle" data-track-label="View: Map">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          <span class="lo-i">ແຜນທີ່</span><span class="en-i">Map</span><span class="zh-i">地图</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAP VIEW -->
+<div id="map-wrap">
+  <div id="map"></div>
+</div>
+
+<!-- MAP PREVIEW CARD -->
+<div id="map-preview">
+  <button class="mp-close" onclick="closeMapPreview()">&#215;</button>
+  <div class="mp-img-wrap">
+    <div id="mp-img-inner"><div class="prop-card-no-img"></div></div>
+    <div class="mp-img-badges" id="mp-img-badges"></div>
+  </div>
+  <div class="mp-body">
+    <div class="mp-act-badges" id="mp-act-badges"></div>
+    <div class="mp-price" id="mp-price"></div>
+    <div class="mp-title" id="mp-title"></div>
+    <div class="mp-specs" id="mp-specs"></div>
+    <div class="mp-loc" id="mp-loc"></div>
+    <div class="mp-agent-row" id="mp-agent-row" style="display:none"></div>
+    <div class="mp-activity-line" id="mp-activity-line"></div>
+    <a class="mp-view-btn" id="mp-view-btn" href="#">
+      <span class="lo-i">ເບິ່ງລາຍລະອຽດ</span>
+      <span class="en-i">View Property</span>
+      <span class="zh-i">查看详情</span>
+    </a>
+  </div>
+</div>
+
+<div class="page-content" id="page-content-wrap">
+  <div id="listings-container" class="listings-grid">
+    <div class="state-center">
+      <div class="loading-dots">
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+      </div>
+      <p class="lo-i">ກຳລັງໂຫຼດ...</p>
+      <p class="en-i">Loading...</p>
+      <p class="zh-i">加载中...</p>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="dev-banner.js"></script>
+<script src="amenities.js"></script>
+<script src="terminology.js"></script>
+<script src="session.js"></script>
+<script src="tracking.js"></script>
+<script>
+
+const SUPABASE_URL = window.PINTAG.supabaseUrl;
+const SUPABASE_ANON = window.PINTAG.anonKey;
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+let allProperties = [];
+// Listing Type (Rent/Sale/All) and Property Type (House/Condo/etc.) are
+// independent filter groups, combined with AND logic — see setTxFilter/
+// setTypeFilter below. Neither selection clears the other.
+let currentTxFilter = 'all';
+let currentTypeFilter = 'all';
+let currentSort = 'newest';
+let currentAvailOnly = false;
+
+// "Available Only" excludes sold/rented/under_offer; a null/undefined/
+// literal 'available' status all count as available (matches getBadgeHtml's
+// existing status handling below).
+function isAvailableStatus(p) {
+  return !p.status || p.status === 'available';
+}
+
+function setAvailFilter(val, btn) {
+  currentAvailOnly = (val === 'available');
+  document.querySelectorAll('.avail-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  closeMapPreview();
+  if (_viewMode === 'map') renderMap();
+  else renderListings();
+}
+
+function getCurrentLang() {
+  if (document.body.classList.contains('lang-en')) return 'en';
+  if (document.body.classList.contains('lang-zh')) return 'zh';
+  return 'lo';
+}
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function getSavedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem('pintag_saved') || '[]')); }
+  catch(e) { return new Set(); }
+}
+
+function toggleSave(slug, e) {
+  e.preventDefault();
+  e.stopPropagation();
+  const saved = getSavedSet();
+  if (saved.has(slug)) { saved.delete(slug); } else { saved.add(slug); }
+  try { localStorage.setItem('pintag_saved', JSON.stringify([...saved])); } catch(e) {}
+  const btn = document.querySelector('[data-save="' + slug + '"]');
+  if (btn) btn.classList.toggle('saved', saved.has(slug));
+}
+
+function getBadgeHtml(p, lang, isFeaturedCard) {
+  const L = {
+    curated:   { lo: 'ຄັດເລືອກ',       en: 'Curated',      zh: '精选'   },
+    available: { lo: 'ວ່າງ',             en: 'Available',    zh: '在售'   },
+    sold:      { lo: 'ຂາຍແລ້ວ',        en: 'Sold',         zh: '已售'   },
+    rented:    { lo: 'ເຊົ່າແລ້ວ',      en: 'Rented',       zh: '已租'   },
+    offer:     { lo: 'ກຳລັງດຳເນີນ',   en: 'Under Offer',  zh: '洽谈中' },
+    land:      { lo: 'ທີ່ດິນ',          en: 'Land',         zh: '土地'   }
+  };
+  if (isFeaturedCard)             return '<span class="status-badge badge-curated">'   + L.curated[lang]   + '</span>';
+  if (p.status === 'sold')        return '<span class="status-badge badge-sold">'      + L.sold[lang]      + '</span>';
+  if (p.status === 'rented')      return '<span class="status-badge badge-rented">'    + L.rented[lang]    + '</span>';
+  if (p.status === 'under_offer') return '<span class="status-badge badge-offer">'     + L.offer[lang]     + '</span>';
+  if (p.property_type === 'land') return '<span class="status-badge badge-land">'      + L.land[lang]      + '</span>';
+  return                                 '<span class="status-badge badge-available">' + L.available[lang] + '</span>';
+}
+
+// Role-appropriate label — only listings with a real linked Pintag Agent
+// Profile (parties.type === 'agent') get the "Pintag Agent" badge; every
+// other contact (owner, reception, sales office, etc.) shows its own role,
+// so buyers can tell who they're actually about to contact.
+var CONTACT_ROLE_LABELS_LO = {
+  owner: 'ເຈົ້າຂອງ', agent: 'ຕົວແທນ', property_manager: 'ຜູ້ຈັດການອາຄານ',
+  reception: 'ພະນັກງານຕ້ອນຮັບ', sales_office: 'ຫ້ອງການຂາຍ', developer: 'ຜູ້ພັດທະນາ',
+  family_representative: 'ຕົວແທນຄອບຄົວ', other: 'ຜູ້ຕິດຕໍ່'
+};
+
+function getContactDisplay(p) {
+  var contact = p.contacts;
+  var party = p.parties;
+  var isAgent = !!(party && party.type === 'agent');
+  var name = isAgent ? (party.name_en || (contact && contact.name) || '') : ((contact && contact.name) || '');
+  if (!name) return null;
+  return {
+    name: name,
+    photo: isAgent ? party.photo_url : null,
+    platformLabel: isAgent ? 'ຕົວແທນ Pintag' : (CONTACT_ROLE_LABELS_LO[contact && contact.role] || CONTACT_ROLE_LABELS_LO.other)
+  };
+}
+
+function getAgentHtml(p) {
+  var d = getContactDisplay(p);
+  if (!d) return '';
+  var initial = esc(d.name.trim().charAt(0) || 'P');
+  var avatarInner = d.photo
+    ? '<img src="' + esc(d.photo) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
+    : initial;
+  return '<div class="card-divider"></div>' +
+    '<div class="card-agent">' +
+      '<div class="agent-avatar">' + avatarInner + '</div>' +
+      '<div>' +
+        '<div class="agent-name">' + esc(d.name) + '</div>' +
+        '<div class="agent-platform">' + esc(d.platformLabel) + '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function sortProperties(arr) {
+  var copy = arr.slice();
+  if (currentSort === 'featured')  return copy.sort(function(a,b){ return (b.is_featured?1:0)-(a.is_featured?1:0); });
+  if (currentSort === 'price_asc') return copy.sort(function(a,b){
+    var pa = parseFloat((a.price_display||'').replace(/[^0-9.]/g,''))||0;
+    var pb = parseFloat((b.price_display||'').replace(/[^0-9.]/g,''))||0;
+    return pa-pb;
+  });
+  if (currentSort === 'price_desc') return copy.sort(function(a,b){
+    var pa = parseFloat((a.price_display||'').replace(/[^0-9.]/g,''))||0;
+    var pb = parseFloat((b.price_display||'').replace(/[^0-9.]/g,''))||0;
+    return pb-pa;
+  });
+  return copy; /* newest: already ordered by created_at desc from API */
+}
+
+// ── DISTRICT COORDINATES (Vientiane) ──────────────────
+const DISTRICT_COORDS = {
+  'Chanthabouly': [17.9620, 102.6135],
+  'Sikhottabong':  [17.9180, 102.5695],
+  'Xaythany':      [18.0265, 102.6695],
+  'Sisattanak':    [17.9440, 102.6270],
+  'Hadxaifong':    [17.8860, 102.7350],
+  'Saysettha':     [17.9835, 102.6910],
+  'Naxaithong':    [18.0660, 102.5840]
+};
+const MAP_CENTER = [17.960, 102.630];
+const MAP_ZOOM   = 12;
+
+function getLatLng(p) {
+  // Try to extract from map_url (Google Maps formats)
+  if (p.map_url) {
+    var m = p.map_url.match(/@([-\d.]+),([-\d.]+)/);
+    if (m) return [parseFloat(m[1]), parseFloat(m[2])];
+    m = p.map_url.match(/[?&]q=([-\d.]+),([-\d.]+)/);
+    if (m) return [parseFloat(m[1]), parseFloat(m[2])];
+    m = p.map_url.match(/!3d([-\d.]+).*?!2d([-\d.]+)/);
+    if (m) return [parseFloat(m[1]), parseFloat(m[2])];
+  }
+  // Fall back to district centroid with small random jitter
+  var base = DISTRICT_COORDS[p.district] || MAP_CENTER;
+  var jitter = function() { return (Math.random() - 0.5) * 0.012; };
+  return [base[0] + jitter(), base[1] + jitter()];
+}
+
+function formatPriceBubble(p) {
+  var raw = p.price_display || '';
+  if (!raw) return '?';
+  var str = raw.replace(/,/g, '');
+  var match = str.match(/[\d.]+/);
+  if (!match) return raw.slice(0, 8);
+  var num = parseFloat(match[0]);
+  var hasUSD = /\$/i.test(raw) || /USD/i.test(raw);
+  var hasKip = /₭|LAK|kip/i.test(raw);
+  var sym = hasUSD ? '$' : hasKip ? '₭' : '';
+  if (hasKip) {
+    if (num >= 1e9) return sym + (num/1e9).toFixed(1).replace(/\.0$/,'') + 'B';
+    if (num >= 1e6) return sym + (num/1e6).toFixed(0) + 'M';
+    if (num >= 1e3) return sym + (num/1e3).toFixed(0) + 'k';
+    return sym + num;
+  }
+  if (num >= 1e6) return sym + (num/1e6).toFixed(1).replace(/\.0$/,'') + 'M';
+  if (num >= 1e3) return sym + (num/1e3).toFixed(0) + 'k';
+  return sym + num.toFixed(0);
+}
+
+// ── ACTIVITY / BADGE HELPERS ──────────────────────────
+function daysOld(p) {
+  if (!p.created_at) return Infinity;
+  var t = new Date(p.created_at).getTime();
+  if (!t || t <= 0) return Infinity;
+  return Math.max(0, (Date.now() - t) / 86400000);
+}
+function daysSinceUpdate(p) {
+  var src = p.updated_at || p.created_at;
+  if (!src) return Infinity;
+  var t = new Date(src).getTime();
+  if (!t || t <= 0) return Infinity;
+  return Math.max(0, (Date.now() - t) / 86400000);
+}
+function isNewListing(p) { var age = daysOld(p); return isFinite(age) && age <= 7; }
+
+// Extract a numeric price value from display strings like "$550,000" or "2.5M"
+function parseNumericPrice(s) {
+  if (!s) return null;
+  var clean = String(s).replace(/[^\d.MmKk]/g, '');
+  if (/[Mm]$/.test(clean)) return parseFloat(clean) * 1000000;
+  if (/[Kk]$/.test(clean)) return parseFloat(clean) * 1000;
+  return parseFloat(clean) || null;
+}
+
+// One primary badge per card (priority order) + optional Verified secondary
+function getActivityBadgesHtml(p, lang) {
+  var age = daysOld(p);
+  if (!isFinite(age)) age = Infinity;
+  var score = parseFloat(p.trending_score) || 0;
+  var primary = '';
+
+  if (p.price_previous && p.price_previous !== p.price_display) {
+    primary = '<span class="act-badge act-badge-drop">📉 ' + {lo:'ຫຼຸດລາຄາ',en:'Price Reduced',zh:'降价'}[lang] + '</span>';
+  } else if (age <= 7) {
+    primary = '<span class="act-badge act-badge-new">🆕 ' + {lo:'ໃໝ່',en:'New',zh:'新房源'}[lang] + '</span>';
+  } else if (score >= 200) {
+    primary = '<span class="act-badge act-badge-hot">🔥 ' + {lo:'ນິຍົມສູງ',en:'Hot Property',zh:'热门房源'}[lang] + '</span>';
+  } else if (p._isBestValue) {
+    primary = '<span class="act-badge act-badge-val">💰 ' + {lo:'ຄຸ້ມຄ່າທີ່ສຸດ',en:'Best Value',zh:'超值房源'}[lang] + '</span>';
+  } else if (p.is_featured) {
+    primary = '<span class="act-badge act-badge-feat">⭐ ' + {lo:'ແນະນຳ',en:'Featured',zh:'精选'}[lang] + '</span>';
+  }
+
+  var secondary = p.is_verified ? '<span class="act-badge act-badge-vfy">' + {lo:'ຢັ້ງຢືນ',en:'Verified',zh:'认证'}[lang] + '</span>' : '';
+  return primary + secondary;
+}
+
+function getActivityLine(p, lang) {
+  var age = daysOld(p);
+  if (!isFinite(age)) return '';
+  var score = parseFloat(p.trending_score) || 0;
+  var isSale = p.transaction_type === 'for_sale' || p.transaction_type === 'sale' || p.transaction_type === 'sale_or_rent';
+
+  // District-trending context replaces age line for popular/hot listings
+  if (score >= 100 && p.district_en) {
+    var d = esc(p.district_en);
+    return {
+      lo: 'ຍອດນິຍົມ ' + (isSale ? 'ຊື້ຂາຍ' : 'ເຊົ່າ') + ' ໃນ ' + d,
+      en: 'Popular ' + (isSale ? 'sale' : 'rental') + ' in ' + d,
+      zh: d + '热门' + (isSale ? '售房' : '出租房')
+    }[lang];
+  }
+  if (age < 1)   return {lo:'ລົງຂາຍວັນນີ້',  en:'Listed today',        zh:'今日上架'}[lang];
+  if (age < 2)   return {lo:'ລົງຂາຍມື້ວານ', en:'Listed yesterday',     zh:'昨日上架'}[lang];
+  if (age < 30)  return {lo:'ລົງຂາຍ '+Math.floor(age)+' ວັນກ່ອນ',   en:'Listed '+Math.floor(age)+' days ago',   zh:Math.floor(age)+'天前上架'}[lang];
+  var mo = Math.floor(age / 30);
+  if (mo < 24)   return {lo:'ລົງຂາຍ '+mo+' ເດືອນກ່ອນ',              en:'Listed '+mo+(mo===1?' month':' months')+' ago', zh:mo+'个月前上架'}[lang];
+  var yr = Math.floor(age / 365);
+  return           {lo:'ລົງຂາຍ '+yr+' ປີກ່ອນ',                       en:'Listed '+yr+(yr===1?' year':' years')+' ago',   zh:yr+'年前上架'}[lang];
+}
+
+// ── VIEW SWITCHING ────────────────────────────────────
+var _viewMode = 'list';
+
+function showListView() {
+  _viewMode = 'list';
+  document.getElementById('map-wrap').style.display     = 'none';
+  document.getElementById('map-preview').style.display  = 'none';
+  document.getElementById('page-content-wrap').style.display = 'block';
+  document.getElementById('btn-list').classList.add('active');
+  document.getElementById('btn-map').classList.remove('active');
+}
+
+function showMapView() {
+  _viewMode = 'map';
+  document.getElementById('map-wrap').style.display     = 'block';
+  document.getElementById('page-content-wrap').style.display = 'none';
+  document.getElementById('btn-map').classList.add('active');
+  document.getElementById('btn-list').classList.remove('active');
+  if (!_map) initMap();
+  renderMap();
+}
+
+// ── MAP INIT & RENDER ─────────────────────────────────
+var _map = null;
+var _markers = [];
+var _activeSlug = null;
+
+function initMap() {
+  _map = L.map('map', { zoomControl: true, scrollWheelZoom: true }).setView(MAP_CENTER, MAP_ZOOM);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19
+  }).addTo(_map);
+  _map.on('click', function() { closeMapPreview(); });
+}
+
+function renderMap() {
+  if (!_map) return;
+  _markers.forEach(function(m) { _map.removeLayer(m); });
+  _markers = [];
+  _activeSlug = null;
+
+  var filtered = allProperties.filter(function(p){
+    var matchesTx = currentTxFilter === 'all' || p.transaction_type === currentTxFilter;
+    var matchesType = currentTypeFilter === 'all' || p.property_type === currentTypeFilter;
+    var matchesAvail = !currentAvailOnly || isAvailableStatus(p);
+    return matchesTx && matchesType && matchesAvail;
+  });
+
+  filtered.forEach(function(p) {
+    var latlng = getLatLng(p);
+    var label  = formatPriceBubble(p);
+    var isFeat = !!p.is_featured;
+    var icon = L.divIcon({
+      className: '',
+      html: '<div class="price-bubble' + (isFeat ? ' pb-featured' : '') + '" data-slug="' + (p.slug||'') + '">' + label + '</div>',
+      iconAnchor: [0, 0]
+    });
+    var marker = L.marker(latlng, { icon: icon }).addTo(_map);
+    marker._pintag = p;
+    marker.on('click', function(e) {
+      L.DomEvent.stopPropagation(e);
+      var prev = document.querySelector('.price-bubble.pb-active');
+      if (prev) prev.classList.remove('pb-active');
+      var el = marker.getElement();
+      if (el) { var b = el.querySelector('.price-bubble'); if (b) b.classList.add('pb-active'); }
+      _activeSlug = p.slug;
+      showMapPreview(p);
+    });
+    _markers.push(marker);
+  });
+}
+
+function showMapPreview(p) {
+  var lang = getCurrentLang();
+  var imgInner = (p.images && p.images.length)
+    ? '<img src="' + esc(p.images[0]) + '" alt="" loading="lazy">'
+    : '<div class="prop-card-no-img"></div>';
+  document.getElementById('mp-img-inner').innerHTML = imgInner;
+
+  // Image-overlay badges (NEW only)
+  var imgBadges = '';
+  if (isNewListing(p)) {
+    var newTxt = daysOld(p) < 1
+      ? {lo:'ໃໝ່ວັນນີ້',en:'New Today',zh:'今天上架'}[lang]
+      : {lo:'ໃໝ່ອາທິດນີ້',en:'New This Week',zh:'本周新上'}[lang];
+    imgBadges = '<span class="status-badge badge-available">' + newTxt + '</span>';
+  }
+  document.getElementById('mp-img-badges').innerHTML = imgBadges;
+
+  // Activity badges
+  document.getElementById('mp-act-badges').innerHTML = getActivityBadgesHtml(p, lang);
+
+  var mpPriceText = p.transaction_type === 'sale_or_rent' && (p.sale_price || p.rent_price)
+    ? [p.sale_price, p.rent_price].filter(Boolean).join(' / ')
+    : (p.price_display || {lo:'ສອບຖາມ',en:'Price on request',zh:'价格面议'}[lang]);
+  document.getElementById('mp-price').textContent = mpPriceText;
+
+  var title = p['title_' + lang] || p.title_en || '';
+  document.getElementById('mp-title').textContent = title;
+
+  var specs = [
+    p.bedrooms  ? p.bedrooms  + ' ' + {lo:'ຫ້ອງນອນ',en:'beds',zh:'卧'}[lang] : '',
+    p.bathrooms ? p.bathrooms + ' ' + {lo:'ຫ້ອງນ້ຳ',en:'baths',zh:'浴'}[lang] : '',
+    p.sqm       ? p.sqm + ' sqm' : '',
+    p.property_type ? (p.property_type.charAt(0).toUpperCase() + p.property_type.slice(1)) : ''
+  ].filter(Boolean).join(' · ');
+  document.getElementById('mp-specs').textContent = specs;
+
+  var district = p['district_' + lang] || p.district_en || p.district || '';
+  document.getElementById('mp-loc').innerHTML =
+    '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#2D8C8C" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>' +
+    (district ? esc(district) + ', ' : '') +
+    {lo:'ວຽງຈັນ',en:'Vientiane',zh:'万象'}[lang];
+
+  // Agent / Buyer Contact
+  var agentRow = document.getElementById('mp-agent-row');
+  var mpContact = getContactDisplay(p);
+  if (mpContact) {
+    var agentInitial = esc(mpContact.name.charAt(0) || 'P');
+    var avatarInner = mpContact.photo
+      ? '<img src="' + esc(mpContact.photo) + '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" loading="lazy" onerror="this.style.display=\'none\'">'
+      : agentInitial;
+    agentRow.innerHTML =
+      '<div class="agent-avatar">' + avatarInner + '</div>' +
+      '<div><div class="agent-name">' + esc(mpContact.name) + '</div>' +
+      '<div class="agent-platform">' + esc(mpContact.platformLabel) + '</div></div>';
+    agentRow.style.display = 'flex';
+  } else {
+    agentRow.style.display = 'none';
+  }
+
+  // Activity line
+  var actLine = getActivityLine(p, lang);
+  document.getElementById('mp-activity-line').textContent = actLine;
+
+  document.getElementById('mp-view-btn').href = 'listing.html?slug=' + encodeURIComponent(p.slug || '');
+  document.getElementById('map-preview').style.display = 'block';
+}
+
+function closeMapPreview() {
+  document.getElementById('map-preview').style.display = 'none';
+  var prev = document.querySelector('.price-bubble.pb-active');
+  if (prev) prev.classList.remove('pb-active');
+  _activeSlug = null;
+}
+
+async function loadListings() {
+  try {
+    var res = await fetch(SUPABASE_URL + '/rest/v1/properties?or=(status.neq.draft,status.is.null)&order=is_featured.desc,created_at.desc&select=*,contacts(role,name),parties(type,name_en,photo_url)', {
+      headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON }
+    });
+    allProperties = await res.json();
+    renderListings();
+  } catch(e) {
+    var container = document.getElementById('listings-container');
+    container.innerHTML = '<div style="grid-column:1/-1;" class="state-center"><p class="state-title lo-i">ເກີດຂໍ້ຜິດພາດ ກະລຸນາລອງໃໝ່</p><p class="state-title en-i">Something went wrong, please try again</p><p class="state-title zh-i">出现错误，请重试</p></div>';
+  }
+}
+
+function setTxFilter(filter, btn) {
+  currentTxFilter = filter;
+  document.querySelectorAll('.tx-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  closeMapPreview();
+  if (_viewMode === 'map') renderMap();
+  else renderListings();
+}
+
+function setTypeFilter(filter, btn) {
+  currentTypeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  closeMapPreview();
+  if (_viewMode === 'map') renderMap();
+  else renderListings();
+}
+
+function setSort(val) {
+  currentSort = val;
+  if (_viewMode === 'list') renderListings();
+}
+
+// ── BEHAVIORAL EVENT TRACKING (Intelligence layer) ────
+// Pure instrumentation of the existing search/browse/click flow — no
+// change to what's searchable or how results are filtered/sorted.
+// Fire-and-forget: never blocks rendering or navigation.
+function postEvent(table, body) {
+  fetch(SUPABASE_URL + '/rest/v1/' + table, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(body),
+    keepalive: true
+  }).catch(function(){});
+}
+
+var _searchEventTimer = null;
+function scheduleBehavioralEvents(sorted) {
+  // Debounced so adjusting several filters in a row logs one settled
+  // search, not one per intermediate click.
+  clearTimeout(_searchEventTimer);
+  _searchEventTimer = setTimeout(function() {
+    var sessionId = getOrCreateSessionId();
+    postEvent('search_events', {
+      session_id: sessionId,
+      property_type: currentTypeFilter === 'all' ? null : currentTypeFilter,
+      transaction_type: currentTxFilter === 'all' ? null : currentTxFilter,
+      result_count: sorted.length
+    });
+    if (!sorted.length) return;
+    var filtersSnapshot = { tx: currentTxFilter, type: currentTypeFilter, avail: currentAvailOnly, sort: currentSort };
+    var rows = sorted.filter(function(p){ return p.id; }).map(function(p, idx){
+      return {
+        property_id: p.id,
+        event_type: 'impression',
+        session_id: sessionId,
+        source: 'search',
+        search_position: idx + 1,
+        search_filters: filtersSnapshot
+      };
+    });
+    if (rows.length) postEvent('listing_events', rows);
+  }, 500);
+}
+
+function renderListings() {
+  var filtered = allProperties.filter(function(p){
+    var matchesTx = currentTxFilter === 'all' || p.transaction_type === currentTxFilter;
+    var matchesType = currentTypeFilter === 'all' || p.property_type === currentTypeFilter;
+    var matchesAvail = !currentAvailOnly || isAvailableStatus(p);
+    return matchesTx && matchesType && matchesAvail;
+  });
+  var sorted = sortProperties(filtered);
+
+  // Derive trending_score from views_week (stable average from full dataset)
+  var _wTotal = 0, _wCount = 0;
+  allProperties.forEach(function(p) { if ((p.views_week||0) > 0) { _wTotal += p.views_week; _wCount++; } });
+  var _avgW = _wCount > 0 ? _wTotal / _wCount : 0;
+  sorted.forEach(function(p) {
+    if (!p.trending_score && _avgW > 0) {
+      p.trending_score = Math.round((p.views_week||0) / _avgW * 100);
+    }
+  });
+
+  // Derive Best Value: price > 15% below group average (same district + type + transaction, min 3 peers)
+  var _grp = {};
+  allProperties.forEach(function(p) {
+    var np = parseNumericPrice(p.price_display);
+    if (!np || !p.district_en || !p.property_type || !p.transaction_type) return;
+    var k = p.district_en + '|' + p.property_type + '|' + p.transaction_type;
+    if (!_grp[k]) _grp[k] = [];
+    _grp[k].push(np);
+  });
+  var _grpAvg = {};
+  Object.keys(_grp).forEach(function(k) {
+    var arr = _grp[k];
+    if (arr.length >= 3) _grpAvg[k] = arr.reduce(function(a,b){return a+b;},0) / arr.length;
+  });
+  sorted.forEach(function(p) {
+    var np = parseNumericPrice(p.price_display);
+    var k = (p.district_en||'') + '|' + (p.property_type||'') + '|' + (p.transaction_type||'');
+    p._isBestValue = !!(np && _grpAvg[k] && np < _grpAvg[k] * 0.85);
+  });
+
+  scheduleBehavioralEvents(sorted);
+
+  var lang = getCurrentLang();
+  var saved = getSavedSet();
+  var n = filtered.length;
+
+  var countEl = document.getElementById('count-text');
+  countEl.innerHTML =
+    '<span class="lo-i">' + n + ' ລາຍການ · ວຽງຈັນ</span>' +
+    '<span class="en-i">' + n + ' listings · Vientiane</span>' +
+    '<span class="zh-i">' + n + ' 个房源 · 万象</span>';
+
+  var container = document.getElementById('listings-container');
+
+  if (!sorted.length) {
+    container.innerHTML =
+      '<div style="grid-column:1/-1;" class="state-center">' +
+        '<p class="state-title lo-i">ບໍ່ມີລາຍການ</p>' +
+        '<p class="state-title en-i">No listings found</p>' +
+        '<p class="state-title zh-i">暂无房源</p>' +
+        '<p class="lo-i">ລອງປ່ຽນໂຕກອງ</p>' +
+        '<p class="en-i">Try a different filter</p>' +
+        '<p class="zh-i">尝试其他筛选条件</p>' +
+      '</div>';
+    return;
+  }
+
+  var featuredUsed = false;
+  container.innerHTML = '';
+
+  sorted.forEach(function(p, idx) {
+    var card = document.createElement('a');
+    card.href = 'listing.html?slug=' + encodeURIComponent(p.slug);
+
+    var isFeaturedCard = p.is_featured && !featuredUsed;
+    if (isFeaturedCard) { featuredUsed = true; card.className = 'prop-card is-featured'; }
+    else { card.className = 'prop-card'; }
+
+    var title    = esc(p['title_'    + lang] || p.title_en    || '');
+    var district = esc(p['district_' + lang] || p.district_en || '');
+    var isSale   = p.transaction_type === 'for_sale' || p.transaction_type === 'sale';
+    var isSor    = p.transaction_type === 'sale_or_rent';
+
+    if (p.id) {
+      card.setAttribute('data-track', 'listing-card');
+      card.setAttribute('data-track-type', 'card');
+      card.setAttribute('data-track-property-id', p.id);
+      card.setAttribute('data-track-label', title);
+      card.setAttribute('data-track-meta', JSON.stringify({ position: idx + 1, featured: !!isFeaturedCard }));
+    }
+
+    var txLabel = {
+      lo: isSor ? 'ຊື້ / ເຊົ່າ' : isSale ? 'ຂາຍ' : 'ໃຫ້ເຊົ່າ',
+      en: isSor ? 'Sale or Rent' : isSale ? 'For Sale' : 'For Rent',
+      zh: isSor ? '售/租'        : isSale ? '出售'     : '租房'
+    };
+
+    var typeDisplay = p.property_type
+      ? esc(p.property_type.charAt(0).toUpperCase() + p.property_type.slice(1))
+      : '';
+
+    var imgHtml = (p.images && p.images.length)
+      ? '<img src="' + esc(p.images[0]) + '" alt="" loading="' + (idx < 4 ? 'eager' : 'lazy') + '">'
+      : '<div class="prop-card-no-img"></div>';
+
+    var imgCount = (p.images && p.images.length > 1) ? p.images.length : 0;
+    var photoHtml = imgCount
+      ? '<div class="ov-br"><span class="photo-count">' +
+          '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
+          imgCount +
+          '<span class="lo-i"> ຮູບ</span><span class="en-i"> photos</span><span class="zh-i"> 张</span>' +
+        '</span></div>'
+      : '';
+
+    var aiHtml = p.video_url
+      ? '<div class="ov-bl"><span class="ai-badge">▶ AI <span class="lo-i">ພາຊົມຮອບ</span><span class="en-i">Walkthrough</span><span class="zh-i">带看</span></span></div>'
+      : '';
+
+    var slugSafe = p.slug.replace(/'/g, '%27');
+    var isSaved = saved.has(p.slug);
+
+    // Card facts driven by PROPERTY_TYPE_DISPLAY (terminology.js) — which
+    // facts appear, in what order, and with what icon, is per property type.
+    var cardFacts = (typeof getCardFacts === 'function') ? getCardFacts(p.property_type, p, lang) : [];
+    var specsHtml = cardFacts.map(function(f){
+      return '<span class="card-spec">' + f.icon + ' <span>' + esc(String(f.value)) + '</span> <span class="card-spec-lbl">' + esc(f.label) + '</span></span>';
+    }).join('');
+
+    // Priority 3-4 amenity icons only (compact card), per the fixed
+    // AMENITY_PRIORITY order in amenities.js — full list shows on listing.html.
+    var topAms = (typeof topAmenities === 'function') ? topAmenities(p.amenities, 4) : [];
+    var amenitiesHtml = topAms.length
+      ? '<div class="card-amenities">' + topAms.map(function(am){
+          var resAm = resolveAmenityData(am, lang);
+          return '<span class="card-amenity" title="' + esc(resAm.label) + '" aria-label="' + esc(resAm.label) + '">' + resAm.icon + '</span>';
+        }).join('') + '</div>'
+      : '';
+
+    var perMo = { lo: '/ ເດືອນ', en: '/ month', zh: '/ 月' };
+    var rawPrice = esc((p.price_display || '').replace(/\s*\/\s*(ເດືອນ|mo|月|month)\s*/i, '').trim());
+    var priceHtml;
+    if (isSor && (p.sale_price || p.rent_price)) {
+      priceHtml = '';
+      if (p.sale_price) priceHtml += '<p class="card-price">' + esc(p.sale_price) + ' <span class="card-price-unit lo-i">ຂາຍ</span><span class="card-price-unit en-i">Sale</span><span class="card-price-unit zh-i">售</span></p>';
+      if (p.rent_price) priceHtml += '<p class="card-price">' + esc(p.rent_price) + ' <span class="card-price-unit">' + perMo[lang] + '</span> <span class="card-price-unit lo-i">ເຊົ່າ</span><span class="card-price-unit en-i">Rent</span><span class="card-price-unit zh-i">租</span></p>';
+    } else {
+      priceHtml = rawPrice
+        ? '<p class="card-price">' + rawPrice + (!isSale && !isSor ? ' <span class="card-price-unit">' + perMo[lang] + '</span>' : '') + '</p>'
+        : '<p class="card-price-req"><span class="lo-i">ສອບຖາມລາຄາ</span><span class="en-i">Price on request</span><span class="zh-i">价格面议</span></p>';
+    }
+
+    var actBadgesHtml = getActivityBadgesHtml(p, lang);
+    var actLineTxt    = getActivityLine(p, lang);
+    var actLineHtml   = actLineTxt ? '<p class="card-activity-line">' + esc(actLineTxt) + '</p>' : '';
+
+    var newBadgeHtml = isNewListing(p)
+      ? '<div style="margin-top:4px;"><span class="badge-new-listing">' +
+          (daysOld(p) < 1
+            ? ({lo:'ໃໝ່ວັນນີ້',en:'New Today',zh:'今天上架'})[lang]
+            : ({lo:'ໃໝ່ອາທິດນີ້',en:'New This Week',zh:'本周新上'})[lang])
+          + '</span></div>'
+      : '';
+
+    card.innerHTML =
+      '<div class="prop-card-img">' +
+        imgHtml +
+        '<div class="ov-tl">' + getBadgeHtml(p, lang, isFeaturedCard) + newBadgeHtml + '</div>' +
+        '<div class="ov-tr">' +
+          '<button class="heart-btn' + (isSaved ? ' saved' : '') + '" data-save="' + slugSafe + '" onclick="toggleSave(\'' + slugSafe + '\',event)" aria-label="Save listing">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1A2428" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+          '</button>' +
+        '</div>' +
+        photoHtml +
+        aiHtml +
+      '</div>' +
+      '<div class="prop-card-body">' +
+        '<p class="card-tag">' +
+          '<span class="lo-i">' + txLabel.lo + '</span>' +
+          '<span class="en-i">' + txLabel.en + '</span>' +
+          '<span class="zh-i">' + txLabel.zh + '</span>' +
+          (typeDisplay ? ' · ' + typeDisplay : '') +
+        '</p>' +
+        (actBadgesHtml ? '<div class="act-badges">' + actBadgesHtml + '</div>' : '') +
+        '<p class="card-title">' + esc(title) + '</p>' +
+        '<p class="card-loc">' +
+          '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2D8C8C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>' +
+          (district ? esc(district) + ', ' : '') +
+          '<span class="lo-i">ວຽງຈັນ</span><span class="en-i">Vientiane</span><span class="zh-i">万象</span>' +
+        '</p>' +
+        (specsHtml ? '<div class="card-specs">' + specsHtml + '</div>' : '') +
+        amenitiesHtml +
+        priceHtml +
+        getAgentHtml(p) +
+        actLineHtml +
+      '</div>';
+
+    if (p.id) {
+      card.addEventListener('click', function() {
+        postEvent('listing_events', {
+          property_id: p.id,
+          event_type: 'click',
+          session_id: getOrCreateSessionId(),
+          source: 'search',
+          search_position: idx + 1
+        });
+      });
+    }
+
+    container.appendChild(card);
+  });
+}
+
+function updateSortLabels() {
+  var lang = getCurrentLang();
+  var sel = document.getElementById('sort-select');
+  if (!sel) return;
+  Array.from(sel.options).forEach(function(opt){
+    var label = opt.getAttribute('data-' + lang);
+    if (label) opt.text = label;
+  });
+}
+
+function setLang(lang, btn) {
+  document.body.className = lang === 'lo' ? '' : 'lang-' + lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  updateSortLabels();
+  renderListings();
+}
+
+loadListings();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src https://*.supabase.co; frame-src 'none'; object-src 'none';">
+<title>Pintag — Discover Properties Across Laos</title>
+<meta name="description" content="Discover properties for sale and rent across Laos. Pintag connects buyers, renters and agents on Laos's premier real estate platform.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Pintag">
+<meta property="og:title" content="Pintag — Discover Properties Across Laos">
+<meta property="og:description" content="Discover properties for sale and rent across Laos. Pintag connects buyers, renters and agents on Laos's premier real estate platform.">
+<meta property="og:url" content="https://pintag.io">
+<meta property="og:image" content="https://pintag.io/og-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pintag.io/og-preview.jpg">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:"DM Sans",sans-serif;-webkit-font-smoothing:antialiased;
+  background:#F7F3EC;color:#1A2024;
+  overflow-x:hidden;
+}
+
+/* ─── LANGUAGE ───────────────────────────────────────────── */
+.lo-i{display:inline;}.en-i{display:none;}.zh-i{display:none;}
+body.lang-en .lo-i{display:none;}body.lang-en .en-i{display:inline;}
+body.lang-zh .lo-i{display:none;}body.lang-zh .zh-i{display:inline;}
+
+/* ─── NAV ──────────────────────────────────────────────── */
+nav{
+  height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;
+  background:#F7F3EC;
+  border-bottom:1px solid rgba(26,32,36,0.07);
+  position:relative;z-index:100;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-text{
+  font-size:15px;font-weight:600;color:#1A2024;
+  letter-spacing:-0.01em;
+}
+.nav-center{
+  display:flex;align-items:center;gap:32px;
+}
+.nav-lang-item{
+  font-size:12px;font-weight:400;color:#8C9598;
+  cursor:pointer;border:none;background:none;
+  font-family:"DM Sans",sans-serif;
+  padding:0;letter-spacing:0.02em;
+  transition:color 0.2s;
+}
+.nav-lang-item.active{color:#1A2024;font-weight:500;}
+.nav-lang-item:hover{color:#1A2024;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-agent-btn{
+  display:flex;align-items:center;gap:7px;
+  background:#1A2024;color:#fff;
+  padding:8px 18px;border-radius:4px;
+  font-size:12px;font-weight:500;
+  text-decoration:none;letter-spacing:0.02em;
+  transition:background 0.2s;
+}
+.nav-agent-btn:hover{background:#2D3C42;}
+.nav-menu-icon{
+  width:36px;height:36px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;cursor:pointer;border:none;background:none;padding:4px;
+}
+.nav-menu-icon span{
+  display:block;width:20px;height:1.5px;
+  background:#1A2024;border-radius:1px;
+}
+
+/* ─── HERO ─────────────────────────────────────────────── */
+.hero{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  height:58vh;min-height:360px;max-height:560px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* panels */
+.panel{
+  position:relative;overflow:hidden;
+  cursor:pointer;text-decoration:none;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:52px;
+  transition:flex 0.55s cubic-bezier(0.4,0,0.2,1);
+  flex:1;
+}
+.panel:hover{flex:1.1;}
+
+.panel-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  transition:transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.panel:hover .panel-bg{transform:scale(1.035);}
+
+/* buyer — warm exterior luxury residential */
+.panel-buyer .panel-bg{
+  background-image:url("https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1400&q=85&auto=format&fit=crop");
+  background-position:center 55%;
+}
+/* agent — warm exterior, matched tone */
+.panel-agent .panel-bg{
+  background-image:url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=85&auto=format&fit=crop");
+  background-position:center 50%;
+}
+
+.panel-overlay{
+  position:absolute;inset:0;
+  transition:opacity 0.5s ease;
+}
+.panel-buyer .panel-overlay{
+  background:linear-gradient(
+    to bottom,
+    rgba(8,14,18,0.18) 0%,
+    rgba(8,14,18,0.42) 45%,
+    rgba(8,14,18,0.68) 100%
+  );
+}
+.panel-agent .panel-overlay{
+  background:linear-gradient(
+    to bottom,
+    rgba(8,14,18,0.18) 0%,
+    rgba(8,14,18,0.40) 45%,
+    rgba(8,14,18,0.66) 100%
+  );
+}
+.panel-buyer:hover .panel-overlay{opacity:0.82;}
+.panel-agent:hover .panel-overlay{opacity:0.82;}
+
+/* vertical divider */
+.hero-divider{
+  position:absolute;left:50%;top:0;bottom:0;
+  width:1px;z-index:10;pointer-events:none;
+  background:linear-gradient(to bottom,
+    transparent 0%,
+    rgba(255,255,255,0.18) 20%,
+    rgba(255,255,255,0.28) 50%,
+    rgba(255,255,255,0.18) 80%,
+    transparent 100%);
+}
+
+/* panel content */
+.panel-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;
+  align-items:center;gap:12px;
+  text-align:center;
+  padding:0 28px;
+}
+.panel-label{
+  font-size:clamp(36px,5.5vw,54px);
+  font-weight:300;color:#fff;
+  letter-spacing:-0.01em;line-height:1.05;
+  text-shadow:0 1px 18px rgba(0,0,0,0.22);
+}
+.panel-sublabel{
+  font-size:clamp(11px,1.2vw,13px);
+  font-weight:300;color:rgba(255,255,255,0.52);
+  letter-spacing:0.07em;text-transform:uppercase;
+}
+.panel-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 22px;
+  border:1px solid rgba(255,255,255,0.32);
+  border-radius:2px;
+  font-size:12px;font-weight:400;
+  color:rgba(255,255,255,0.82);
+  letter-spacing:0.06em;
+  transition:all 0.3s;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  background:rgba(255,255,255,0.06);
+  margin-top:4px;
+}
+.panel:hover .panel-cta{
+  background:rgba(255,255,255,0.14);
+  border-color:rgba(255,255,255,0.55);
+  color:#fff;
+}
+.panel-agent .panel-cta{
+  border-color:rgba(56,168,168,0.45);
+  color:rgba(160,220,220,0.85);
+}
+.panel-agent:hover .panel-cta{
+  background:rgba(56,168,168,0.14);
+  border-color:#38A8A8;
+  color:#5DCFCF;
+}
+.cta-arrow{transition:transform 0.3s;}
+.panel:hover .cta-arrow{transform:translateX(4px);}
+
+/* ─── LOCATION BAND ───────────────────────────────────── */
+.location-band{
+  background:#F7F3EC;
+  padding:14px 40px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  text-align:center;
+}
+.location-pin-row{
+  display:flex;align-items:center;gap:6px;
+  font-size:12.5px;font-weight:500;color:#2D8C8C;
+}
+.location-tagline{
+  font-size:12px;font-weight:300;color:#8C9598;
+  letter-spacing:0.01em;
+}
+
+/* ─── FEATURED SECTION ───────────────────────────────── */
+.featured-section{
+  max-width:1280px;margin:0 auto;
+  padding:28px 40px 64px;
+}
+.featured-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:32px;
+}
+.featured-title-block{}
+.featured-eyebrow{
+  font-size:9px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;
+  color:#2D8C8C;margin-bottom:6px;opacity:0.8;
+}
+.featured-title{
+  font-size:22px;font-weight:400;color:#1A2024;
+  letter-spacing:-0.01em;line-height:1.2;
+}
+.featured-sub{
+  font-size:12px;font-weight:300;color:#8C9598;margin-top:4px;
+}
+.featured-view-all{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:400;color:#2D8C8C;
+  text-decoration:none;letter-spacing:0.02em;
+  transition:gap 0.2s;flex-shrink:0;
+}
+.featured-view-all:hover{gap:9px;}
+
+/* ─── CARD GRID ─────────────────────────────────────────── */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.prop-card{
+  display:block;text-decoration:none;color:inherit;
+  background:transparent;
+  border-radius:3px;
+  overflow:hidden;
+  position:relative;
+  transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.prop-card:hover{transform:translateY(-3px);}
+
+.card-img{
+  position:relative;aspect-ratio:3/4;overflow:hidden;
+  background:#EDE8E0;border-radius:3px;
+}
+.card-img img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.prop-card:hover .card-img img{transform:scale(1.04);}
+.card-img-placeholder{
+  width:100%;height:100%;
+  background:linear-gradient(145deg,#E0DBD3,#CEC9C1);
+}
+
+/* bottom gradient overlay — where metadata lives */
+.card-img::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(
+    to bottom,
+    transparent 30%,
+    rgba(8,12,16,0.55) 70%,
+    rgba(8,12,16,0.82) 100%
+  );
+  pointer-events:none;border-radius:3px;
+}
+
+.card-badge{
+  position:absolute;top:11px;left:11px;z-index:3;
+  font-size:8px;font-weight:400;letter-spacing:0.09em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;color:rgba(255,255,255,0.9);
+  background:rgba(255,255,255,0.14);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.18);
+}
+.card-heart{
+  position:absolute;top:10px;right:10px;z-index:3;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,0.82);
+  backdrop-filter:blur(4px);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* metadata — overlaid on image */
+.card-body{
+  position:absolute;bottom:0;left:0;right:0;z-index:2;
+  padding:14px 14px 16px;
+}
+.card-price-row{
+  display:flex;align-items:baseline;gap:4px;
+  margin-bottom:4px;
+}
+.card-price{
+  font-size:15px;font-weight:500;color:#fff;
+  letter-spacing:-0.01em;line-height:1;
+}
+.card-price-unit{font-size:11px;font-weight:300;color:rgba(255,255,255,0.65);}
+.card-loc{
+  display:flex;align-items:center;gap:4px;
+  font-size:10.5px;color:rgba(255,255,255,0.6);margin-bottom:7px;
+}
+.card-loc svg{opacity:0.7;}
+.card-specs{
+  display:flex;gap:10px;
+}
+.card-spec{
+  display:flex;align-items:center;gap:3px;
+  font-size:10.5px;color:rgba(255,255,255,0.55);
+}
+
+/* loading shimmer */
+.card-shimmer{
+  background:linear-gradient(90deg,#EDE8E0 25%,#E4E0D8 50%,#EDE8E0 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.shimmer-card{
+  background:#fff;border-radius:3px;
+  border:1px solid rgba(26,32,36,0.07);overflow:hidden;
+}
+.shimmer-img{aspect-ratio:4/3;width:100%;}
+.shimmer-body{padding:14px 15px;}
+.shimmer-line{height:12px;border-radius:2px;margin-bottom:8px;}
+.shimmer-line.wide{width:70%;}
+.shimmer-line.mid{width:50%;}
+.shimmer-line.short{width:35%;}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:1000px){
+  .card-grid{grid-template-columns:repeat(2,1fr);gap:14px;}
+}
+@media(max-width:700px){
+  nav{padding:0 16px;}
+  .nav-center{gap:18px;}
+  .hero{height:52vh;min-height:300px;}
+  .panel-label{font-size:clamp(30px,9vw,46px);}
+  .featured-section{padding:24px 16px 48px;}
+  .card-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .location-band{padding:12px 20px 10px;}
+  .featured-header{flex-direction:column;align-items:flex-start;gap:10px;}
+}
+@media(max-width:480px){
+  .hero{grid-template-columns:1fr;grid-template-rows:1fr 1fr;height:60vh;}
+  .hero-divider{left:0;right:0;top:50%;bottom:auto;width:100%;height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,0.2),transparent);}
+  .panel:hover{flex:1.04;}
+  .panel{padding-bottom:32px;}
+  .card-grid{grid-template-columns:1fr 1fr;gap:10px;}
+}
+
+/* ─── CARD AGENT ROW ─────────────────────────────────────── */
+.card-agent-row{
+  display:flex;align-items:center;gap:5px;
+  padding-top:7px;margin-top:7px;
+  border-top:1px solid rgba(255,255,255,0.10);
+  font-size:9.5px;color:rgba(255,255,255,0.42);
+  letter-spacing:0.02em;overflow:hidden;
+}
+.card-agent-pfp{
+  width:15px;height:15px;border-radius:50%;
+  overflow:hidden;background:rgba(255,255,255,0.15);
+  flex-shrink:0;
+}
+.card-agent-pfp img{width:100%;height:100%;object-fit:cover;object-position:top;}
+.card-agent-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* ─── FOOTER ─────────────────────────────────────────────── */
+.site-footer{
+  padding:18px 40px;
+  border-top:1px solid rgba(26,32,36,0.07);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+  background:#F7F3EC;
+}
+.footer-brand{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:500;color:#1A2024;
+  text-decoration:none;
+}
+.footer-right{
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+.footer-link{
+  font-size:11.5px;color:#8C9598;text-decoration:none;
+  letter-spacing:0.02em;transition:color 0.2s;
+}
+.footer-link:hover{color:#2D8C8C;}
+.footer-sep{color:rgba(26,32,36,0.15);font-size:11px;}
+@media(max-width:700px){
+  .site-footer{padding:14px 16px;}
+  .footer-right{gap:12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="28" height="24" viewBox="0 0 46 38" fill="none" shape-rendering="geometricPrecision">
+      <circle cx="11" cy="10" r="8.5" fill="#38A8A8"/>
+      <circle cx="27" cy="14" r="3.5" fill="#1C2B32"/>
+    </svg>
+    <span class="logo-text">Pintag</span>
+  </a>
+  <div class="nav-center">
+    <button class="nav-lang-item active" onclick="setLang('lo',this)">ລາວ</button>
+    <button class="nav-lang-item" onclick="setLang('en',this)">EN</button>
+    <button class="nav-lang-item" onclick="setLang('zh',this)">中文</button>
+  </div>
+  <div class="nav-right">
+    <a href="for-agents.html" class="nav-agent-btn" data-track="nav-agent-login" data-track-type="cta" data-track-label="Agent login">
+      <span class="lo-i">ເຂົ້າສູ່ລະບົບ</span>
+      <span class="en-i">Agent login</span>
+      <span class="zh-i">经纪登录</span>
+    </a>
+    <button class="nav-menu-icon" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO SPLIT -->
+<section class="hero">
+  <div class="hero-divider"></div>
+
+  <!-- BUYER -->
+  <a href="listings.html" class="panel panel-buyer" data-track="home-buyer-panel" data-track-type="panel" data-track-label="Buyer panel — Browse listings">
+    <div class="panel-bg"></div>
+    <div class="panel-overlay"></div>
+    <div class="panel-content">
+      <p class="panel-label">ຜູ້ຊື້</p>
+      <p class="panel-sublabel">
+        <span class="lo-i">ຊື້ ເຊົ່າ ດິນ</span>
+        <span class="en-i">Buy &middot; Rent &middot; Land</span>
+        <span class="zh-i">购房 &middot; 租房 &middot; 土地</span>
+      </p>
+      <div class="panel-cta">
+        <span class="lo-i">ເບິ່ງລາຍການ</span>
+        <span class="en-i">Browse listings</span>
+        <span class="zh-i">浏览房源</span>
+        <svg class="cta-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- AGENT -->
+  <a href="for-agents.html" class="panel panel-agent" data-track="home-agent-panel" data-track-type="panel" data-track-label="Agent panel — List your property">
+    <div class="panel-bg"></div>
+    <div class="panel-overlay"></div>
+    <div class="panel-content">
+      <p class="panel-label">ຜູ້ຂາຍ</p>
+      <p class="panel-sublabel">
+        <span class="lo-i">Agent &middot; ນາຍໜ້າ</span>
+        <span class="en-i">List Your Property</span>
+        <span class="zh-i">发布房源</span>
+      </p>
+      <div class="panel-cta">
+        <span class="lo-i">ລົງປະກາດ</span>
+        <span class="en-i">Get started</span>
+        <span class="zh-i">立即发布</span>
+        <svg class="cta-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </div>
+  </a>
+</section>
+
+<!-- LOCATION BAND -->
+<div class="location-band">
+  <div class="location-pin-row">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    <span class="lo-i">ວຽງຈັນ, ປະເທດລາວ</span>
+    <span class="en-i">Vientiane, Laos</span>
+    <span class="zh-i">万象，老挝</span>
+  </div>
+  <p class="location-tagline">
+    <span class="lo-i">ເຂົ້າສູ່ທຸກທຳເລ. ເລືອກສິ່ງທີ່ໃຊ້ສຳຄັນ.</span>
+    <span class="en-i">Explore every opportunity. Find what matters.</span>
+    <span class="zh-i">探索每一个机遇。找到所需。</span>
+  </p>
+</div>
+
+<!-- FEATURED LISTINGS -->
+<section class="featured-section">
+  <div class="featured-header">
+    <div class="featured-title-block">
+      <p class="featured-eyebrow">
+        <span class="lo-i">ຊັບສິນແນະນຳ</span>
+        <span class="en-i">Featured</span>
+        <span class="zh-i">精选房源</span>
+      </p>
+      <h2 class="featured-title">
+        <span class="lo-i">ຊັບສິນຫຼ້າສຸດ</span>
+        <span class="en-i">Latest Properties</span>
+        <span class="zh-i">最新房源</span>
+      </h2>
+      <p class="featured-sub">
+        <span class="lo-i">ເລືອກກັບທີ່ມີຄຸນນະພາບ ຈາກທຳເລີຍແທ້</span>
+        <span class="en-i">Curated quality from verified agents</span>
+        <span class="zh-i">经认证经纪颉选优质房源</span>
+      </p>
+    </div>
+    <a href="listings.html" class="featured-view-all" data-track="home-featured-view-all" data-track-type="cta" data-track-label="View all listings">
+      <span class="lo-i">ເບິ່ງທັງຫມດ</span>
+      <span class="en-i">View all</span>
+      <span class="zh-i">查看全部</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+  <div id="card-grid" class="card-grid">
+    <!-- shimmer placeholders -->
+    <div class="shimmer-card"><div class="shimmer-img card-shimmer"></div><div class="shimmer-body"><div class="shimmer-line wide card-shimmer"></div><div class="shimmer-line mid card-shimmer"></div><div class="shimmer-line short card-shimmer"></div></div></div>
+    <div class="shimmer-card"><div class="shimmer-img card-shimmer"></div><div class="shimmer-body"><div class="shimmer-line wide card-shimmer"></div><div class="shimmer-line mid card-shimmer"></div><div class="shimmer-line short card-shimmer"></div></div></div>
+    <div class="shimmer-card"><div class="shimmer-img card-shimmer"></div><div class="shimmer-body"><div class="shimmer-line wide card-shimmer"></div><div class="shimmer-line mid card-shimmer"></div><div class="shimmer-line short card-shimmer"></div></div></div>
+    <div class="shimmer-card"><div class="shimmer-img card-shimmer"></div><div class="shimmer-body"><div class="shimmer-line wide card-shimmer"></div><div class="shimmer-line mid card-shimmer"></div><div class="shimmer-line short card-shimmer"></div></div></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <a href="index.html" class="footer-brand">
+    <svg width="20" height="17" viewBox="0 0 46 38" fill="none" shape-rendering="geometricPrecision">
+      <circle cx="11" cy="10" r="8.5" fill="#38A8A8"/>
+      <circle cx="27" cy="14" r="3.5" fill="#1C2B32"/>
+    </svg>
+    Pintag
+  </a>
+  <div class="footer-right">
+    <span class="footer-link">ວຽງຈັນ, ລາວ</span>
+    <span class="footer-sep">·</span>
+    <a href="listings.html" class="footer-link" data-track="footer-listings-link" data-track-type="cta" data-track-label="Footer — Listings">Listings</a>
+    <span class="footer-sep">·</span>
+    <a href="for-agents.html" class="footer-link" data-track="footer-for-agents-link" data-track-type="cta" data-track-label="Footer — For Agents">For Agents</a>
+    <span class="footer-sep">·</span>
+    <a href="https://wa.me/85620542966655" class="footer-link" target="_blank" rel="noopener" data-track="footer-whatsapp-link" data-track-type="cta" data-track-label="Footer — WhatsApp">WhatsApp</a>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="dev-banner.js"></script>
+<script src="terminology.js"></script>
+<script src="session.js"></script>
+<script src="tracking.js"></script>
+<script>
+const SB_URL = window.PINTAG.supabaseUrl;
+const SB_KEY = window.PINTAG.anonKey;
+
+// ── BEHAVIORAL EVENT TRACKING (Intelligence layer) ────
+// Pure instrumentation of the existing featured-cards fetch/render — no
+// change to what's shown or how it's chosen. Fire-and-forget.
+function postEvent(table, body) {
+  fetch(SB_URL + '/rest/v1/' + table, {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(body),
+    keepalive: true
+  }).catch(function(){});
+}
+
+function postHomepageImpressions(props) {
+  var sessionId = getOrCreateSessionId();
+  var rows = (props || []).filter(function(p){ return p.id; }).map(function(p, idx){
+    return { property_id: p.id, event_type: 'impression', session_id: sessionId, source: 'homepage', search_position: idx + 1 };
+  });
+  if (rows.length) postEvent('listing_events', rows);
+}
+
+(function() {
+  var grid = document.getElementById('card-grid');
+  if (!grid) return;
+  grid.addEventListener('click', function(e) {
+    var a = e.target.closest('.prop-card');
+    if (!a) return;
+    var pid = a.getAttribute('data-pid');
+    if (!pid) return;
+    postEvent('listing_events', {
+      property_id: pid,
+      event_type: 'click',
+      session_id: getOrCreateSessionId(),
+      source: 'homepage',
+      search_position: parseInt(a.getAttribute('data-position'), 10) || null
+    });
+  });
+})();
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function setLang(lang, btn) {
+  document.body.className = lang === 'lo' ? '' : 'lang-' + lang;
+  document.querySelectorAll('.nav-lang-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards(window._props || [], lang);
+}
+
+function getCurrentLang() {
+  if (document.body.classList.contains('lang-en')) return 'en';
+  if (document.body.classList.contains('lang-zh')) return 'zh';
+  return 'lo';
+}
+
+async function loadFeatured() {
+  try {
+    const res = await fetch(SB_URL + '/rest/v1/properties?or=(status.neq.draft,status.is.null)&order=is_featured.desc,created_at.desc&limit=4&select=*,contacts(name),parties(type,name_en,photo_url)', {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    const data = await res.json();
+    window._props = data;
+    renderCards(data, getCurrentLang());
+    postHomepageImpressions(data);
+  } catch(e) {
+    document.getElementById('card-grid').innerHTML = '';
+  }
+}
+
+function renderCards(props, lang) {
+  const grid = document.getElementById('card-grid');
+  if (!props || !props.length) { grid.innerHTML = ''; return; }
+
+  const PIN_SVG = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+  const HEART_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1A2024" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+
+  const txL = {
+    sale:    { lo: 'ຂາຍ',      en: 'Sale',        zh: '出售' },
+    rent:    { lo: 'ເຊົ່າ',    en: 'Rent',        zh: '租房' },
+    sor:     { lo: 'ຊື້/ເຊົ່າ', en: 'Sale or Rent', zh: '售/租' }
+  };
+  const perMo = { lo: '/ ເດືອນ', en: '/ mo', zh: '/ 月' };
+  const cityL = { lo: 'ວຽງຈັນ', en: 'Vientiane', zh: '万象' };
+
+  grid.innerHTML = props.map((p, idx) => {
+    const district = esc(p['district_' + lang] || p.district_en || '');
+    const isSale = p.transaction_type === 'for_sale' || p.transaction_type === 'sale';
+    const isSor  = p.transaction_type === 'sale_or_rent';
+    const tx = isSor ? txL.sor[lang] : isSale ? txL.sale[lang] : txL.rent[lang];
+    const badgeClass = isSor ? 'badge-sor' : isSale ? 'badge-sale' : 'badge-rent';
+    const imgHtml = (p.images && p.images.length)
+      ? '<img src="' + esc(p.images[0]) + '" alt="" loading="lazy">'
+      : '<div class="card-img-placeholder"></div>';
+    // Card facts driven by PROPERTY_TYPE_DISPLAY (terminology.js) — same
+    // per-type schema listings.html/listing.html use, kept icon+value only
+    // here to match this page's more compact card.
+    const cardFacts = (typeof getCardFacts === 'function') ? getCardFacts(p.property_type, p, lang) : [];
+    const specs = cardFacts.map(f => '<span class="card-spec">' + f.icon + ' ' + esc(String(f.value)) + '</span>');
+    const priceUnit = (!isSale && !isSor && p.price_display) ? '<span class="card-price-unit">' + perMo[lang] + '</span>' : '';
+    const sorPriceHtml = isSor && (p.sale_price || p.rent_price)
+      ? (p.sale_price ? esc(p.sale_price) : '') + (p.sale_price && p.rent_price ? ' / ' : '') + (p.rent_price ? esc(p.rent_price) : '')
+      : null;
+    // Only show a photo when this listing is linked to a real Pintag Agent
+    // Profile — otherwise just the contact's name, with no avatar implying
+    // it's a Pintag agent when it might be the owner or a reception desk.
+    const isLinkedAgent = !!(p.parties && p.parties.type === 'agent');
+    const agentName = esc((isLinkedAgent ? p.parties.name_en : (p.contacts && p.contacts.name)) || '');
+    const agentPhoto = esc((isLinkedAgent && p.parties.photo_url) || '');
+    const agentHtml = agentName
+      ? '<div class="card-agent-row">' +
+          (agentPhoto ? '<div class="card-agent-pfp"><img src="' + agentPhoto + '" alt="" loading="lazy"></div>' : '') +
+          '<span class="card-agent-name">' + agentName + '</span>' +
+        '</div>'
+      : '';
+    return '<a href="listing.html?slug=' + encodeURIComponent(p.slug) + '" class="prop-card" data-pid="' + esc(p.id||'') + '" data-position="' + (idx+1) + '"' +
+      ' data-track="home-featured-card" data-track-type="card" data-track-property-id="' + esc(p.id||'') + '" data-track-label="' + esc(p['title_' + lang] || p.title_en || '') + '" data-track-meta=\'' + esc(JSON.stringify({position: idx + 1})) + '\'>' +
+      '<div class="card-img">' +
+        imgHtml +
+        '<span class="card-badge ' + badgeClass + '">' + tx + '</span>' +
+        '<button class="card-heart" onclick="event.preventDefault()">' + HEART_SVG + '</button>' +
+      '</div>' +
+      '<div class="card-body">' +
+        '<div class="card-price-row">' +
+          '<span class="card-price">' + (sorPriceHtml || esc(p.price_display || '—')) + '</span>' + priceUnit +
+        '</div>' +
+        '<div class="card-loc">' + PIN_SVG + (district ? district + ', ' : '') + cityL[lang] + '</div>' +
+        (specs.length ? '<div class="card-specs">' + specs.join('') + '</div>' : '') +
+        agentHtml +
+      '</div>' +
+    '</a>';
+  }).join('');
+}
+
+loadFeatured();
+</script>
+</body>
+</html>
