@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src https://*.supabase.co; frame-src 'none'; object-src 'none';">
+<title>Pintag · Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --teal:#2D8C8C;--teal-light:#38A8A8;
+  --ink:#1C2B32;--ink-soft:#3D5058;--ink-muted:#7A9098;
+  --warm:#F7F3EC;--warm-deep:#EDE8DF;--white:#FFFFFF;
+  --border:rgba(26,36,40,0.07);--wa:#1A9E50;
+  --fb:#1877F2;
+}
+body{font-family:'DM Sans',sans-serif;font-weight:400;background:var(--white);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:300;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(255,255,255,0.97);backdrop-filter:blur(24px);border-bottom:1px solid rgba(26,36,40,0.05);}
+.nav-logo{display:flex;align-items:center;gap:6px;text-decoration:none;}
+.nav-wordmark{font-size:18px;font-weight:800;color:#1C2B32;letter-spacing:-0.02em;line-height:1;}
+.nav-back{font-size:12px;font-weight:500;color:var(--ink-muted);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color 0.2s;letter-spacing:0.04em;text-transform:uppercase;}
+.nav-back:hover{color:var(--teal);}
+
+/* LOADING */
+.loading-screen{display:flex;align-items:center;justify-content:center;height:100vh;}
+.loading-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:ldot 1.2s ease-in-out infinite;}
+@keyframes ldot{0%,100%{opacity:0.25;transform:scale(0.8);}50%{opacity:1;transform:scale(1.2);}}
+
+/* HERO */
+.agent-hero{
+  margin-top:54px;
+  position:relative;
+  background:var(--warm);
+  overflow:hidden;
+}
+
+/* Slow property crossfade — atmosphere only */
+.hero-bg-reel{position:absolute;inset:0;z-index:0;}
+.hero-bg-slide{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;object-position:center 45%;
+  opacity:0;
+  transition:opacity 2s ease-in-out;
+}
+.hero-bg-slide.active{opacity:0.14;}
+
+/* Warm overlay */
+.hero-warm-overlay{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(
+    135deg,
+    rgba(247,243,236,0.97) 0%,
+    rgba(247,243,236,0.92) 55%,
+    rgba(247,243,236,0.78) 100%
+  );
+}
+
+/* Two-column hero layout */
+.hero-layout{
+  position:relative;z-index:2;
+  display:grid;
+  grid-template-columns:1fr 308px;
+  gap:32px;
+  max-width:980px;
+  margin:0 auto;
+  padding:48px 28px 48px;
+  align-items:start;
+}
+
+/* LEFT: agent identity */
+.hero-left{display:flex;align-items:flex-start;gap:20px;}
+
+.hero-portrait{
+  width:88px;height:88px;
+  border-radius:50%;overflow:hidden;
+  flex-shrink:0;
+  border:2px solid rgba(26,36,40,0.1);
+  background:var(--warm-deep);
+  margin-top:2px;
+}
+.hero-portrait img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;}
+.hero-portrait-initial{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--teal);}
+
+.hero-credential{
+  font-size:9px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:9px;display:none;align-items:center;gap:5px;
+}
+.hero-credential svg{flex-shrink:0;}
+.hero-name{
+  font-size:clamp(26px,3.6vw,38px);font-weight:800;
+  color:var(--ink);letter-spacing:-0.04em;line-height:1.0;
+  margin-bottom:6px;
+}
+.hero-role{font-size:13px;font-weight:400;color:var(--ink-muted);margin-bottom:16px;letter-spacing:0.01em;}
+.hero-bio{
+  font-size:15px;font-weight:400;color:var(--ink-soft);
+  line-height:1.82;
+}
+
+/* RIGHT: contact + social */
+.hero-right{display:flex;flex-direction:column;gap:10px;}
+
+/* Contact card */
+.contact-card{
+  background:rgba(255,255,255,0.97);
+  border:1px solid rgba(26,36,40,0.09);
+  border-radius:10px;
+  padding:20px;
+  box-shadow:0 2px 18px rgba(26,36,40,0.07);
+}
+.contact-card-label{
+  font-size:10px;font-weight:600;letter-spacing:0.14em;
+  text-transform:uppercase;color:var(--ink-muted);margin-bottom:14px;
+}
+.contact-btns{display:flex;flex-direction:column;gap:9px;}
+.btn-contact{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  width:100%;padding:13px 16px;
+  color:#fff;font-size:14px;font-weight:500;
+  text-decoration:none;border-radius:6px;
+  transition:filter 0.18s;letter-spacing:0.01em;
+  font-family:'DM Sans',sans-serif;
+}
+.btn-contact:hover{filter:brightness(1.07);}
+.btn-contact:active{filter:brightness(0.92);}
+.btn-wa-c{background:var(--wa);box-shadow:0 2px 10px rgba(26,158,80,0.18);}
+
+/* Social cards */
+.social-card{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,0.97);
+  border:1px solid rgba(26,36,40,0.09);
+  border-radius:10px;
+  padding:14px 16px;
+  text-decoration:none;
+  transition:box-shadow 0.22s,transform 0.22s;
+  box-shadow:0 1px 6px rgba(26,36,40,0.05);
+}
+.social-card:hover{box-shadow:0 4px 18px rgba(26,36,40,0.11);transform:translateY(-1px);}
+.social-icon-wrap{
+  width:36px;height:36px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.social-icon-tk{background:#000;}
+.social-icon-fb{background:var(--fb);}
+.social-card-info{flex:1;min-width:0;}
+.social-card-name{
+  font-size:12px;font-weight:600;color:var(--ink);letter-spacing:0.01em;
+  margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.social-card-action{font-size:11px;color:var(--ink-muted);}
+.social-card-arrow{color:var(--ink-muted);opacity:0.45;flex-shrink:0;display:flex;align-items:center;}
+
+/* PORTFOLIO */
+.portfolio-wrap{padding:32px 28px 64px;max-width:980px;margin:0 auto;}
+.portfolio-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px;}
+.portfolio-title{font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-0.01em;}
+.portfolio-count{font-size:12px;color:var(--ink-muted);}
+
+.portfolio-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+.portfolio-grid .p-card:first-child{grid-column:1/-1;}
+.portfolio-grid .p-card:first-child .p-img{aspect-ratio:16/9;}
+.portfolio-grid .p-card:first-child .p-img img{object-position:center 50%;}
+.portfolio-grid .p-card:first-child .p-price{font-size:17px;}
+
+.p-card{display:block;text-decoration:none;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
+.p-card:hover{transform:translateY(-3px);}
+.p-img{aspect-ratio:4/3;overflow:hidden;background:var(--warm);border-radius:6px;position:relative;}
+.p-img img{width:100%;height:100%;object-fit:cover;object-position:center 45%;display:block;transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);}
+.p-card:hover .p-img img{transform:scale(1.04);}
+
+.p-tx{
+  position:absolute;top:9px;left:9px;
+  background:rgba(255,255,255,0.93);
+  font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink-soft);padding:3px 8px;border-radius:3px;
+}
+.p-tx-rent{background:rgba(45,140,140,0.13);color:var(--teal);}
+.p-tx-sor{background:rgba(139,92,246,0.12);color:#7C3AED;}
+.p-featured-dot{position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%;background:var(--teal-light);box-shadow:0 0 0 2px rgba(255,255,255,0.6);}
+
+.p-body{padding:11px 2px 0;}
+.p-price{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.02em;line-height:1;margin-bottom:4px;}
+.p-loc{font-size:11px;color:var(--ink-muted);}
+
+/* Empty portfolio fallback */
+.portfolio-fallback{grid-column:1/-1;border-radius:6px;overflow:hidden;position:relative;}
+.portfolio-fallback img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:center 50%;display:block;opacity:0.5;}
+.portfolio-fallback-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.portfolio-fallback-text{font-size:13px;font-weight:400;color:var(--ink-muted);letter-spacing:0.04em;}
+
+.page-footer{padding:20px 24px 40px;text-align:center;border-top:1px solid var(--border);}
+.page-footer p{font-size:12px;color:var(--ink-muted);letter-spacing:0.04em;}
+
+/* MOTION */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.fu{animation:fadeUp 0.45s cubic-bezier(0.4,0,0.2,1) both;}
+.fu1{animation-delay:0s;}.fu2{animation-delay:0.08s;}.fu3{animation-delay:0.16s;}.fu4{animation-delay:0.24s;}
+@media(prefers-reduced-motion:reduce){.fu{animation:none;} .hero-bg-slide{transition:none;}}
+
+/* RESPONSIVE */
+@media(max-width:760px){
+  .hero-layout{
+    grid-template-columns:1fr;
+    padding:36px 20px 32px;
+    gap:24px;
+  }
+  .hero-portrait{width:72px;height:72px;}
+  .hero-name{font-size:28px;}
+  .portfolio-wrap{padding:28px 20px 56px;}
+  .portfolio-grid{gap:12px;}
+}
+@media(max-width:400px){
+  .hero-left{gap:14px;}
+  .hero-portrait{width:64px;height:64px;}
+}
+</style>
+</head>
+<body>
+<div class="loading-screen" id="loading"><div class="loading-dot"></div></div>
+<div id="page" style="display:none;">
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="28" height="24" viewBox="0 0 46 38" fill="none" shape-rendering="geometricPrecision">
+      <circle cx="11" cy="10" r="8.5" fill="#38A8A8"/>
+      <circle cx="27" cy="14" r="3.5" fill="#1C2B32"/>
+    </svg>
+    <span class="nav-wordmark">Pintag</span>
+  </a>
+  <a href="for-agents.html" class="nav-back">← Pintag</a>
+</nav>
+
+<!-- HERO: identity left, contact + social right -->
+<div class="agent-hero" id="agent-hero">
+  <div class="hero-bg-reel" id="hero-reel"></div>
+  <div class="hero-warm-overlay"></div>
+  <div class="hero-layout">
+
+    <!-- LEFT: agent identity -->
+    <div class="hero-left fu fu1">
+      <div class="hero-portrait" id="hero-portrait">
+        <div class="hero-portrait-initial" id="hero-initial">?</div>
+      </div>
+      <div class="hero-text">
+        <span class="hero-credential" id="hero-credential">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <circle cx="6" cy="6" r="6" fill="#2D8C8C"/>
+            <path d="M3.5 6l1.8 1.8L8.5 4.2" stroke="white" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          VERIFIED AGENT
+        </span>
+        <h1 class="hero-name" id="hero-name">—</h1>
+        <p class="hero-role" id="hero-role">Property Advisor · ວຽງຈັນ</p>
+        <p class="hero-bio" id="hero-bio" style="display:none;"></p>
+      </div>
+    </div>
+
+    <!-- RIGHT: contact card + social cards -->
+    <div class="hero-right fu fu2">
+      <div class="contact-card">
+        <p class="contact-card-label">ຕິດຕໍ່ຕົວແທນ</p>
+        <div class="contact-btns">
+          <a href="#" id="wa-btn" target="_blank" class="btn-contact btn-wa-c" data-track="agent-whatsapp" data-track-type="cta" data-track-label="WhatsApp agent">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <span id="wa-label">WhatsApp</span>
+          </a>
+        </div>
+      </div>
+      <div id="social-cards"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PORTFOLIO -->
+<div class="portfolio-wrap fu fu3">
+  <div class="portfolio-header">
+    <span class="portfolio-title" id="portfolio-title">ອະສັງຫາລິມະຊັບ</span>
+    <span class="portfolio-count" id="portfolio-count"></span>
+  </div>
+  <div class="portfolio-grid" id="portfolio-grid"></div>
+</div>
+
+<div class="page-footer"><p>Pintag · pintag.io</p></div>
+</div>
+
+<script src="config.js"></script>
+<script src="dev-banner.js"></script>
+<script src="session.js"></script>
+<script src="tracking.js"></script>
+<script>
+const SB=window.PINTAG.supabaseUrl;
+const KEY=window.PINTAG.anonKey;
+
+// ── Behavioral event tracking (Intelligence layer) ─────────────────
+function postEvent(table,body){
+  fetch(SB+'/rest/v1/'+table,{
+    method:'POST',
+    headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify(body),
+    keepalive:true
+  }).catch(function(){});
+}
+const FALLBACK='https://pintag-cyrora.github.io/pintag/pintag-interior.png';
+
+function esc(s){if(s==null)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+const slug=new URLSearchParams(location.search).get('slug');
+
+var interiorKW=['interior','living','bedroom','kitchen','dining','sofa','bathroom'];
+var exteriorKW=['cover','facade','exterior','drone','front'];
+function pickWarmImg(images){
+  if(!images||!images.length) return null;
+  function score(url){
+    var u=(url||'').toLowerCase();
+    for(var i=0;i<interiorKW.length;i++) if(u.includes(interiorKW[i])) return 2;
+    for(var i=0;i<exteriorKW.length;i++) if(u.includes(exteriorKW[i])) return 0;
+    return 1;
+  }
+  return images.slice().sort(function(a,b){return score(b)-score(a);})[0]||null;
+}
+
+function startReel(images){
+  var reel=document.getElementById('hero-reel');
+  if(!reel||!images||images.length<1) return;
+  var slides=images.slice(0,4);
+  slides.forEach(function(src,i){
+    var img=document.createElement('img');
+    img.className='hero-bg-slide'+(i===0?' active':'');
+    img.src=src;img.alt='';img.loading=i===0?'eager':'lazy';
+    reel.appendChild(img);
+  });
+  if(slides.length<2) return;
+  var cur=0;
+  setInterval(function(){
+    var allSlides=reel.querySelectorAll('.hero-bg-slide');
+    allSlides[cur].classList.remove('active');
+    cur=(cur+1)%allSlides.length;
+    allSlides[cur].classList.add('active');
+  },7000);
+}
+
+function extractHandle(url){
+  if(!url) return null;
+  try{
+    var m=url.match(/@([\w.]+)/);
+    if(m) return '@'+m[1];
+    var clean=url.replace(/\/$/, '').replace(/\?.*$/,'');
+    var parts=clean.split('/');
+    var last=parts[parts.length-1];
+    if(last&&last.length>1) return '@'+last;
+  }catch(e){}
+  return null;
+}
+
+function buildSocialCard(url, iconClass, iconSvg, handle, actionText){
+  var card=document.createElement('a');
+  card.href=url;card.target='_blank';card.rel='noopener noreferrer';
+  card.className='social-card';
+
+  var iconWrap=document.createElement('div');
+  iconWrap.className='social-icon-wrap '+iconClass;
+  iconWrap.innerHTML=iconSvg;
+
+  var info=document.createElement('div');
+  info.className='social-card-info';
+
+  var nameEl=document.createElement('div');
+  nameEl.className='social-card-name';
+  nameEl.textContent=handle;
+
+  var actionEl=document.createElement('div');
+  actionEl.className='social-card-action';
+  actionEl.textContent=actionText;
+
+  info.appendChild(nameEl);info.appendChild(actionEl);
+
+  var arrow=document.createElement('span');
+  arrow.className='social-card-arrow';
+  arrow.innerHTML='<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  card.appendChild(iconWrap);card.appendChild(info);card.appendChild(arrow);
+  return card;
+}
+
+function renderSocialCards(a){
+  var container=document.getElementById('social-cards');
+  if(!container) return;
+
+  if(a.tiktok_url){
+    var handle=extractHandle(a.tiktok_url)||'TikTok';
+    var tkSvg='<svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>';
+    container.appendChild(buildSocialCard(a.tiktok_url,'social-icon-tk',tkSvg,handle,'ຕິດຕາມໃນ TikTok'));
+  }
+
+  if(a.facebook_url){
+    var fbHandle=extractHandle(a.facebook_url)||'Facebook';
+    var fbSvg='<svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
+    container.appendChild(buildSocialCard(a.facebook_url,'social-icon-fb',fbSvg,fbHandle,'ເບິ່ງໃນ Facebook'));
+  }
+}
+
+function showError(msg){
+  document.getElementById('loading').innerHTML=
+    '<div style="padding:40px 24px;text-align:center;font-family:DM Sans,sans-serif;max-width:320px;margin:0 auto;">'+
+    '<p style="color:#7A9098;font-size:14px;line-height:1.8;margin-bottom:20px;">'+msg+'</p>'+
+    '<a href="for-agents.html" style="color:#2D8C8C;font-size:14px;text-decoration:none;">← Pintag</a></div>';
+}
+
+async function load(){
+  if(!slug){showError('ບໍ່ພົບໂປຣໄຟລ໌ຕົວແທນ');return;}
+  var ctrl=new AbortController();
+  var t=setTimeout(function(){ctrl.abort();},8000);
+  try{
+    var r=await fetch(SB+'/rest/v1/parties?type=eq.agent&slug=eq.'+encodeURIComponent(slug)+'&limit=1',
+      {headers:{'apikey':KEY,'Authorization':'Bearer '+KEY},signal:ctrl.signal});
+    clearTimeout(t);
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var ag=await r.json();
+    console.log('Resolved slug:', slug);
+    console.log('Agent object:', ag);
+    if(!ag||!ag[0]) throw new Error('Agent not found');
+    var a=ag[0];
+    console.log('Agent ID:', a.id);
+    var r2=await fetch(
+      SB+'/rest/v1/properties?managed_by_party_id=eq.'+encodeURIComponent(a.id)+'&order=is_featured.desc,created_at.desc&select=id,slug,title_lo,title_en,price_display,district_lo,district_en,images,transaction_type,is_featured',
+      {headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}});
+    var listings=await r2.json();
+    console.log('Listings returned:', listings);
+    if(!Array.isArray(listings)) listings=[];
+    render(a,listings);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('page').style.display='block';
+  }catch(err){
+    clearTimeout(t);
+    showError(err.name==='AbortError'?'ການໂຫຼດໃຊ້ເວລາດົນ — ກະລຸນາລອງໃໝ່':'ບໍ່ສາມາດໂຫຼດຂໍ້ມູນໄດ້');
+  }
+}
+
+function render(a,listings){
+  document.title='Pintag · '+(a.name_en||a.name_lo||'Agent');
+  var initial=(a.name_en||a.name_lo||'A').charAt(0).toUpperCase();
+
+  // Portrait
+  var safeInitial=esc(initial);
+  document.getElementById('hero-initial').textContent=initial;
+  if(a.photo_url){
+    var port=document.getElementById('hero-portrait');
+    var img=document.createElement('img');
+    img.alt='';img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:top center;display:block;';
+    img.onerror=function(){this.onerror=null;port.innerHTML='<div class="hero-portrait-initial">'+safeInitial+'</div>';};
+    img.src=a.photo_url;port.innerHTML='';port.appendChild(img);
+  }
+
+  // Credential
+  if(a.is_verified) document.getElementById('hero-credential').style.display='flex';
+
+  // Name
+  document.getElementById('hero-name').textContent=a.name_lo||a.name_en||'Agent';
+
+  // Role
+  var roleEl=document.getElementById('hero-role');
+  roleEl.textContent=a.agency_name?a.agency_name+' · ວຽງຈັນ':'ຕົວແທນອະສັງຫາ · ວຽງຈັນ';
+
+  // Bio
+  var bio=a.bio_lo||a.bio_en||'';
+  if(bio){
+    var bioEl=document.getElementById('hero-bio');
+    bioEl.textContent=bio;
+    bioEl.style.display='block';
+  }
+
+  // WhatsApp
+  var waN=(a.whatsapp||'').replace(/[^0-9]/g,'');
+  var waM=encodeURIComponent('ສະບາຍດີ '+(a.name_lo||a.name_en||'')+', ຂ້ອຍຢາກສອບຖາມກ່ຽວກັບລາຍການ Pintag ຂອງທ່ານ');
+  document.getElementById('wa-btn').href='https://wa.me/'+waN+'?text='+waM;
+  document.getElementById('wa-label').textContent='WhatsApp · '+(a.name_lo||a.name_en||'');
+
+  // Social cards
+  renderSocialCards(a);
+
+  // Background reel
+  var reelImgs=[];
+  listings.forEach(function(l){
+    if(l.images&&l.images.length) reelImgs.push(l.images[0]);
+  });
+  if(reelImgs.length) startReel(reelImgs);
+
+  // Portfolio header
+  var agentName=a.name_lo||a.name_en||'';
+  document.getElementById('portfolio-title').textContent=agentName?'ລາຍການຂອງ '+agentName:'ອະສັງຫາລິມະຊັບ';
+  if(listings.length) document.getElementById('portfolio-count').textContent=listings.length+' ລາຍການ';
+
+  // Portfolio grid
+  var grid=document.getElementById('portfolio-grid');
+  if(!listings.length){
+    var fb=document.createElement('div');fb.className='portfolio-fallback';
+    var fbImg=document.createElement('img');fbImg.src=FALLBACK;fbImg.alt='';fb.appendChild(fbImg);
+    var fbOv=document.createElement('div');fbOv.className='portfolio-fallback-overlay';
+    var fbTxt=document.createElement('p');fbTxt.className='portfolio-fallback-text';
+    fbTxt.textContent='ລາຍການກຳລັງຈະມາ';fbOv.appendChild(fbTxt);fb.appendChild(fbOv);
+    grid.appendChild(fb);return;
+  }
+
+  listings.forEach(function(p,i){
+    var imgs=Array.isArray(p.images)?p.images:[];
+    var thumb=pickWarmImg(imgs)||imgs[0]||null;
+    var card=document.createElement('a');
+    card.href='listing.html?slug='+encodeURIComponent(p.slug||'');
+    card.className='p-card';
+    if(p.id){
+      card.setAttribute('data-track','agent-listing-card');
+      card.setAttribute('data-track-type','card');
+      card.setAttribute('data-track-property-id',p.id);
+      card.setAttribute('data-track-label',p.title_en||p.title_lo||'');
+      card.setAttribute('data-track-meta',JSON.stringify({position:i+1}));
+    }
+    var imgDiv=document.createElement('div');imgDiv.className='p-img';
+    if(thumb){
+      var ti=document.createElement('img');ti.src=thumb;ti.alt='';
+      ti.loading=i===0?'eager':'lazy';ti.decoding='async';imgDiv.appendChild(ti);
+    }
+    var tx=document.createElement('span');
+    var isSor=p.transaction_type==='sale_or_rent';
+    tx.className='p-tx'+(p.transaction_type==='for_sale'?'':isSor?' p-tx-sor':' p-tx-rent');
+    tx.textContent=p.transaction_type==='for_sale'?'ຂາຍ':isSor?'ຊື້/ເຊົ່າ':'ເຊົ່າ';imgDiv.appendChild(tx);
+    if(p.is_featured){var dot=document.createElement('span');dot.className='p-featured-dot';imgDiv.appendChild(dot);}
+    var body=document.createElement('div');body.className='p-body';
+    if(p.price_display){var pe=document.createElement('p');pe.className='p-price';pe.textContent=p.price_display;body.appendChild(pe);}
+    if(p.district_lo||p.district_en){var de=document.createElement('p');de.className='p-loc';de.textContent=p.district_lo||p.district_en;body.appendChild(de);}
+    card.appendChild(imgDiv);card.appendChild(body);grid.appendChild(card);
+
+    if(p.id){
+      card.addEventListener('click',function(){
+        postEvent('listing_events',{property_id:p.id,event_type:'click',session_id:getOrCreateSessionId(),source:'agent_profile',search_position:i+1});
+      });
+    }
+  });
+
+  var sessionId=getOrCreateSessionId();
+  var impressionRows=listings.filter(function(p){return p&&p.id;}).map(function(p,idx){
+    return {property_id:p.id,event_type:'impression',session_id:sessionId,source:'agent_profile',search_position:idx+1};
+  });
+  if(impressionRows.length) postEvent('listing_events',impressionRows);
+}
+
+load();
+</script>
+</body>
+</html>

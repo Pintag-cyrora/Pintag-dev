@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src https://*.supabase.co; frame-src 'none'; object-src 'none';">
+<title>Pintag Agent Dashboard</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-components.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+:root{
+  --bg:#F3EFE8;
+  --panel:#FFFFFF;
+  --line:rgba(26,36,40,0.08);
+  --text:#1A2428;
+  --muted:#7A9098;
+  --teal:#2D8C8C;
+  --teal-soft:#38A8A8;
+  --radius:18px;
+}
+
+body{
+  font-family:"DM Sans",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+
+.dashboard{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:260px 1fr;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  background:#fff;
+  border-right:1px solid var(--line);
+  padding:28px 22px;
+  position:sticky;
+  top:0;
+  height:100vh;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:38px;
+}
+
+.logo-dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--teal);
+}
+
+.logo span{
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:-0.03em;
+}
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.nav a{
+  text-decoration:none;
+  color:var(--text);
+  padding:12px 14px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:500;
+  transition:.2s;
+}
+
+.nav a:hover{
+  background:rgba(45,140,140,0.08);
+  color:var(--teal);
+}
+
+.nav a.active{
+  background:var(--teal);
+  color:#fff;
+}
+
+.logout-btn{
+  margin-top:40px;
+  border:none;
+  background:none;
+  cursor:pointer;
+  color:#A24B4B;
+  font-size:14px;
+  font-weight:600;
+  font-family:"DM Sans",sans-serif;
+}
+
+/* MAIN */
+
+.main{
+  padding:34px;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:28px;
+}
+
+.welcome h1{
+  font-size:34px;
+  font-weight:600;
+  letter-spacing:-0.04em;
+  margin-bottom:6px;
+}
+
+.welcome p{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.btn{
+  border:none;
+  cursor:pointer;
+  font-family:"DM Sans",sans-serif;
+  border-radius:12px;
+  padding:12px 18px;
+  font-weight:600;
+  transition:.2s;
+}
+
+.btn-primary{
+  background:var(--teal);
+  color:#fff;
+}
+
+.btn-primary:hover{
+  background:var(--teal-soft);
+}
+
+/* STATS */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+  margin-bottom:28px;
+}
+
+.stat-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:22px;
+}
+
+.stat-label{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:10px;
+}
+
+.stat-value{
+  font-size:32px;
+  font-weight:700;
+  letter-spacing:-0.04em;
+}
+
+/* LISTINGS */
+
+.section{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:24px;
+}
+
+.section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:22px;
+}
+
+.section-head h2{
+  font-size:20px;
+  font-weight:600;
+  letter-spacing:-0.03em;
+}
+
+.listings{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+/* Card appearance (background/border/radius/image/body/title/price) is now
+   owned by shared-components.css's .pt-card family -- see components.js's
+   renderPropertyCard(). This is a disclosed visual change on this page
+   (16px radius/16:10 image -> the shared 3px radius/4:3 image, larger type
+   -> the shared scale), the same kind of consolidation index.html's
+   migration already made, for the same reason: one card system, not one
+   per page. Stats + Edit/Delete actions stay page-specific (footerHtml). */
+.listing-stats{
+  display:flex;
+  gap:16px;
+  margin-top:14px;
+  color:#7C8B92;
+  font-size:13px;
+}
+.card-actions{
+  display:flex;
+  gap:10px;
+}
+
+.card-btn{
+  flex:1;
+  border:none;
+  border-radius:10px;
+  padding:10px;
+  cursor:pointer;
+  font-family:"DM Sans",sans-serif;
+  font-weight:600;
+  font-size:13px;
+}
+
+.edit-btn{
+  background:rgba(45,140,140,0.08);
+  color:var(--teal);
+}
+
+.delete-btn{
+  background:#F8F4F0;
+  color:#A24B4B;
+}
+
+.empty{
+  color:var(--muted);
+  font-size:14px;
+}
+
+/* MOBILE */
+
+@media(max-width:960px){
+
+  .dashboard{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    position:relative;
+    height:auto;
+    border-right:none;
+    border-bottom:1px solid var(--line);
+    padding:18px 16px;
+  }
+
+  .nav{
+    flex-direction:row;
+    overflow-x:auto;
+    padding-bottom:4px;
+  }
+
+  .nav a{
+    white-space:nowrap;
+  }
+
+  .main{
+    padding:18px 16px 100px;
+  }
+
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:18px;
+  }
+
+  .welcome h1{
+    font-size:28px;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+
+  .stat-card{
+    padding:18px;
+  }
+
+  .stat-value{
+    font-size:24px;
+  }
+
+  .listings{
+    grid-template-columns:1fr;
+  }
+
+  .pt-card-title{
+    font-size:16px;
+  }
+
+}
+
+/* Lead Analytics */
+.lead-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-bottom:28px;}
+.lead-table-wrap{overflow-x:auto;}
+.lead-table{width:100%;border-collapse:collapse;font-size:13px;}
+.lead-table th{text-align:left;padding:10px 12px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--line);}
+.lead-table td{padding:10px 12px;border-bottom:1px solid var(--line);}
+.lead-table tr:last-child td{border-bottom:none;}
+.lead-badge{display:inline-block;background:rgba(45,140,140,0.1);color:var(--teal);font-weight:600;font-size:12px;padding:2px 8px;border-radius:20px;}
+
+/* Lead outcome — Closed/Lost are the two buttons worth one click; the
+   intermediate stages (Contacted/Viewing/Negotiating) are available via
+   a small, visually secondary <select> next to them, not the primary
+   action. Once a lead is Closed or Lost it renders as a plain badge —
+   the decision is made, nothing left to click. */
+.outcome-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.outcome-btn{
+  font-family:"DM Sans",sans-serif;font-size:12px;font-weight:600;
+  border-radius:8px;padding:6px 10px;cursor:pointer;border:1px solid transparent;
+}
+.outcome-btn:disabled{opacity:0.5;cursor:wait;}
+.outcome-btn-closed{background:rgba(45,140,140,0.08);color:var(--teal);border-color:rgba(45,140,140,0.18);}
+.outcome-btn-lost{background:#F8F4F0;color:#A24B4B;border-color:rgba(162,75,75,0.18);}
+.outcome-badge{display:inline-block;font-size:12.5px;font-weight:600;color:var(--text);}
+.status-select-sm{
+  font-family:"DM Sans",sans-serif;font-size:11px;color:var(--muted);
+  background:none;border:1px solid var(--line);border-radius:6px;
+  padding:4px 6px;cursor:pointer;
+}
+.status-select-sm:disabled{opacity:0.5;cursor:wait;}
+
+/* Conversion funnel — a simple vertical list, not a custom chart */
+.funnel{display:flex;flex-direction:column;gap:2px;max-width:320px;}
+.funnel-row{display:flex;align-items:baseline;justify-content:space-between;padding:10px 4px;}
+.funnel-label{font-size:13px;color:var(--text);}
+.funnel-value{font-size:18px;font-weight:700;letter-spacing:-0.02em;}
+.funnel-arrow{display:block;text-align:center;color:var(--muted);font-size:13px;margin:-2px 0;}
+
+@media(max-width:960px){
+  .lead-stats{grid-template-columns:repeat(2,1fr);}
+}
+
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span>Pintag</span>
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="active">Dashboard</a>
+    </nav>
+
+    <button class="logout-btn" onclick="logout()">
+      Logout
+    </button>
+
+  </aside>
+
+  <main class="main">
+
+    <div class="topbar">
+
+      <div class="welcome">
+        <h1 id="welcome-name">Welcome back</h1>
+        <p>Manage your listings and inquiries</p>
+      </div>
+
+      <button class="btn btn-primary">
+        + Add Property
+      </button>
+
+    </div>
+
+    <div class="stats">
+
+      <div class="stat-card">
+        <div class="stat-label">Active Listings</div>
+        <div class="stat-value" id="listing-count">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Published</div>
+        <div class="stat-value" id="published-count">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">For Sale</div>
+        <div class="stat-value" id="sale-count">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">For Rent</div>
+        <div class="stat-value" id="rent-count">0</div>
+      </div>
+
+    </div>
+
+    <section class="section">
+
+      <div class="section-head">
+        <h2>My Listings</h2>
+      </div>
+
+      <div class="listings" id="listings"></div>
+
+    </section>
+
+    <!-- Property Performance — views, lead clicks, and lead rate are
+         recorded automatically the moment a listing gets browsed; no
+         agent action is needed for any number here to be accurate.
+         Shown first, above the optional pipeline below, because this is
+         the data worth trusting on day one. -->
+    <div style="margin-top:28px;">
+      <section class="section">
+        <div class="section-head">
+          <h2>Property Performance</h2>
+        </div>
+        <div class="lead-table-wrap">
+          <table class="lead-table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Views</th>
+                <th>Lead Clicks</th>
+                <th>Lead Rate</th>
+                <th>Open Leads</th>
+                <th>Closed Deals</th>
+              </tr>
+            </thead>
+            <tbody id="prop-analytics-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Pipeline (optional) — everything here depends on you updating a
+         lead's status. The one thing worth doing is marking a deal
+         Closed or Lost once it's over; the rest is here if you want it,
+         not something you need to maintain. -->
+    <div style="margin-top:28px;">
+      <section class="section" style="margin-bottom:28px;">
+        <div class="section-head">
+          <h2>Leads</h2>
+        </div>
+        <p style="font-size:12.5px;color:var(--muted);margin:-10px 0 16px;">A lead appears here automatically when a buyer clicks "Message Agent." Updating its status is optional — the one that matters most is marking it Closed or Lost once you know the outcome.</p>
+        <div class="lead-table-wrap">
+          <table class="lead-table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Customer</th>
+                <th>Contact</th>
+                <th>Created</th>
+                <th>Outcome</th>
+                <th>Last Updated</th>
+              </tr>
+            </thead>
+            <tbody id="lead-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="lead-stats">
+        <div class="stat-card">
+          <div class="stat-label">🆕 New</div>
+          <div class="stat-value" id="lead-count-new">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">💬 Contacted</div>
+          <div class="stat-value" id="lead-count-contacted">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">📅 Viewings</div>
+          <div class="stat-value" id="lead-count-viewing">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">🎉 Closed</div>
+          <div class="stat-value" id="lead-count-closed">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">❌ Lost</div>
+          <div class="stat-value" id="lead-count-lost">—</div>
+        </div>
+      </div>
+
+      <section class="section" style="margin-bottom:28px;">
+        <div class="section-head">
+          <h2>Conversion Funnel</h2>
+        </div>
+        <div class="funnel" id="funnel-body"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>Agent Analytics — This Month</h2>
+        </div>
+        <div class="stats" style="grid-template-columns:repeat(3,1fr);margin-bottom:0;">
+          <div class="stat-card">
+            <div class="stat-label">Listings</div>
+            <div class="stat-value" id="agm-listings">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Views</div>
+            <div class="stat-value" id="agm-views">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Lead Clicks</div>
+            <div class="stat-value" id="agm-clicks">—</div>
+          </div>
+        </div>
+        <div id="agm-pipeline-stats"></div>
+      </section>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="config.js"></script>
+<script src="components.js"></script>
+<script src="dev-banner.js"></script>
+<script>
+
+const SUPABASE_URL = window.PINTAG.supabaseUrl;
+
+const SUPABASE_KEY = window.PINTAG.anonKey;
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function initDashboard(){
+
+  const {
+    data:{ user }
+  } = await supabaseClient.auth.getUser();
+
+  if(!user){
+    window.location.href = 'agent-login.html';
+    return;
+  }
+
+  // Resolve the logged-in user's own party row — checks auth_user_id first
+  // (the decoupled model going forward), falling back to id (the legacy
+  // "agents.id == auth uid" convention preserved for pre-existing agents).
+  const { data: parties } = await supabaseClient
+    .from('parties')
+    .select('*')
+    .or(`auth_user_id.eq.${user.id},id.eq.${user.id}`)
+    .limit(1);
+  const agent = (parties && parties[0]) || null;
+
+  if(!agent){
+    console.error('No party record found for this user');
+    return;
+  }
+
+  document.getElementById('welcome-name').innerText =
+    `Welcome back, ${agent.name_en || 'Agent'}`;
+
+  const { data: properties, error } = await supabaseClient
+    .from('properties')
+    .select('*')
+    .eq('managed_by_party_id', agent.id)
+    .order('created_at', { ascending:false });
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  renderStats(properties);
+  renderListings(properties);
+  loadLeads(agent.id, properties);
+
+}
+
+function renderStats(properties){
+
+  const total = properties.length;
+
+  const published = properties.filter(p =>
+    p.status === 'active'
+  ).length;
+
+  const sale = properties.filter(p =>
+    p.transaction_type === 'for_sale'
+  ).length;
+
+  const rent = properties.filter(p =>
+    p.transaction_type === 'for_rent'
+  ).length;
+
+  document.getElementById('listing-count').innerText = total;
+  document.getElementById('published-count').innerText = published;
+  document.getElementById('sale-count').innerText = sale;
+  document.getElementById('rent-count').innerText = rent;
+
+}
+
+function renderListings(properties){
+
+  const container = document.getElementById('listings');
+
+  if(!properties.length){
+
+    container.innerHTML = `
+      <div class="empty">
+        No listings yet.
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = '';
+  properties.forEach(property => {
+    const views    = Number(property.views)     || 0;
+    const inquiries= Number(property.inquiries) || 0;
+    const saves    = Number(property.saves)     || 0;
+    const id       = esc(property.id);
+
+    // tag:'div' -- this card hosts its own Edit/Delete buttons and must
+    // not also be a link to the public listing page (nested-interactive-
+    // element problem, not just a style one). No transaction badge/specs/
+    // agent-row/heart -- none of that fits an agent managing their own
+    // listings. Stats + actions are genuinely page-specific, via footerHtml.
+    const card = renderPropertyCard(property, {
+      tag: 'div',
+      showTransactionBadge: false,
+      showCardTag: false,
+      showSpecs: false,
+      showAgentRow: false,
+      showHeart: false,
+      footerHtml: `
+        <div class="listing-stats">
+          <span>👁 ${views}</span>
+          <span>💬 ${inquiries}</span>
+          <span>❤ ${saves}</span>
+        </div>
+        <div class="card-actions">
+          <button class="card-btn edit-btn"   data-id="${id}" onclick="editListing(this.dataset.id)">Edit</button>
+          <button class="card-btn delete-btn" data-id="${id}" onclick="deleteListing(this.dataset.id)">Delete</button>
+        </div>
+      `
+    });
+    container.appendChild(card);
+  });
+}
+
+function editListing(id){
+
+  console.log(id);
+
+  window.location.href =
+    `edit-listing.html?id=${id}`;
+
+}
+
+async function deleteListing(id){
+
+  const confirmed =
+    confirm('Delete this listing?');
+
+  if(!confirmed) return;
+
+  const { error } = await supabaseClient
+    .from('properties')
+    .delete()
+    .eq('id', id);
+
+  if(error){
+    alert('Could not delete listing');
+    return;
+  }
+
+  location.reload();
+
+}
+
+async function logout(){
+
+  await supabaseClient.auth.signOut();
+
+  window.location.href =
+    'agent-login.html';
+
+}
+
+// ── Leads CRM ────────────────────────────────────────────────────────────
+// A lead is created automatically (server-side, via a trigger on
+// lead_events — see 20260715000000_leads_crm.sql) the moment a buyer
+// clicks "Message Agent" on one of this agent's listings. Nothing here
+// creates leads; this only reads and updates them.
+
+var STATUS_LABELS = {
+  new:               '🆕 New',
+  contacted:         '💬 Contacted',
+  viewing_scheduled: '📅 Viewing Scheduled',
+  negotiating:       '🤝 Negotiating',
+  closed:            '🎉 Closed',
+  lost:              '❌ Lost'
+};
+
+var _leadsCache = null;
+var _propMapCache = {};
+
+async function loadLeads(agentId, properties) {
+  try {
+    // `properties` is already fetched by initDashboard() — reused here for
+    // titles/view_count instead of a second properties query. Only two new
+    // requests are made: the agent's own leads, and their whatsapp_click
+    // events (needed for the funnel's "Message Clicks" stage and the
+    // per-property "Lead clicks" column, which leads alone can't give —
+    // a lead only exists once contact has already been made).
+    const [{ data: leads, error: leadsErr }, { data: events, error: eventsErr }] = await Promise.all([
+      supabaseClient.from('leads')
+        .select('id,property_id,status,customer_name,customer_phone,contact_method,created_at,updated_at')
+        .eq('party_id', agentId)
+        .order('created_at', { ascending: false }),
+      supabaseClient.from('lead_events')
+        .select('id,listing_id,event_type,created_at')
+        .eq('agent_id', agentId)
+        .eq('event_type', 'whatsapp_click')
+    ]);
+    if (leadsErr || eventsErr || !leads) { console.error('loadLeads', leadsErr || eventsErr); return; }
+
+    _leadsCache = leads;
+    _propMapCache = {};
+    (properties || []).forEach(function(p) { _propMapCache[p.id] = p; });
+
+    renderLeadStatusTiles(leads);
+    renderLeadsTable(leads, _propMapCache);
+    renderConversionFunnel(leads, events);
+    renderPropertyAnalytics(properties || [], leads, events);
+    renderAgentAnalyticsThisMonth(properties || [], leads, events);
+  } catch(e) { console.error('loadLeads', e); }
+}
+
+// Current pipeline snapshot — mutually exclusive counts of "how many leads
+// sit in each status right now." Negotiating has no tile of its own here
+// (only New/Contacted/Viewings/Closed/Lost do) — it still shows correctly
+// per-row in the leads table, just isn't one of these five summary tiles.
+function renderLeadStatusTiles(leads) {
+  var counts = { new: 0, contacted: 0, viewing_scheduled: 0, closed: 0, lost: 0 };
+  leads.forEach(function(l) { if (counts.hasOwnProperty(l.status)) counts[l.status]++; });
+  document.getElementById('lead-count-new').innerText       = counts.new;
+  document.getElementById('lead-count-contacted').innerText = counts.contacted;
+  document.getElementById('lead-count-viewing').innerText   = counts.viewing_scheduled;
+  document.getElementById('lead-count-closed').innerText    = counts.closed;
+  document.getElementById('lead-count-lost').innerText      = counts.lost;
+}
+
+// The one action worth one click is marking a lead Closed or Lost — those
+// render as two small buttons. The intermediate stages (Contacted/Viewing
+// Scheduled/Negotiating) are available via a small, visually secondary
+// <select> next to them for any agent who wants to track them, but
+// they're not the primary ask. Once a lead is Closed or Lost, it renders
+// as a plain badge — the decision is made, nothing left to click.
+var NON_TERMINAL_STATUSES = ['new','contacted','viewing_scheduled','negotiating'];
+
+function renderLeadsTable(leads, propMap) {
+  var tbody = document.getElementById('lead-tbody');
+  if (!leads.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px;">No leads yet — a lead appears here automatically as soon as a buyer clicks "Message Agent" on one of your listings.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = leads.map(function(l) {
+    var p = propMap[l.property_id];
+    var title = p ? esc(p.title_en || p.title_lo || '—') : '—';
+    var customer = l.customer_name ? esc(l.customer_name) : '<span style="color:var(--muted)">—</span>';
+    var created = new Date(l.created_at).toLocaleDateString();
+    var updated = new Date(l.updated_at).toLocaleDateString();
+
+    var isTerminal = l.status === 'closed' || l.status === 'lost';
+    var outcomeHtml;
+    if (isTerminal) {
+      outcomeHtml = '<span class="outcome-badge">' + STATUS_LABELS[l.status] + '</span>';
+    } else {
+      var options = NON_TERMINAL_STATUSES.map(function(s) {
+        return '<option value="' + s + '"' + (s === l.status ? ' selected' : '') + '>' + STATUS_LABELS[s] + '</option>';
+      }).join('');
+      outcomeHtml =
+        '<div class="outcome-actions">' +
+        '<button class="outcome-btn outcome-btn-closed" data-id="' + esc(l.id) + '" onclick="markLeadOutcome(this,\'closed\')">🎉 Closed</button>' +
+        '<button class="outcome-btn outcome-btn-lost" data-id="' + esc(l.id) + '" onclick="markLeadOutcome(this,\'lost\')">❌ Lost</button>' +
+        '<select class="status-select-sm" data-id="' + esc(l.id) + '" onchange="updateLeadStatus(this)">' + options + '</select>' +
+        '</div>';
+    }
+
+    return '<tr>' +
+      '<td style="font-weight:500;">' + title + '</td>' +
+      '<td>' + customer + '</td>' +
+      '<td>💬 WhatsApp</td>' +
+      '<td>' + created + '</td>' +
+      '<td>' + outcomeHtml + '</td>' +
+      '<td style="color:var(--muted);">' + updated + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+// One click: PATCH just that row, re-render from the updated in-memory
+// cache — no extra round trip beyond the PATCH itself. Shared by both the
+// Closed/Lost buttons and the secondary status <select>.
+async function markLeadOutcome(btn, status) {
+  var row = btn.closest('tr');
+  row.querySelectorAll('button,select').forEach(function(el) { el.disabled = true; });
+  const { error } = await supabaseClient.from('leads').update({ status: status }).eq('id', btn.dataset.id);
+  if (error) {
+    row.querySelectorAll('button,select').forEach(function(el) { el.disabled = false; });
+    alert('Could not update lead status');
+    return;
+  }
+  applyLeadStatusUpdate(btn.dataset.id, status);
+}
+
+async function updateLeadStatus(selectEl) {
+  var id = selectEl.dataset.id;
+  var newStatus = selectEl.value;
+  selectEl.disabled = true;
+  const { error } = await supabaseClient.from('leads').update({ status: newStatus }).eq('id', id);
+  selectEl.disabled = false;
+  if (error) {
+    alert('Could not update lead status');
+    return;
+  }
+  applyLeadStatusUpdate(id, newStatus);
+}
+
+function applyLeadStatusUpdate(id, newStatus) {
+  var lead = (_leadsCache || []).find(function(l) { return l.id === id; });
+  if (lead) { lead.status = newStatus; lead.updated_at = new Date().toISOString(); }
+  renderLeadStatusTiles(_leadsCache);
+  renderLeadsTable(_leadsCache, _propMapCache);
+}
+
+// A confidently-rendered 0% funnel from a handful of never-updated leads
+// reads as a real measurement ("nobody converts") when the truth might
+// just be "nobody's updated their status yet." Below this sample size, an
+// honest "not enough data" message beats a wrong-looking number.
+var MIN_PIPELINE_SAMPLE = 3;
+
+// Cumulative "reached this stage or beyond" — the complementary view to
+// the status-snapshot tiles above. Message Clicks comes from lead_events
+// directly (every whatsapp_click, whether or not its lead has moved past
+// New yet — always accurate regardless of manual updates); everything
+// downstream comes from leads.status, which is only as fresh as the last
+// time an agent touched it.
+function renderConversionFunnel(leads, events) {
+  var messageClicks = events.length;
+  var el = document.getElementById('funnel-body');
+  var updatedCount = leads.filter(function(l) { return l.status !== 'new'; }).length;
+  if (updatedCount < MIN_PIPELINE_SAMPLE) {
+    el.innerHTML =
+      '<div class="funnel-row"><span class="funnel-label">Message Clicks</span><span class="funnel-value">' + messageClicks + '</span></div>' +
+      '<p style="color:var(--muted);font-size:12.5px;padding:6px 4px 0;">The rest of the funnel needs a few leads marked Closed or Lost before it\'s reliable — not shown yet.</p>';
+    return;
+  }
+  var reached = function(statuses) {
+    return leads.filter(function(l) { return statuses.indexOf(l.status) !== -1; }).length;
+  };
+  var stages = [
+    ['Message Clicks', messageClicks],
+    ['Contacted',       reached(['contacted','viewing_scheduled','negotiating','closed'])],
+    ['Viewing',         reached(['viewing_scheduled','negotiating','closed'])],
+    ['Negotiating',     reached(['negotiating','closed'])],
+    ['Closed',          reached(['closed'])]
+  ];
+  el.innerHTML = stages.map(function(s, i) {
+    return '<div class="funnel-row"><span class="funnel-label">' + s[0] + '</span><span class="funnel-value">' + s[1] + '</span></div>' +
+      (i < stages.length - 1 ? '<div class="funnel-arrow">↓</div>' : '');
+  }).join('');
+}
+
+function renderPropertyAnalytics(properties, leads, events) {
+  var leadsByProp = {};
+  leads.forEach(function(l) { (leadsByProp[l.property_id] = leadsByProp[l.property_id] || []).push(l); });
+  var clicksByProp = {};
+  events.forEach(function(e) { if (e.listing_id) clicksByProp[e.listing_id] = (clicksByProp[e.listing_id] || 0) + 1; });
+
+  var tbody = document.getElementById('prop-analytics-tbody');
+  if (!properties.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px;">No listings yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = properties.map(function(p) {
+    var views  = Number(p.view_count) || 0;
+    var clicks = clicksByProp[p.id] || 0;
+    var propLeads = leadsByProp[p.id] || [];
+    var open   = propLeads.filter(function(l) { return l.status !== 'closed' && l.status !== 'lost'; }).length;
+    var closedDeals = propLeads.filter(function(l) { return l.status === 'closed'; }).length;
+    var rate = views > 0 ? ((clicks / views) * 100).toFixed(1) + '%' : '—';
+    return '<tr>' +
+      '<td style="font-weight:500;">' + esc(p.title_en || p.title_lo || '—') + '</td>' +
+      '<td>' + views + '</td>' +
+      '<td>' + clicks + '</td>' +
+      '<td>' + rate + '</td>' +
+      '<td>' + open + '</td>' +
+      '<td>' + closedDeals + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+// "This month" = the current calendar month, applied consistently as a
+// creation-date cohort: new listings created this month, and leads
+// created this month grouped by their current status. Views is the one
+// exception — properties.view_count is a lifetime counter (there's no
+// monthly view log in the schema; listing_events exists but nothing
+// actually writes to it today), so this shows lifetime views rather than
+// fabricate a monthly figure that doesn't exist.
+function renderAgentAnalyticsThisMonth(properties, leads, events) {
+  var now = new Date();
+  var monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+  var listingsThisMonth = properties.filter(function(p) { return p.created_at >= monthStart; }).length;
+  var viewsTotal = properties.reduce(function(a, p) { return a + (Number(p.view_count) || 0); }, 0);
+  var clicksThisMonth = events.filter(function(e) { return e.created_at >= monthStart; }).length;
+  document.getElementById('agm-listings').innerText = listingsThisMonth;
+  document.getElementById('agm-views').innerText    = viewsTotal;
+  document.getElementById('agm-clicks').innerText   = clicksThisMonth;
+
+  // Contacted/Viewings/Deals Closed/Conversion Rate depend entirely on
+  // manual status updates — gated the same way as the funnel above,
+  // rather than rendering a confident 0%/"—" from an empty sample.
+  var leadsThisMonth = leads.filter(function(l) { return l.created_at >= monthStart; });
+  var contactedTM = leadsThisMonth.filter(function(l) { return l.status !== 'new'; }).length;
+  var pipelineEl = document.getElementById('agm-pipeline-stats');
+  if (contactedTM < MIN_PIPELINE_SAMPLE) {
+    pipelineEl.innerHTML = '<p style="color:var(--muted);font-size:12.5px;margin-top:14px;">Contacted, Viewings, Deals Closed, and Conversion Rate need a few leads with an updated status this month before they\'re reliable — not shown yet.</p>';
+    return;
+  }
+  var viewingTM = leadsThisMonth.filter(function(l) { return ['viewing_scheduled','negotiating','closed'].indexOf(l.status) !== -1; }).length;
+  var closedTM  = leadsThisMonth.filter(function(l) { return l.status === 'closed'; }).length;
+  var conversionRate = clicksThisMonth > 0 ? ((closedTM / clicksThisMonth) * 100).toFixed(1) + '%' : '—';
+  pipelineEl.innerHTML =
+    '<div class="stats" style="grid-template-columns:repeat(4,1fr);margin-top:14px;margin-bottom:0;">' +
+    '<div class="stat-card"><div class="stat-label">Contacted</div><div class="stat-value">' + contactedTM + '</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Viewings</div><div class="stat-value">' + viewingTM + '</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Deals Closed</div><div class="stat-value">' + closedTM + '</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Conversion Rate</div><div class="stat-value">' + conversionRate + '</div></div>' +
+    '</div>';
+}
+
+initDashboard();
+
+</script>
+
+</body>
+</html>

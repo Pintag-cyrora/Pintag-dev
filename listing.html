@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src https://*.supabase.co; frame-src https://maps.google.com https://www.google.com https://www.youtube.com; media-src *; object-src 'none';">
+<title>Pintag · ລາຍລະອິດອະສັງຫາ</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pintag · Premium Real Estate in Laos">
+<meta property="og:description" content="Discover premium properties for sale and rent in Vientiane, Laos.">
+<meta property="og:image" content="https://pintag.io/og-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:site_name" content="Pintag">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pintag.io/og-preview.jpg">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="theme-color" content="#F3EFE8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" crossorigin>
+<link rel="stylesheet" href="shared-components.css">
+<script>
+window.addEventListener('error',function(e){
+  if(e.message==='Script error.'||e.message==='Script error'){e.preventDefault();e.stopImmediatePropagation();return true;}
+},true);
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+:root{
+  --teal:#2D8C8C;--teal-light:#38A8A8;--teal-mark:rgba(45,140,140,0.22);
+  --ink:#1A2428;--ink-soft:#3A4E55;--ink-muted:#7A9098;
+  --warm:#F3EFE8;--warm-deep:#E8E3DB;--white:#FFFFFF;
+  --border:rgba(26,36,40,0.07);--border-mid:rgba(26,36,40,0.10);--border-strong:rgba(26,36,40,0.13);
+  --wa:#236B6B;--wa-hover:#1D5858;
+  --r-btn:10px;--r-tag:4px;--r-switcher:6px;
+}
+img{image-rendering:auto;backface-visibility:hidden;}
+body{
+  font-family:"DM Sans",sans-serif;font-weight:400;font-size:15px;line-height:1.75;
+  background-color:var(--warm);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='360'%3E%3Cpath d='M0 28C150 22 450 34 600 28M0 54C150 61 450 47 600 54M0 80C150 74 450 86 600 80M0 108C150 116 450 100 600 108M0 133C150 127 450 139 600 133M0 160C150 167 450 153 600 160M0 186C150 180 450 192 600 186M0 214C150 222 450 206 600 214M0 238C150 232 450 244 600 238M0 265C150 272 450 258 600 265M0 290C150 284 450 296 600 290M0 318C150 325 450 311 600 318M0 343C150 337 450 349 600 343' fill='none' stroke='%231A2428' stroke-width='.5' stroke-opacity='.055'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:600px 360px;
+  color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;text-rendering:optimizeLegibility;
+}
+::selection{background:rgba(45,140,140,0.18);color:var(--ink);}
+button,a{-webkit-tap-highlight-color:transparent;}
+.lo{display:block;}.en{display:none;}.zh{display:none;}
+.lo-i{display:inline;}.en-i{display:none;}.zh-i{display:none;}
+body.lang-en .lo{display:none;}body.lang-en .en{display:block;}body.lang-en .zh{display:none;}
+body.lang-en .lo-i{display:none;}body.lang-en .en-i{display:inline;}body.lang-en .zh-i{display:none;}
+body.lang-zh .lo{display:none;}body.lang-zh .en{display:none;}body.lang-zh .zh{display:block;}
+body.lang-zh .lo-i{display:none;}body.lang-zh .en-i{display:none;}body.lang-zh .zh-i{display:inline;}
+nav{position:fixed;top:0;left:0;right:0;z-index:300;height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 28px 0 28px;display:flex;align-items:center;justify-content:space-between;background:rgba(243,239,232,0.985);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border-mid);}
+.nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0;}
+.nav-wordmark{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-0.02em;}
+.nav-links{display:flex;align-items:center;gap:24px;margin:0 32px;}
+.nav-link{font-size:13px;color:var(--ink-soft);text-decoration:none;transition:color 0.15s;}
+.nav-link:hover{color:var(--ink);}
+.nav-right{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.lang-switcher{display:flex;gap:3px;background:var(--warm-deep);padding:3px;border-radius:var(--r-switcher);border:1px solid var(--border-mid);}
+.lang-btn{font-family:"DM Sans",sans-serif;font-size:10px;font-weight:700;padding:4px 10px;border:none;background:transparent;color:var(--ink-muted);cursor:pointer;border-radius:var(--r-tag);letter-spacing:0.04em;transition:background 0.15s,color 0.15s;}
+.lang-btn.active{background:var(--ink);color:var(--white);}
+.nav-cta{display:flex;align-items:center;gap:7px;background:var(--teal);color:var(--white);padding:7px 16px;border-radius:var(--r-btn);font-size:12.5px;font-weight:600;text-decoration:none;border:none;cursor:pointer;font-family:"DM Sans",sans-serif;transition:background 0.15s;white-space:nowrap;}
+.nav-cta:hover{background:var(--teal-light);}
+.g-wrap{max-width:1280px;margin-top:calc(52px + env(safe-area-inset-top));margin-left:auto;margin-right:auto;background:var(--white);min-height:calc(100vh - 54px);animation:fadePage .45s ease;will-change:opacity,transform;}
+@keyframes fadePage{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.hero-section{display:grid;grid-template-columns:400px 1fr;min-height:660px;align-items:stretch;border-bottom:1px solid var(--border-mid);background:linear-gradient(to bottom,#fff,#fdfbf8);}
+.hero-left{padding:36px 32px 28px;border-right:1px solid rgba(26,36,40,0.06);background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;flex-direction:column;}
+.hero-right{overflow:hidden;display:flex;flex-direction:column;padding-left:2px;}
+@media(min-width:961px){.hero-left{position:sticky;top:92px;align-self:start;}}
+.back-link{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:400;color:var(--ink-muted);text-decoration:none;margin-bottom:28px;transition:color 0.15s;}
+.back-link:hover{color:var(--teal);}
+.hero-location{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;color:var(--teal);margin-bottom:14px;}
+.info-title{font-size:clamp(26px,2.4vw,46px);font-weight:500;color:var(--ink);letter-spacing:-0.025em;line-height:1.12;margin-bottom:12px;overflow-wrap:anywhere;}
+/* property highlight subtitle — renders from data.property_highlight */
+.property-highlight{font-size:13px;font-weight:400;color:var(--ink-muted);line-height:1.65;margin-bottom:20px;}
+.tx-badge{display:inline-block;padding:3px 11px;border:1px solid rgba(45,140,140,0.28);border-radius:20px;font-size:10.5px;font-weight:400;color:var(--teal);background:rgba(45,140,140,0.04);margin-bottom:24px;width:fit-content;letter-spacing:0.02em;}
+.tx-badge-sor{border-color:rgba(139,92,246,0.3);color:#7C3AED;background:rgba(139,92,246,0.06);}
+.price-type-label{font-size:13px;font-weight:400;color:var(--ink-muted);margin-left:4px;}
+.price-block{margin-bottom:0;}
+.price-value{font-size:28px;font-weight:600;color:var(--ink);letter-spacing:-0.02em;line-height:1.1;}
+.price-lak{font-size:11px;color:var(--ink-muted);margin-top:4px;font-variant-numeric:tabular-nums;}
+.price-inquire{font-size:14px;font-weight:400;color:var(--ink-muted);}
+.spec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 8px;margin:26px 0 0;}
+.spec-item{display:flex;flex-direction:column;gap:4px;}
+.spec-icon{color:var(--ink-muted);display:block;line-height:1;}
+.spec-val{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-0.01em;line-height:1.2;}
+.spec-lbl{font-size:9px;color:var(--ink-muted);letter-spacing:0.04em;text-transform:uppercase;line-height:1.3;}
+.highlight-pills{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 0;}
+.highlight-pill{display:inline-flex;align-items:center;padding:5px 11px;border-radius:999px;background:rgba(45,140,140,0.07);border:1px solid rgba(45,140,140,0.12);color:var(--teal);font-size:11px;font-weight:500;line-height:1;white-space:nowrap;flex:0 0 auto;}
+.sidebar-insight{font-size:12.5px;color:var(--ink-muted);line-height:1.85;margin-top:16px;}
+.left-actions{margin-top:auto;padding-top:24px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:12px;}
+.action-link{display:inline-flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:12.5px;font-weight:400;color:var(--ink-soft);padding:0;transition:color 0.18s;text-decoration:none;}
+.action-link:hover{color:var(--teal);}
+.action-link:hover svg{stroke:var(--teal);}
+.action-link svg{transition:stroke 0.18s;}
+.pintag-verified{display:inline-flex;align-items:center;gap:5px;font-size:8px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);border:1px solid var(--teal-mark);padding:3px 8px;border-radius:var(--r-tag);white-space:nowrap;width:fit-content;}
+.pintag-verified::before{content:"";display:block;width:4px;height:4px;border-right:1.5px solid var(--teal);border-bottom:1.5px solid var(--teal);transform:rotate(-45deg) translateY(-1px);flex-shrink:0;}
+/* Gallery */
+.desktop-gallery{display:flex;flex-direction:column;height:100%;}
+.dg-hero{flex:1;min-height:0;position:relative;overflow:hidden;background:var(--warm-deep);cursor:pointer;}
+.dg-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;display:block;transition:opacity 0.3s;will-change:opacity;}
+.dg-hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to bottom,rgba(255,255,255,0) 55%,rgba(20,24,28,0.10));}
+.dg-hero::before{content:"";position:absolute;top:16px;left:16px;z-index:2;width:16px;height:16px;border-top:1px solid rgba(255,255,255,0.22);border-left:1px solid rgba(255,255,255,0.22);pointer-events:none;}
+.dg-coord{position:absolute;bottom:14px;left:18px;z-index:3;font-size:8.5px;font-weight:500;letter-spacing:0.1em;color:rgba(255,255,255,0.38);text-transform:uppercase;font-variant-numeric:tabular-nums;pointer-events:none;}
+.dg-view-all{position:absolute;top:14px;right:14px;z-index:4;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(26,36,40,0.12);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:500;color:var(--ink);cursor:pointer;font-family:"DM Sans",sans-serif;transition:background 0.15s;}
+.dg-view-all:hover{background:#fff;}
+.dg-rail{display:flex;gap:2px;flex-shrink:0;background:var(--ink);height:96px;}
+.dg-thumb{flex:1;min-width:0;height:96px;overflow:hidden;cursor:pointer;position:relative;opacity:0.44;transition:opacity 0.25s;}
+.dg-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.dg-thumb:hover{opacity:0.76;}
+.dg-thumb.active{opacity:1;}
+.dg-thumb.active::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--teal);}
+.dg-thumb-overflow{position:absolute;inset:0;background:rgba(26,36,40,0.68);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
+.dg-thumb-overflow-n{font-size:18px;font-weight:700;color:#fff;line-height:1;}
+.dg-thumb-overflow-lbl{font-size:9px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:0.06em;text-transform:uppercase;}
+.mobile-gallery{display:none;position:relative;}
+.mg-track{display:flex;overflow-x:scroll;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:pan-x pan-y;}
+.mg-track::-webkit-scrollbar{display:none;}
+.mg-slide{flex:0 0 100%;scroll-snap-align:start;aspect-ratio:4/3;overflow:hidden;background:var(--warm-deep);}
+.mg-slide img{width:100%;height:100%;object-fit:contain;object-position:center center;display:block;}
+.mg-dots{display:flex;justify-content:center;gap:5px;padding:10px 0 8px;background:var(--white);}
+.mg-dot{width:5px;height:5px;border-radius:50%;background:var(--ink-muted);opacity:0.28;transition:opacity 0.2s,background 0.2s;cursor:pointer;}
+.mg-dot.active{opacity:1;background:var(--teal);}
+/* Agent */
+.agent-band{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:36px;padding:28px 48px;border-bottom:1px solid var(--border-mid);background:var(--white);}
+.agent-presented{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-muted);margin-bottom:12px;}
+.agent-identity{display:flex;align-items:center;gap:14px;}
+.agent-name-en{font-size:15px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:2px;}
+.agent-stats-row{display:flex;align-items:center;gap:28px;justify-content:center;}
+.agent-stat{display:flex;align-items:flex-start;gap:9px;}
+.agent-stat-icon{color:var(--ink-muted);flex-shrink:0;margin-top:1px;}
+.agent-stat-body{display:flex;flex-direction:column;gap:1px;}
+.agent-stat-val{font-size:13px;font-weight:600;color:var(--ink);line-height:1.2;}
+.agent-stat-lbl{font-size:11px;color:var(--ink-muted);line-height:1.3;}
+.agent-ctas{display:flex;flex-direction:column;gap:8px;min-width:200px;}
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:var(--r-btn);font-size:13px;font-weight:500;text-decoration:none;border:none;cursor:pointer;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);font-family:"DM Sans",sans-serif;white-space:nowrap;}
+.btn-wa{background:var(--wa);color:var(--white);box-shadow:0 2px 10px rgba(35,107,107,0.18);}
+.btn-wa:hover{background:var(--wa-hover);transform:translateY(-1px);box-shadow:0 4px 16px rgba(35,107,107,0.22);}
+.btn-call{background:transparent;color:var(--ink-soft);border:1px solid var(--border-strong);}
+.btn-call:hover{background:var(--warm);color:var(--ink);transform:translateY(-1px);}
+/* Detail 3-col */
+.detail-wrap{max-width:1200px;margin:0 auto;padding:60px 48px 0;background:var(--white);}
+.detail-grid{display:grid;grid-template-columns:1.8fr 1fr 0.9fr;gap:56px;padding-bottom:48px;border-bottom:1px solid var(--border);}
+.detail-grid > div:first-child{max-width:760px;padding-top:72px;}
+.section-label{font-size:11px;font-weight:500;color:#6A8490;margin-bottom:18px;letter-spacing:0.1em;text-transform:uppercase;display:block;}
+.body-narrative{font-size:16px;color:var(--ink-soft);line-height:1.95;white-space:pre-line;letter-spacing:0.005em;max-width:680px;}
+.amenity-row{display:flex;flex-wrap:wrap;gap:16px 20px;margin-top:28px;padding-top:22px;border-top:1px solid var(--border);}
+.amenity-item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;color:var(--ink-muted);text-align:center;min-width:54px;max-width:66px;}
+.amenity-icon{width:38px;height:38px;border:1px solid var(--border-mid);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);}
+/* Mobile-only duplicate slot for the amenity row (see the mobile media
+   query below for why: same amenityRowHtml, shown earlier in the mobile
+   reading order, hidden here by default so it doesn't also show on
+   desktop where the original .detail-grid copy is the visible one). */
+.mobile-amenities-slot{display:none;}
+.mobile-amenities-slot .amenity-row{margin-top:0;padding-top:0;border-top:none;}
+/* Secondary "Property Details" list — type-relevant facts that don't
+   make the main spec grid (see getDetailFacts() in terminology.js). */
+.pdetail-list{margin-top:28px;padding-top:22px;border-top:1px solid var(--border);}
+.pdetail-row{display:flex;align-items:center;gap:10px;font-size:12.5px;padding:9px 0;border-bottom:1px solid var(--border);}
+.pdetail-row:last-child{border-bottom:none;}
+.pdetail-icon{width:26px;height:26px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;background:rgba(45,140,140,0.03);}
+.pdetail-lbl{color:var(--ink-muted);flex:1;}
+.pdetail-val{font-weight:500;color:var(--ink);}
+/* Features — editorial, premium spacing */
+.features-list{display:flex;flex-direction:column;gap:0;}
+.feature-item{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:400;color:var(--ink-soft);padding:11px 0;border-bottom:1px solid var(--border);line-height:1.4;}
+.feature-item:last-child{border-bottom:none;}
+.feature-item-icon{width:26px;height:26px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-muted);flex-shrink:0;background:rgba(45,140,140,0.03);}
+.view-all-features{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;color:var(--teal);text-decoration:none;margin-top:18px;transition:gap 0.15s;}
+.view-all-features:hover{gap:8px;}
+/* Map column */
+.map-frame{width:100%;height:300px;background:var(--warm-deep);border-radius:16px;overflow:hidden;border:1px solid var(--border-mid);box-shadow:0 4px 12px rgba(0,0,0,0.04);margin-bottom:12px;position:relative;}
+.map-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;}
+.map-open-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--teal);font-weight:500;text-decoration:none;transition:gap 0.15s;}
+.map-open-link:hover{gap:8px;}
+/* Nearby places */
+.nearby-list{display:flex;flex-direction:column;gap:11px;margin-top:18px;padding-top:18px;border-top:1px solid var(--border);}
+.nearby-item{display:flex;align-items:center;gap:11px;font-size:13px;color:var(--ink-soft);padding-bottom:11px;border-bottom:1px solid var(--border);}
+.nearby-item:last-child{border-bottom:none;padding-bottom:0;}
+.nearby-icon{width:32px;height:32px;border-radius:10px;background:rgba(45,140,140,0.07);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.nearby-name{flex:1;font-size:13px;color:var(--ink-soft);line-height:1.35;}
+.nearby-dist{font-size:11px;color:var(--ink-muted);white-space:nowrap;}
+/* Video */
+.media-section{padding:36px 40px;border-top:1px solid var(--border);}
+.asset-iframe-wrapper{position:relative;width:100%;aspect-ratio:16/9;background:var(--warm-deep);border-radius:8px;overflow:hidden;border:1px solid var(--border);margin-top:14px;}
+.asset-iframe-wrapper iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+/* Similar */
+.similar-section{max-width:1400px;margin:0 auto;padding:56px 48px 88px;background:linear-gradient(to bottom,#fff,#fcfaf7);}
+.similar-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;}
+.similar-title{font-size:19px;font-weight:600;color:var(--ink);letter-spacing:-0.025em;}
+.similar-view-all{font-size:12.5px;font-weight:500;color:var(--teal);text-decoration:none;display:flex;align-items:center;gap:4px;transition:gap 0.15s;}
+.similar-view-all:hover{gap:7px;}
+/* Card design mirrors listings.html's .prop-card (same border-radius,
+   image aspect-ratio, spacing, and typography scale) so this section
+   matches the Listings page rather than a separate one-off design. */
+.similar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;}
+/* .sim-no-img is NOT part of the Similar Properties card (that's now
+   .pt-preview-no-img, owned by shared-components.css) -- it's the main
+   photo gallery's own no-photo placeholder (desktop-gallery/mobile-gallery
+   below), which coincidentally reused the same class name before. Its
+   dark gradient is intentional for that context and must not become the
+   light .pt-card-no-img gradient, so it stays defined here as its own
+   page-specific rule. */
+.sim-no-img{width:100%;height:100%;background:linear-gradient(135deg,#2A3A35,#1A2828);}
+/* Everything else about the Similar Properties card is now owned by
+   shared-components.css's .pt-preview family (see components.js's
+   renderPropertyPreview()). Only this page's own horizontal scroll-snap
+   carousel layout, in the mobile media query
+   below, is genuinely page-specific and stays here. */
+/* ── Editorial presentation layer (desktop) ── */
+.emotional-intro{max-width:640px;margin:0 auto;padding:100px 48px 0;text-align:center;background:var(--white);}
+.emotional-statement{font-size:24px;font-weight:300;line-height:1.7;color:var(--ink-soft);letter-spacing:0.01em;}
+.property-highlights{max-width:800px;margin:0 auto;display:grid;grid-template-columns:repeat(var(--ph-cols,4),1fr);gap:48px;padding:0 0 56px;border-bottom:1px solid var(--border);}
+.highlight-item{display:flex;flex-direction:column;}
+.highlight-kicker{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-muted);margin-bottom:10px;}
+.highlight-value{font-size:17px;font-weight:400;color:var(--ink);line-height:1.4;letter-spacing:-0.01em;}
+.cinematic-break{background:#faf8f5;padding:112px 48px;text-align:center;}
+.cinematic-quote{max-width:700px;margin:0 auto;font-size:36px;font-weight:300;line-height:1.45;color:var(--ink-soft);letter-spacing:0.005em;}
+/* Mobile CTA */
+.mobile-cta-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(255,255,255,0.985);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--border-mid);padding:8px 16px;padding-bottom:calc(8px + env(safe-area-inset-bottom));}
+.mcta-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.mcta-price-wrap{display:flex;flex-direction:column;gap:1px;}
+.mcta-price-label{font-size:9px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-muted);}
+.mcta-price-value{font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-0.02em;line-height:1;}
+.mcta-price-req{font-size:13px;font-weight:400;color:var(--ink-muted);}
+.mcta-btn{display:flex;align-items:center;gap:7px;background:var(--wa);color:var(--white);padding:8px 14px;border-radius:var(--r-btn);font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap;box-shadow:0 3px 10px rgba(35,107,107,0.18);}
+/* Loader */
+.loader-stage{min-height:70vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:140px 24px;color:var(--ink-muted);}
+.loader-cluster{display:flex;gap:6px;justify-content:center;margin-bottom:16px;}
+.loader-bead{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:beadWave 1.2s ease-in-out infinite;}
+.loader-bead:nth-child(2){animation-delay:0.15s;}
+.loader-bead:nth-child(3){animation-delay:0.3s;}
+@keyframes beadWave{0%,100%{opacity:0.2;transform:scale(0.8);}50%{opacity:1;transform:scale(1.2);}}
+/* ── PROPERTY STATUS BADGE — detail & gallery overlay ── */
+.prop-status-badge{
+  display:inline-flex;align-items:center;
+  font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;
+  padding:5px 11px;border-radius:5px;color:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,0.25);
+}
+.prop-status-available{background:#166534;}
+.prop-status-sold{background:#991B1B;}
+.prop-status-rented{background:#C2410C;}
+.prop-status-offer{background:#1D4ED8;}
+.mg-status-wrap{position:absolute;top:12px;right:12px;z-index:4;pointer-events:none;}
+@media(max-width:960px){
+  .prop-status-badge{font-size:11px;padding:6px 13px;}
+}
+/* Lightbox */
+.lb-overlay{position:fixed;inset:0;z-index:1000;background:rgba(8,12,16,0.96);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.32s cubic-bezier(0.16,1,0.3,1);touch-action:pan-y;}
+.lb-overlay.lb-open{opacity:1;pointer-events:all;}
+.lb-stage{position:relative;width:100%;max-width:1100px;max-height:90vh;display:flex;align-items:center;justify-content:center;padding:0 72px;}
+.lb-img-wrap{position:relative;width:100%;height:82vh;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.15);}
+.lb-img{width:100%;height:100%;object-fit:contain;display:block;border-radius:3px;transition:opacity 0.22s ease;}
+.lb-img.lb-fade{opacity:0;}
+.lb-close{position:fixed;top:22px;right:28px;z-index:1001;width:40px;height:40px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.7);transition:background 0.2s,color 0.2s;font-size:0;}
+.lb-close:hover{background:rgba(255,255,255,0.16);color:#fff;}
+.lb-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.10);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.65);transition:background 0.2s,color 0.2s;z-index:2;}
+.lb-arrow:hover{background:rgba(255,255,255,0.14);color:#fff;}
+.lb-prev{left:0;}.lb-next{right:0;}
+.lb-dots{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;}
+.lb-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.28);transition:background 0.2s,transform 0.2s;cursor:pointer;}
+.lb-dot.active{background:rgba(255,255,255,0.75);transform:scale(1.3);}
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE — intentional responsive overrides, max-width:768px
+   Desktop layout and spacing completely unchanged above this.
+   ═══════════════════════════════════════════════════════════════ */
+@media(max-width:960px){
+  /* Nav — hide desktop-only elements */
+  .nav-links{display:none;}
+  .nav-cta{display:none;}
+  .back-link{display:none;}
+  /* Hero — collapse to single column, show mobile gallery */
+  .hero-section{grid-template-columns:1fr;min-height:auto;}
+  .hero-right,.desktop-gallery{display:none;}
+  .mobile-gallery{display:block;}
+  /* Mobile info hierarchy: Price, then Title, then Location, then Facts —
+     reordered from desktop's Title-first reading order via flex `order`,
+     scoped to this breakpoint only. Every child keeps the exact same
+     markup/desktop styling; only their visual sequence changes here. */
+  .hero-left{
+    padding:20px 16px 18px;border-right:none;border-bottom:1px solid var(--border-mid);
+    display:flex;flex-direction:column;
+  }
+  .hero-left .price-block{order:1;}
+  .hero-left .hero-badges-row{order:2;}
+  .hero-left #sp-badges{order:3;}
+  .hero-left .sp-metrics-row{order:4;}
+  .hero-left .info-title{order:5;}
+  .hero-left .property-highlight{order:6;}
+  .hero-left .hero-location{order:7;}
+  .hero-left .spec-grid{order:8;}
+  .hero-left .highlight-pills{order:10;}
+  .hero-left .sidebar-insight{order:11;}
+  .hero-left .left-actions{order:12;}
+  /* Amenity icons (position 6 in the mobile hierarchy) — shown here,
+     ahead of Contact/Agent/Description; the identical row still renders
+     in its original desktop spot inside the Overview column (hidden below
+     only on mobile) so the two never show at once. */
+  .mobile-amenities-slot{display:block;padding:16px;border-bottom:1px solid var(--border-mid);}
+  .detail-grid .amenity-row{display:none;}
+  .mobile-cta-bar{display:block;}
+  /* Agent band — contained card presence on mobile */
+  .agent-band{grid-template-columns:1fr;gap:14px;padding:18px 16px;margin:12px 16px 0;border-radius:14px;border:1px solid var(--border-mid);}
+  .agent-stats-row{justify-content:flex-start;gap:20px;flex-wrap:wrap;}
+  .agent-ctas{flex-direction:row;gap:8px;}
+  .agent-ctas .btn-primary{flex:1;padding:10px 14px;font-size:13px;}
+  /* Detail — single column, tighter section spacing */
+  .detail-wrap{padding:28px 16px 0;}
+  .detail-grid{grid-template-columns:1fr;gap:0;padding-bottom:0;overflow:hidden;}
+  /* Each column gets its own border + padding instead of grid gap */
+  .detail-grid > div{padding:20px 0;border-bottom:1px solid var(--border);min-width:0;}
+  .detail-grid > div:last-child{border-bottom:none;padding-bottom:18px;}
+  /* Editorial layer — tighter, calmer on mobile */
+  .emotional-intro{padding:48px 20px 0;max-width:none;}
+  .emotional-statement{font-size:19px;line-height:1.6;}
+  .property-highlights{grid-template-columns:repeat(2,1fr);gap:24px 20px;padding:0 0 32px;max-width:none;}
+  .highlight-value{font-size:15px;}
+  .cinematic-break{padding:48px 20px;}
+  .cinematic-quote{font-size:23px;line-height:1.4;}
+  /* Typography hierarchy — slightly tighter on mobile */
+  .info-title{font-size:24px;line-height:1.12;margin-bottom:8px;}
+  .property-highlight{font-size:12.5px;margin-bottom:16px;}
+  .price-value{font-size:24px;}
+  .section-label{margin-bottom:12px;}
+  .body-narrative{font-size:13.5px;line-height:1.9;}
+  /* Spec grid — tighter vertical rhythm */
+  .spec-grid{gap:14px 8px;margin:18px 0 0;}
+  /* Property details list — tighter */
+  .pdetail-list{margin-top:16px;padding-top:16px;}
+  /* Highlight pills — slightly tighter top margin */
+  .highlight-pills{margin:16px 0 0;}
+  .sidebar-insight{margin-top:12px;font-size:12px;}
+  /* Left actions — less vertical weight */
+  .left-actions{padding-top:16px;gap:10px;}
+  /* Amenity row — tighter wrap */
+  .amenity-row{gap:12px 14px;margin-top:18px;padding-top:14px;}
+  /* Feature items — slightly tighter */
+  .feature-item{padding:9px 0;font-size:12.5px;}
+  /* Map — significantly smaller, not dominant */
+  .map-frame{height:240px;border-radius:10px;}
+  /* Nearby — tighter list spacing on mobile */
+  .nearby-list{gap:8px;margin-top:14px;padding-top:14px;}
+  .nearby-item{font-size:12.5px;padding-bottom:8px;}
+  .nearby-icon{width:28px;height:28px;font-size:12px;}
+  /* Similar section — horizontal swipe carousel on mobile */
+  .similar-section{padding:28px 0 72px;}
+  .similar-header{margin-bottom:16px;padding:0 16px;}
+  .similar-title{font-size:16px;}
+  .similar-grid{
+    display:flex;
+    gap:14px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    padding:0 16px 4px;
+    scrollbar-width:none;
+  }
+  .similar-grid::-webkit-scrollbar{display:none;}
+  .pt-preview{
+    flex:0 0 78%;
+    scroll-snap-align:start;
+  }
+  /* Media section */
+  .media-section{padding:20px 16px;}
+  /* Mobile CTA bar — refined for editorial balance */
+  .mcta-price-value{font-size:17px;}
+  .mcta-btn{padding:8px 14px;font-size:13px;}
+}
+@media(min-width:961px) and (max-width:1100px){
+  .hero-section{grid-template-columns:340px 1fr;}
+  .agent-band{padding:22px 32px;gap:20px;}
+  .detail-wrap{padding:40px 32px 0;}
+  .detail-grid{grid-template-columns:1.6fr 1fr 0.9fr;gap:36px;}
+  .similar-section{padding:36px 32px 48px;}
+  .similar-grid{grid-template-columns:repeat(2,1fr);}
+  .media-section{padding:32px 32px;}
+}
+/* Social proof */
+.sp-badges-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-height:0;}
+.sp-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;}
+.sp-badge-fire{background:rgba(239,68,68,0.08);color:#DC2626;border:1px solid rgba(239,68,68,0.18);}
+.sp-badge-pop{background:rgba(45,140,140,0.08);color:var(--teal);border:1px solid rgba(45,140,140,0.18);}
+.sp-badge-top{background:rgba(234,179,8,0.08);color:#B45309;border:1px solid rgba(234,179,8,0.22);}
+.sp-metrics-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.sp-metric{display:inline-flex;align-items:center;font-size:11.5px;color:var(--ink-muted);font-weight:400;}
+.sp-fomo-agent{margin:0 48px 16px;padding:10px 14px;background:rgba(45,140,140,0.04);border:1px solid rgba(45,140,140,0.10);border-radius:8px;display:flex;flex-direction:column;gap:4px;}
+.sp-fomo-line{font-size:11.5px;color:var(--ink-muted);line-height:1.55;}
+.sp-fomo-line::before{content:"· ";color:var(--teal);}
+@media(max-width:960px){.sp-fomo-agent{margin:0 16px 12px;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="26" height="24" viewBox="0 0 26 24" fill="none" shape-rendering="geometricPrecision">
+      <circle cx="8" cy="8" r="7.5" fill="#38A8A8"/>
+      <circle cx="20" cy="15" r="3" fill="#1C2B32"/>
+    </svg>
+    <span class="nav-wordmark">Pintag</span>
+  </a>
+  <div class="nav-links">
+    <a href="listings.html?filter=for_sale" class="nav-link"><span class="lo-i">ຊື້</span><span class="en-i">Buy</span><span class="zh-i">购房</span></a>
+    <a href="listings.html?filter=for_rent" class="nav-link"><span class="lo-i">ເຊົ່າ</span><span class="en-i">Rent</span><span class="zh-i">租房</span></a>
+    <a href="listings.html" class="nav-link"><span class="lo-i">ລາຍການ</span><span class="en-i">Listings</span><span class="zh-i">房源</span></a>
+  </div>
+  <div class="nav-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('lo',this)">ລາວ</button>
+      <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+      <button class="lang-btn" onclick="setLang('zh',this)">中文</button>
+    </div>
+    <button class="nav-cta" onclick="var el=document.getElementById('agent-band-anchor');if(el)el.scrollIntoView({behavior:'smooth'})">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="lo-i">ຕິດຕໍ່ຕົວແທນ</span><span class="en-i">Contact Agent</span><span class="zh-i">联系经纪</span>
+    </button>
+  </div>
+</nav>
+
+<div class="g-wrap">
+  <div id="view-target">
+    <div class="loader-stage">
+      <div class="loader-cluster"><div class="loader-bead"></div><div class="loader-bead"></div><div class="loader-bead"></div></div>
+      <p><span class="lo-i">ກຳລັງໂຫຼດ...</span><span class="en-i">Loading...</span><span class="zh-i">加载中...</span></p>
+    </div>
+  </div>
+  <div id="similar-section" class="similar-section" style="display:none;">
+    <div class="similar-header">
+      <span class="similar-title">
+        <span class="lo-i">ຊັບສິນທີ່ຄ້າຍຄືກັນ</span>
+        <span class="en-i">Similar Properties</span>
+        <span class="zh-i">相似房源</span>
+      </span>
+      <a href="listings.html" class="similar-view-all">
+        <span class="lo-i">ເບິ່ງທັງໝົດ</span><span class="en-i">View all</span><span class="zh-i">查看全部</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </div>
+    <div id="similar-grid" class="similar-grid"></div>
+  </div>
+</div>
+
+<div id="mobile-cta-bar" class="mobile-cta-bar"></div>
+
+<div id="lb-overlay" class="lb-overlay" role="dialog" aria-modal="true">
+  <button class="lb-close" id="lb-close" aria-label="Close">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div class="lb-stage">
+    <button class="lb-arrow lb-prev" id="lb-prev" aria-label="Previous" data-track="gallery-lightbox-prev" data-track-type="button" data-track-label="Previous photo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="lb-img-wrap">
+      <img class="lb-img" id="lb-img" alt="" decoding="async">
+    </div>
+    <button class="lb-arrow lb-next" id="lb-next" aria-label="Next" data-track="gallery-lightbox-next" data-track-type="button" data-track-label="Next photo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  <div class="lb-dots" id="lb-dots"></div>
+</div>
+
+<script src="config.js"></script>
+<script src="dev-banner.js"></script>
+<script src="amenities.js"></script>
+<script src="terminology.js"></script>
+<script src="components.js"></script>
+<script src="session.js"></script>
+<script src="tracking.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// PINTAG · listing.html v4 — fully dynamic, no hardcoded content
+// ═══════════════════════════════════════════════════════════════════
+
+var BASE_DB = window.PINTAG.supabaseUrl;
+var SEC_KEY = window.PINTAG.anonKey;
+
+// ── Lead tracking ─────────────────────────────────────────────────
+function trackLead(listingId, agentId, eventType) {
+  if (!listingId) return;
+  fetch(BASE_DB + '/rest/v1/lead_events', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SEC_KEY,
+      'Authorization': 'Bearer ' + SEC_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({
+      listing_id: listingId || null,
+      agent_id:   agentId   || null,
+      event_type: eventType,
+      user_agent: navigator.userAgent,
+      referrer:   document.referrer || null,
+      session_id: getOrCreateSessionId()
+    })
+  }).catch(function(){});
+}
+
+// ── Behavioral event tracking (Intelligence layer) ─────────────────
+// Fire-and-forget, mirrors the pattern in listings.html/index.html.
+function postEvent(table, body) {
+  fetch(BASE_DB + '/rest/v1/' + table, {
+    method: 'POST',
+    headers: { 'apikey': SEC_KEY, 'Authorization': 'Bearer ' + SEC_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(body),
+    keepalive: true
+  }).catch(function(){});
+}
+
+// ── Social proof feature flags ─────────────────────────────────────
+var SHOW_PUBLIC_VIEWS      = true;
+var SHOW_PUBLIC_INQUIRIES  = true;
+var SHOW_POPULAR_BADGES    = true;
+var LEAD_HIGH_INTEREST_MIN = 10;  // "High Interest" badge threshold
+var LEAD_POPULAR_MIN       = 5;   // "Popular Listing" badge threshold
+
+// ── Social proof helpers ───────────────────────────────────────────
+var _publicStats = null;
+
+function formatViewCount(n) {
+  if (!SHOW_PUBLIC_VIEWS || !n || n < 10) return null;
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k views';
+  return n + ' views';
+}
+
+// Rounded inquiry count — hide low numbers, round down to nearest 5
+function formatInquiryCount(n) {
+  if (!SHOW_PUBLIC_INQUIRIES || !n || n < 5) return null;
+  if (n < 10) return '5+ inquiries';
+  return (Math.floor(n / 5) * 5) + '+ inquiries';
+}
+
+function getFomoLines(stats, lang, ctx) {
+  if (!stats) return [];
+  var lines = [];
+  var isSale = ctx && (ctx.transaction_type === 'for_sale' || ctx.transaction_type === 'sale' || ctx.transaction_type === 'sale_or_rent');
+
+  // Weekly views (freshness signal — shows recency of real interest)
+  if ((stats.views_week || 0) >= 5) {
+    var vw = stats.views_week;
+    lines.push({lo:'ມີການເບິ່ງ '+vw+' ຄັ້ງໃນອາທິດນີ້', en:'Viewed '+vw+' times this week', zh:'本周浏览 '+vw+' 次'}[lang]);
+  }
+
+  // Total views context (shown only if no weekly signal, threshold higher to avoid overlap)
+  if ((stats.view_count || 0) >= 20 && (stats.views_week || 0) < 5) {
+    var vc = stats.view_count;
+    lines.push({lo:'ມີຜູ້ເຂົ້າເບິ່ງຫຼ້າສຸດ '+vc+' ຄົນ', en:vc+' people viewed this property recently', zh:'最近有 '+vc+' 人查看此房源'}[lang]);
+  }
+
+  // Lead activity signals
+  if ((stats.lead_week || 0) >= 3) {
+    lines.push({lo:'ໂດ່ດັງໃນອາທິດນີ້', en:'Trending this week', zh:'本周热门'}[lang]);
+  }
+  if ((stats.lead_month || 0) >= 5 && (stats.lead_week || 0) < 3) {
+    var n = stats.lead_month;
+    lines.push({lo:n+' ຄົນ ຕິດຕໍ່ຊັບສິນນີ້ໃນເດືອນນີ້', en:n+' people contacted this property this month', zh:'本月 '+n+' 人咨询此房源'}[lang]);
+  }
+
+  // District popularity with transaction context
+  if (stats.is_top_district && stats.district) {
+    var d = esc(stats.district);
+    if (isSale !== undefined) {
+      lines.push({
+        lo: 'ນິຍົມ' + (isSale ? 'ຊື້ຂາຍ' : 'ເຊົ່າ') + 'ໃນ ' + d,
+        en: 'Popular ' + (isSale ? 'sale' : 'rental') + ' in ' + d,
+        zh: d + '热门' + (isSale ? '售房' : '出租房')
+      }[lang]);
+    } else {
+      lines.push({lo:'ກຳລັງເປັນທີ່ນິຍົມໃນ '+d, en:'Trending in '+d, zh:d+'区热门房源'}[lang]);
+    }
+  }
+
+  return lines.filter(Boolean);
+}
+
+function applyPublicStats(stats) {
+  if (!stats) return;
+  var lang = getCurrentLang();
+
+  // View count pill
+  var spV = document.getElementById('sp-views');
+  if (spV) {
+    var vfmt = formatViewCount(stats.view_count);
+    spV.textContent = vfmt ? '👁 ' + vfmt : '';
+    spV.style.display = vfmt ? 'inline-flex' : 'none';
+  }
+
+  // Inquiry count pill
+  var spI = document.getElementById('sp-inquiries');
+  if (spI) {
+    var ifmt = formatInquiryCount(stats.lead_count);
+    spI.textContent = ifmt ? '📩 ' + ifmt : '';
+    spI.style.display = ifmt ? 'inline-flex' : 'none';
+  }
+
+  // Popular badges
+  if (SHOW_POPULAR_BADGES) {
+    var spB = document.getElementById('sp-badges');
+    if (spB) {
+      var badges = '';
+      if ((stats.lead_count || 0) >= LEAD_HIGH_INTEREST_MIN) {
+        badges += '<span class="sp-badge sp-badge-fire">🔥 ' + ({lo:'ຊັບສິນສົນໃຈສູງ', en:'High Interest Property', zh:'高关注房源'}[lang]||'High Interest Property') + '</span>';
+      } else if ((stats.lead_count || 0) >= LEAD_POPULAR_MIN) {
+        badges += '<span class="sp-badge sp-badge-pop">⚡ ' + ({lo:'ລາຍການຍອດນິຍົມ', en:'Popular Listing', zh:'热门房源'}[lang]||'Popular Listing') + '</span>';
+      }
+      if (stats.is_top_district) {
+        badges += '<span class="sp-badge sp-badge-top">🏆 ' + ({lo:'ເບິ່ງຫຼາຍທີ່ສຸດໃນເຂດ', en:'Most Viewed in District', zh:'区域最高浏览'}[lang]||'Most Viewed in District') + '</span>';
+      }
+      spB.innerHTML = badges;
+    }
+  }
+
+  // FOMO lines below agent CTA
+  var spF = document.getElementById('sp-fomo');
+  if (spF) {
+    var lines = getFomoLines(stats, lang, propertyContext);
+    if (lines.length) {
+      spF.innerHTML = lines.map(function(l){ return '<span class="sp-fomo-line">' + l + '</span>'; }).join('');
+      spF.style.display = 'block';
+    } else {
+      spF.style.display = 'none';
+    }
+  }
+}
+
+async function loadPublicStats(listingId) {
+  if (!listingId) return;
+  try {
+    var res = await fetch(BASE_DB + '/rest/v1/rpc/public_listing_stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SEC_KEY, 'Authorization': 'Bearer ' + SEC_KEY },
+      body: JSON.stringify({ p_listing_id: listingId })
+    });
+    if (!res.ok) return;
+    _publicStats = await res.json();
+    applyPublicStats(_publicStats);
+  } catch(e) {}
+}
+
+function incrementView(listingId) {
+  if (!listingId) return;
+  fetch(BASE_DB + '/rest/v1/rpc/increment_listing_view', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SEC_KEY, 'Authorization': 'Bearer ' + SEC_KEY },
+    body: JSON.stringify({ p_listing_id: listingId })
+  }).catch(function(){});
+}
+
+// ── State ──────────────────────────────────────────────────────────
+var propertyContext = null;
+var similarCache    = null;
+var _heroTimer      = null;
+var _lbTimer        = null;
+var _fetchInFlight  = false;
+
+// Handle image load errors gracefully
+function handleImageError(img) {
+  if(!img) return;
+  img.style.opacity = '0.5';
+  img.style.background = 'var(--warm-deep)';
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+// PINTAG TAXONOMY — single source of truth for admin + listing page
+// Keys are normalized lowercase_underscore strings.
+// resolveLabel() handles both new keys AND legacy display strings.
+// ══════════════════════════════════════════════════════════════════
+var FEATURES={
+  pool:             {en:'Pool',                    lo:'ສະລອຍນ້ຳ',              zh:'游泳池'    },
+  garden:           {en:'Private Garden',          lo:'ສວນສ່ວນຕົວ',           zh:'私家花园'  },
+  balcony:          {en:'Balcony',                 lo:'ລະບຽງ',                 zh:'阳台'      },
+  security:         {en:'24/7 Security',           lo:'ລະບົບຮັກສາຄວາມປອດໄພ', zh:'全天保安'  },
+  smart_home:       {en:'Smart Home',              lo:'ສະມາດໂຮມ',             zh:'智能家居'  },
+  pet_friendly:     {en:'Pet Friendly',            lo:'ອະນຸຍາດສັດລ້ຽງ',       zh:'允许宠物'  },
+  gym:              {en:'Fitness Gym',             lo:'ຫ້ອງຟິດເນສ',            zh:'健身房'    },
+  elevator:         {en:'Elevator',                lo:'ລິຟ',                   zh:'电梯'      },
+  rooftop:          {en:'Rooftop',                 lo:'ດາດຟ້າ',                zh:'屋顶花园'  },
+  solar_power:      {en:'Solar Power',             lo:'ໂຊລາເຊລ',               zh:'太阳能'    },
+  office_room:      {en:'Office Room',             lo:'ຫ້ອງອອຟຟິດ',            zh:'办公室'    },
+  maid_room:        {en:'Maid Room',               lo:'ຫ້ອງຄົນໃຊ້',            zh:'佣人房'    },
+  jacuzzi:          {en:'Jacuzzi',                 lo:'ຈາກູຊີ',                zh:'按摩浴缸'  },
+  ac:               {en:'Air Conditioning',        lo:'ລະບົບແອ',               zh:'空调'      },
+  river_view:       {en:'River View',              lo:'ວິວແມ່ນ້ຳ',             zh:'河景'      },
+  mountain_view:    {en:'Mountain View',           lo:'ວິວພູ',                  zh:'山景'      },
+  european_kitchen: {en:'European Kitchen',        lo:'ເຮືອນຄົວສໄຕລ໌ເອີຣົບ', zh:'欧式厨房'  },
+  living_room:      {en:'Spacious Living Room',    lo:'ຫ້ອງຮັບແຂກກ້ວາງ',      zh:'宽敞客厅'  },
+  walk_in_closet:   {en:'Walk-in Closet',          lo:'ຫ້ອງເກັບເຄື່ອງ',       zh:'步入式衣柜'},
+  storage_room:     {en:'Storage Room',            lo:'ຫ້ອງເກັບຂອງ',          zh:'储藏室'    },
+  water_pump:       {en:'Water Heater & Pump',     lo:'ເຄື່ອງສູບນ້ຳ',          zh:'热水器水泵'},
+  covered_parking:  {en:'Covered Parking',         lo:'ທີ່ຈອດລົດ',             zh:'有盖停车'  }
+};
+// AMENITIES / resolveAmenityData / AMENITY_PRIORITY / topAmenities now live
+// in amenities.js (shared with admin.html and listings.html) — loaded via
+// <script src="amenities.js"> before this block.
+var HIGHLIGHTS={
+  embassy_district: {en:'Embassy District',          lo:'ເຂດສະຖານທູດ',         zh:'使馆区'     },
+  near_intl_school: {en:'Near International School', lo:'ໃກ້ໂຮງຮຽນນານາຊາດ',  zh:'近国际学校' },
+  quiet_street:     {en:'Quiet Street',              lo:'ຖະໜົນສະຫງົບ',        zh:'安静街道'   },
+  walkable:         {en:'Walkable Area',             lo:'ພື້ນທີ່ຍ່ຽງໄດ້',      zh:'步行区'     },
+  near_cafe:        {en:'Near Café',                 lo:'ໃກ້ຮ້ານກາເຟ',        zh:'近咖啡馆'   },
+  riverfront:       {en:'Riverfront',                lo:'ຕິດແມ່ນ້ຳ',           zh:'河畔'       },
+  family_friendly:  {en:'Family Friendly',           lo:'ເໝາະສຳລັບຄອບຄົວ',   zh:'适合家庭'   },
+  investment_area:  {en:'Investment Area',           lo:'ພື້ນທີ່ລົງທຶນ',       zh:'投资区'     },
+  city_centre:      {en:'City Centre',               lo:'ໃຈກາງເມືອງ',         zh:'市中心'     },
+  airport_access:   {en:'Airport Access',            lo:'ໃກ້ສະໜາມບິນ',        zh:'近机场'     },
+  near_hospital:    {en:'Near Hospital',             lo:'ໃກ້ໂຮງໝໍ',           zh:'近医院'     },
+  expat_community:  {en:'Expat Community',           lo:'ຊຸມຊົນຕ່າງປະເທດ',    zh:'外籍社区'   }
+};
+
+// ── Resolve stored value (key OR legacy display string) → localized label ──
+// Priority: direct key → normalized key → en-label scan → raw fallback
+function resolveLabel(value,registry,lang){
+  if(!value)return '';
+  var v=String(value).trim();
+  if(registry[v])return registry[v][lang]||registry[v].en||v;
+  var norm=v.toLowerCase().replace(/[\s&\/\-]+/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'');
+  if(registry[norm])return registry[norm][lang]||registry[norm].en||v;
+  for(var k in registry){if(registry[k].en&&registry[k].en.toLowerCase()===v.toLowerCase())return registry[k][lang]||registry[k].en||v;}
+  return v;
+}
+
+var agentFallback = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%237A9098' stroke-width='1'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E";
+
+function getStatusBadgeHtml(status, lang){
+  var S = {
+    active:       { lo:'ວ່າງ',           en:'Available',   zh:'在售',   cls:'prop-status-available' },
+    sold:         { lo:'ຂາຍແລ້ວ',       en:'Sold',        zh:'已售',   cls:'prop-status-sold'      },
+    rented:       { lo:'ເຊົ່າແລ້ວ',     en:'Rented',      zh:'已租',   cls:'prop-status-rented'    },
+    under_offer:  { lo:'ກຳລັງດຳເນີນ',  en:'Under Offer', zh:'洽谈中', cls:'prop-status-offer'     }
+  };
+  var key = S[status] ? status : 'active';
+  var info = S[key];
+  return '<span class="prop-status-badge '+info.cls+'">'+(info[lang]||info.en)+'</span>';
+}
+
+var PT = (function(){
+  var P='[Pintag]';
+  return {
+    log:function(m,d){console.log(P+' '+m,d!==undefined?d:'');},
+    warn:function(m,d){console.warn(P+':WARN '+m,d!==undefined?d:'');},
+    err:function(m,d){console.error(P+':ERR '+m,d!==undefined?d:'');},
+    time:function(m){try{console.time(P+' '+m);}catch(_){}},
+    timeEnd:function(m){try{console.timeEnd(P+' '+m);}catch(_){}}
+  };
+})();
+
+function esc(str){
+  if(str==null)return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Fills {{PLACEHOLDER}} tokens in a template string — the one small piece
+// of i18n infrastructure this file didn't already have. Word order is
+// free to differ per language (see WA_MESSAGE_TEMPLATES below); everything
+// else about how a language is chosen/labeled still goes through the
+// existing {lo,en,zh}[lang] lookup pattern used everywhere else in this file.
+function fillTemplate(template, vars){
+  return String(template).replace(/\{\{(\w+)\}\}/g, function(_, key){
+    return (vars && vars[key] != null) ? vars[key] : '';
+  });
+}
+
+function isSafeUrl(url){
+  if(!url||typeof url!=='string')return false;
+  var t=url.trim().toLowerCase();
+  return t.indexOf('https://')===0||t.indexOf('http://')===0;
+}
+
+function classifyVideoUrl(url){
+  if(!url||typeof url!=='string')return{type:'none',embed:'',raw:''};
+  var u=url.trim();
+  // YouTube watch URL
+  var yt=u.match(/(?:youtube\.com\/watch\?.*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if(yt)return{type:'youtube',embed:'https://www.youtube.com/embed/'+yt[1],raw:u};
+  // YouTube Shorts
+  var yts=u.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/);
+  if(yts)return{type:'youtube',embed:'https://www.youtube.com/embed/'+yts[1],raw:u};
+  // YouTube already embedded
+  if(u.indexOf('youtube.com/embed/')>-1)return{type:'youtube',embed:u,raw:u};
+  // TikTok any format — never iframe, always watch button
+  if(/tiktok\.com/.test(u))return{type:'tiktok',embed:'',raw:u};
+  // Facebook any format — never iframe, always watch button
+  if(/facebook\.com|fb\.watch/.test(u))return{type:'facebook',embed:'',raw:u};
+  // Unknown safe URL — pass through
+  if(u.indexOf('https://')===0||u.indexOf('http://')===0)return{type:'other',embed:u,raw:u};
+  return{type:'none',embed:'',raw:''};
+}
+// kept for backward compat (not used for fb/tiktok any more)
+function toEmbedUrl(url){
+  var r=classifyVideoUrl(url);return r.embed||r.raw||'';
+}
+
+function getParam(name){
+  try{var v=new URLSearchParams(window.location.search).get(name);if(v&&v.trim())return v.trim();}catch(_){}
+  var m=RegExp('[?&]'+name+'=([^&]*)').exec(window.location.search);
+  if(m&&m[1]){var q=decodeURIComponent(m[1].replace(/\+/g,' ')).trim();if(q)return q;}
+  if(name==='slug'){var h=(window.location.hash||'').replace(/^#/,'').trim();if(h)return decodeURIComponent(h);}
+  return null;
+}
+
+async function fetchWithTimeout(resource,options,attempt){
+  attempt=attempt||1;
+  var controller=new AbortController(),timerId=null;
+  var timeout=attempt===1?12000:15000;
+  var toPromise=new Promise(function(_,reject){timerId=setTimeout(function(){controller.abort();reject(new Error('PINTAG_TIMEOUT_'+attempt));},timeout);});
+  try{
+    var res=await Promise.race([fetch(resource,Object.assign({},options,{signal:controller.signal})),toPromise]);
+    clearTimeout(timerId);return res;
+  }catch(err){
+    clearTimeout(timerId);
+    var isTimeout=err.name==='AbortError'||(err.message&&err.message.indexOf('PINTAG_TIMEOUT')===0);
+    var isNet=err.name==='TypeError'||err.name==='NetworkError';
+    PT.warn('fetch attempt '+attempt+' failed',{msg:err.message});
+    if(attempt<2&&(isTimeout||isNet)){await new Promise(function(r){setTimeout(r,900);});return fetchWithTimeout(resource,options,attempt+1);}
+    throw err;
+  }
+}
+
+async function sbFetch(path){
+  var res=await fetchWithTimeout(BASE_DB+path,{headers:{'apikey':SEC_KEY,'Authorization':'Bearer '+SEC_KEY}});
+  if(!res.ok){var b='';try{b=await res.text();}catch(_){}throw new Error('Supabase '+res.status+': '+b.slice(0,100));}
+  try{return await res.json();}catch(e){throw new Error('JSON parse: '+e.message);}
+}
+
+function getCurrentLang(){
+  if(document.body.classList.contains('lang-en'))return 'en';
+  if(document.body.classList.contains('lang-zh'))return 'zh';
+  return 'lo';
+}
+
+function setLang(lang,btn){
+  document.body.classList.remove('lang-lo','lang-en','lang-zh');
+  document.body.classList.add('lang-'+lang);
+  if(btn){document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');}
+  if(propertyContext){try{buildMockupLayout();}catch(e){PT.err('buildMockupLayout on lang switch',e);}if(similarCache)renderSimilarGrid(similarCache);if(_publicStats)applyPublicStats(_publicStats);}
+}
+
+function handleShare(btn){
+  var url=window.location.href;
+  var title=document.title||'Pintag';
+  if(navigator.share){
+    navigator.share({title:title,url:url}).catch(function(){});
+    return;
+  }
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(function(){
+      if(!btn)return;
+      var spans=btn.querySelectorAll('span');
+      var origText=spans.length?spans[0].textContent:'';
+      spans.forEach(function(s){s.textContent=s.className.indexOf('lo-i')>-1?'ຄັດລອກແລ້ວ':s.className.indexOf('zh-i')>-1?'已复制':'Copied';});
+      setTimeout(function(){
+        spans.forEach(function(s){s.textContent=s.className.indexOf('lo-i')>-1?'ແຊຣ໌':s.className.indexOf('zh-i')>-1?'分享':'Share';});
+      },1800);
+    }).catch(function(){});
+  }
+}
+
+window.addEventListener('DOMContentLoaded',function(){
+  var slug=getParam('slug');
+  if(!slug){showErrorState('No property selected. Please navigate from the listings page.');return;}
+  PT.log('Loading',{slug:slug});
+  fetchProperty(slug);
+});
+
+// Single source of truth for "the canonical public Pintag listing URL" —
+// the same slug-based URL used for the og:url tag, the Share button, and
+// the WhatsApp pre-filled message. Returns null (not a broken/blank URL)
+// when a listing has no slug, so callers can fall back cleanly instead of
+// sending a dead link — see WA_MESSAGE_TEMPLATES_FALLBACK below.
+function getCanonicalListingUrl(data){
+  if(!data||!data.slug)return null;
+  return 'https://pintag.io/listing.html?slug='+encodeURIComponent(data.slug);
+}
+
+function updateOGTags(data){
+  var lang=getCurrentLang();
+  var title=(data['title_'+lang]||data.title_en||'Pintag Property')+' · Pintag';
+  var desc=data['property_highlight_'+lang]||data.property_highlight_en||data.property_highlight||'Premium real estate in Vientiane, Laos.';
+  var imgs=Array.isArray(data.images)?data.images.filter(function(u){return u&&typeof u==='string';}):[];
+  var img=imgs[0]||'https://pintag.io/og-preview.jpg';
+  var url=getCanonicalListingUrl(data)||'https://pintag.io/listing.html';
+  function setMeta(sel,val){var el=document.querySelector(sel);if(el)el.setAttribute('content',val);}
+  setMeta('meta[property="og:title"]',title);
+  setMeta('meta[property="og:description"]',desc);
+  setMeta('meta[property="og:image"]',img);
+  setMeta('meta[property="og:url"]',url);
+  setMeta('meta[name="twitter:image"]',img);
+  document.title=title;
+}
+
+async function fetchProperty(slug){
+  if(_fetchInFlight){PT.warn('already in flight');return;}
+  _fetchInFlight=true;
+  PT.time('fetchProperty');
+  try{
+    var data=await sbFetch('/rest/v1/properties?slug=eq.'+encodeURIComponent(slug)+'&select=*,contacts(role,name,phone,whatsapp),parties(id,name_en,name_lo,photo_url,agency_name,slug,type,bio_en,bio_lo,is_verified)&limit=1');
+    PT.timeEnd('fetchProperty');
+    if(!Array.isArray(data)||data.length===0){showErrorState('Property not found. It may have been removed or the link may be incorrect.');return;}
+    propertyContext=data[0];
+    // Single-property page — every data-track element here implicitly
+    // refers to this listing; tracking.js falls back to this when an
+    // element has no explicit data-track-property-id of its own.
+    window.PINTAG_CURRENT_PROPERTY_ID=propertyContext.id||null;
+    PT.log('Loaded',{id:propertyContext.id,title:propertyContext.title_en});
+    try{buildMockupLayout();}catch(e){PT.err('buildMockupLayout',e);showErrorState('Display error. Please refresh.');return;}
+    updateOGTags(propertyContext);
+    if(propertyContext.id){
+      fetchSimilarProperties(propertyContext);
+      incrementView(propertyContext.id);
+      loadPublicStats(propertyContext.id);
+    }
+  }catch(err){
+    PT.timeEnd('fetchProperty');
+    var offline=typeof navigator!=='undefined'&&navigator.onLine===false;
+    showErrorState(offline?'You appear to be offline. Please check your connection and refresh.':'Could not load this property. Please refresh the page or try again shortly.');
+  }finally{_fetchInFlight=false;}
+}
+
+// ══════════════════════════════════════════════════════════════════
+// fetchSimilarProperties — progressive relaxation through 4 priority
+// tiers, stopping as soon as MAX cards are collected:
+//   Tier 1: same property_type + same transaction_type + same district
+//           (results then sorted by closeness to this listing's price —
+//           the 4th-priority signal, applied as a tiebreaker within the
+//           fully-matched tier rather than its own hard filter, since
+//           price_display is free text and not every listing has one)
+//   Tier 2: same property_type + same transaction_type (any district)
+//   Tier 3: same property_type (any transaction_type/district)
+//   Tier 4: no filters — latest active listings. This is both the last
+//           relaxation step AND the explicit "not enough matches" empty
+//           state fallback (show latest active rather than hide the
+//           section) — the same query serves both purposes.
+// Each tier fetches only the remaining gap (never a flat oversized
+// pool), and already-collected ids are excluded at every tier so
+// nothing appears twice across tiers. A tier is skipped outright when
+// the current listing itself lacks that field (e.g. no district) —
+// falls straight through to the next tier down instead of wasting a
+// query that could never match anything.
+// ══════════════════════════════════════════════════════════════════
+async function fetchSimilarProperties(prop){
+  PT.time('fetchSimilar');
+  var MAX = 8;   // upper bound of the requested 4–8 cards
+  var cols = 'id,slug,title_lo,title_en,title_zh,district_lo,district_en,district_zh,' +
+             'images,bedrooms,bathrooms,sqm,price_display,transaction_type,' +
+             'status,property_type,created_at';
+  var results = [];
+
+  function excludeParam(ids){
+    return 'id=not.in.('+ids.map(function(x){return encodeURIComponent(x);}).join(',')+')';
+  }
+  async function fetchTier(extraFilters, limit){
+    if(limit <= 0) return [];
+    var usedIds = [prop.id].concat(results.map(function(p){return p.id;}));
+    var q = '/rest/v1/properties?'+excludeParam(usedIds)+extraFilters
+      +'&status=eq.active&order=created_at.desc&limit='+limit+'&select='+cols;
+    var rows = await sbFetch(q);
+    return Array.isArray(rows) ? rows.filter(Boolean) : [];
+  }
+
+  try{
+    if(prop.property_type && prop.transaction_type && prop.district_en){
+      var t1 = await fetchTier(
+        '&property_type=eq.'+encodeURIComponent(prop.property_type)
+        +'&transaction_type=eq.'+encodeURIComponent(prop.transaction_type)
+        +'&district_en=eq.'+encodeURIComponent(prop.district_en),
+        MAX
+      );
+      var propPrice = parseSimPrice(prop.price_display);
+      t1.sort(function(a,b){
+        var pa=parseSimPrice(a.price_display), pb=parseSimPrice(b.price_display);
+        if(!propPrice||!pa||!pb) return 0; // no price data — keep latest-first order
+        return Math.abs(pa-propPrice) - Math.abs(pb-propPrice);
+      });
+      results = results.concat(t1);
+    }
+    if(results.length < MAX && prop.property_type && prop.transaction_type){
+      var t2 = await fetchTier(
+        '&property_type=eq.'+encodeURIComponent(prop.property_type)
+        +'&transaction_type=eq.'+encodeURIComponent(prop.transaction_type),
+        MAX - results.length
+      );
+      results = results.concat(t2);
+    }
+    if(results.length < MAX && prop.property_type){
+      var t3 = await fetchTier(
+        '&property_type=eq.'+encodeURIComponent(prop.property_type),
+        MAX - results.length
+      );
+      results = results.concat(t3);
+    }
+    if(results.length < MAX){
+      var t4 = await fetchTier('', MAX - results.length);
+      results = results.concat(t4);
+    }
+
+    PT.timeEnd('fetchSimilar');
+    if(!results.length){hideSimilarSection();return;}
+
+    similarCache = results;
+    renderSimilarGrid(results);
+
+  }catch(e){
+    PT.timeEnd('fetchSimilar');
+    PT.warn('fetchSimilarProperties failed',e.message);
+    hideSimilarSection();
+  }
+}
+
+function parseSimPrice(s) {
+  if (!s) return null;
+  var clean = String(s).replace(/[^\d.MmKk]/g, '');
+  if (/[Mm]$/.test(clean)) return parseFloat(clean) * 1000000;
+  if (/[Kk]$/.test(clean)) return parseFloat(clean) * 1000;
+  return parseFloat(clean) || null;
+}
+
+function hideSimilarSection(){
+  var el=document.getElementById('similar-section');
+  if(el)el.style.display='none';
+}
+
+// Card markup/classes mirror listings.html's .prop-card component (same
+// image/price/title/location/specs structure and CSS proportions — see
+// the .sim-* rules in <style>) so this section visually matches the
+// Listings page rather than inventing a separate card design. Trimmed to
+// exactly what's requested: cover image, price, title, location,
+// bedrooms/bathrooms (via getCardFacts(), which already omits bed/bath
+// for property types that don't have them, e.g. Land).
+function renderSimilarGrid(similar){
+  var secEl=document.getElementById('similar-section');
+  var gridEl=document.getElementById('similar-grid');
+  if(!secEl||!gridEl)return;
+  if(!Array.isArray(similar)||!similar.length){hideSimilarSection();return;}
+  secEl.style.display='block';
+  var lang=getCurrentLang();
+  var frag=document.createDocumentFragment();
+  var idxCounter=1;
+  similar.forEach(function(p){
+    if(!p||!p.slug)return;
+    var simIdx = p.id ? idxCounter++ : null;
+    var card = renderPropertyPreview(p, {
+      lang: lang,
+      dataTrack: p.id ? { track:'similar-property-card', type:'card', propertyId:p.id, label: p['title_'+lang]||p.title_en||'' } : null,
+      onClick: p.id ? function(){
+        postEvent('listing_events',{property_id:p.id,event_type:'click',session_id:getOrCreateSessionId(),source:'similar',search_position:simIdx});
+      } : null
+    });
+    frag.appendChild(card);
+  });
+  gridEl.innerHTML='';
+  gridEl.appendChild(frag);
+
+  var sessionId=getOrCreateSessionId();
+  var impressionRows=similar.filter(function(p){return p&&p.id;}).map(function(p,idx){
+    return {property_id:p.id,event_type:'impression',session_id:sessionId,source:'similar',search_position:idx+1};
+  });
+  if(impressionRows.length) postEvent('listing_events',impressionRows);
+}
+
+function showErrorState(msg){
+  var t=document.getElementById('view-target');
+  if(!t)return;
+  t.innerHTML=(
+    '<div style="padding:100px 24px;text-align:center;color:var(--ink-muted);max-width:420px;margin:0 auto;">'+
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:16px;opacity:0.35"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'+
+    '<p style="font-size:14px;line-height:1.75;">'+esc(msg)+'</p>'+
+    '<a href="listings.html" style="display:inline-block;margin-top:20px;font-size:13px;font-weight:500;color:var(--teal);text-decoration:none;">← Back to listings</a>'+
+    '</div>'
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════
+// buildMockupLayout
+// ALL content comes from `propertyContext` (Supabase row).
+// No hardcoded strings for property-specific data.
+//
+// Supabase column reference for dynamic sections:
+//   highlights        TEXT[]   — sidebar pills e.g. ["Embassy District","Near Schools"]
+//   neighborhood_description TEXT — sidebar insight paragraph
+//   nearby_places     JSONB[]  — [{name,icon,distance,category}]
+//   features          JSONB[]  — [{label_lo,label_en,label_zh,name}]
+//   amenities         TEXT[]   — ["pool","security","parking","garden","wifi",…]
+//   latitude          NUMERIC
+//   longitude         NUMERIC
+//   map_embed_url     TEXT     — optional custom embed URL
+//   district_lo/en/zh TEXT
+// ══════════════════════════════════════════════════════════════════
+function buildMockupLayout(){
+  var container=document.getElementById('view-target');
+  if(!container){PT.err('view-target missing');return;}
+  var data=propertyContext;
+  if(!data){PT.warn('no propertyContext');return;}
+
+  var lang=getCurrentLang();
+  PT.log('Rendering',{lang:lang,id:data.id});
+
+  var resolvedTitle    = esc(data['title_'+lang]       || data.title_en    || data.title_lo    || '');
+  var resolvedDesc     = esc(data['description_'+lang] || data.description_en || data.description_lo || '');
+  var resolvedDistrict = esc(data['district_'+lang]    || data.district_en  || '');
+
+  // Village + district — "Thongkang, Sisattanak" style hyperlocal label
+  var resolvedVillage  = data['village_'+lang] || data.village_en || data.village || '';
+  var locationLabel    = resolvedVillage
+    ? esc(resolvedVillage) + ', ' + resolvedDistrict
+    : resolvedDistrict;
+
+  // Property highlight — language-specific, falls back to shared field
+  var resolvedHighlight = data['property_highlight_'+lang] || data.property_highlight_en || data.property_highlight || '';
+
+  var isSale = data.transaction_type==='for_sale'||data.transaction_type==='sale';
+  var isSor  = data.transaction_type==='sale_or_rent';
+  var imagesArray=(Array.isArray(data.images)?data.images:[]).filter(function(u){return u&&typeof u==='string';});
+
+  var statusBadgeHtml=getStatusBadgeHtml(data.status||'active',lang);
+  var desktopGalleryMarkup=buildDesktopGallery(imagesArray);
+  var mobileGalleryMarkup=buildMobileGallery(imagesArray,statusBadgeHtml);
+
+  var L={
+    wa     :{lo:'ສອບຖາມຜ່ານ WhatsApp',en:'Chat on WhatsApp',zh:'通过WhatsApp咨询'},
+    call   :{lo:'ໂທຫາຕົວແທນ',en:'Call Agent',zh:'电话联系'},
+    agent  :{lo:'ຕົວແທນຜູ້ດູແລ',en:'Presented by agent',zh:'物业主理经纪'},
+    overview:{lo:'ພາບລວມ',en:'Overview',zh:'房源概述'},
+    features:{lo:'ຈຸດເດັ່ນ',en:'Features',zh:'房屋亮点'},
+    location:{lo:'ສະຖານທີ່ຕັ້ງ',en:'Location',zh:'地理位置'},
+    nearby :{lo:'ສະຖານທີ່ໃກ້ຄຽງ',en:'Nearby',zh:'周边'},
+    viewFt :{lo:'ເບິ່ງທັງໝົດ',en:'View all features',zh:'查看全部特征'},
+    mapOpen:{lo:'ເປີດໃນ Google Maps',en:'Open in Google Maps',zh:'在谷歌地图中打开'},
+    video  :{lo:'ວິດີໂອນຳຊົມ',en:'Property walk-through',zh:'实景视频'},
+    verified:{lo:'ກວດສອບແລ້ວ',en:'Verified',zh:'平台已核验'},
+    inquire:{lo:'ສອບຖາມລາຄາ',en:'Inquire for price',zh:'意向询价'}
+  };
+
+  var I={
+    heart:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+    play:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>',
+    pin:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+    back:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>',
+    home:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    bolt:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+    star:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    ext:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+    chev:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+    share:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
+  };
+
+  // ── Price ──
+  var resolvedPriceHtml='';
+  if(isSor && (data.sale_price || data.rent_price)){
+    var periodLabel={month:{lo:'/ ເດືອນ',en:'/ month',zh:'/ 月'},year:{lo:'/ ປີ',en:'/ year',zh:'/ 年'},day:{lo:'/ ວັນ',en:'/ day',zh:'/ 天'}};
+    var period=data.rent_period||'month';
+    if(data.sale_price) resolvedPriceHtml+='<p class="price-value">'+esc(data.sale_price)+'<span class="price-type-label"> &mdash; <span class="lo-i">ຂາຍ</span><span class="en-i">For Sale</span><span class="zh-i">出售</span></span></p>';
+    if(data.rent_price) resolvedPriceHtml+='<p class="price-value">'+esc(data.rent_price)+'<span class="price-type-label"> '+esc((periodLabel[period]||periodLabel.month)[lang])+' &mdash; <span class="lo-i">ເຊົ່າ</span><span class="en-i">For Rent</span><span class="zh-i">出租</span></span></p>';
+  }else if(data.price_display){
+    resolvedPriceHtml='<p class="price-value">'+esc(data.price_display)+'</p>';
+    if(data.price_lak)resolvedPriceHtml+='<p class="price-lak">'+esc(data.price_lak)+'</p>';
+  }else{
+    resolvedPriceHtml='<p class="price-inquire">'+L.inquire[lang]+'</p>';
+  }
+
+  // ── Specs ── driven by PROPERTY_TYPE_DISPLAY (terminology.js): which
+  // facts show here (main grid) vs. the secondary Property Details list
+  // below, in what order, with what icon, is per property type — no more
+  // hardcoded per-field checks, no more type-blind "just skip if null".
+  var detailFacts=(typeof getDetailFacts==='function')?getDetailFacts(data.property_type,data,lang):{priority:[],secondary:[]};
+  var specsHtml=detailFacts.priority.map(function(f){
+    return '<div class="spec-item"><span class="spec-icon">'+esc(f.icon)+'</span><span class="spec-val">'+esc(String(f.value))+'</span><span class="spec-lbl">'+esc(f.label.toUpperCase())+'</span></div>';
+  }).join('');
+
+  var pdetailHtml=detailFacts.secondary.length
+    ? '<div class="pdetail-list">'+detailFacts.secondary.map(function(f){
+        return '<div class="pdetail-row"><span class="pdetail-icon">'+esc(f.icon)+'</span><span class="pdetail-lbl">'+esc(f.label)+'</span><span class="pdetail-val">'+esc(String(f.value))+'</span></div>';
+      }).join('')+'</div>'
+    : '';
+
+  var typeBadgeText=isSor?(lang==='lo'?'ຊື້ / ເຊົ່າ':lang==='zh'?'售/租':' Sale or Rent'):isSale?(lang==='lo'?'ຂາຍ':lang==='zh'?'出售':'For Sale'):(lang==='lo'?'ໃຫ້ເຊົ່າ':lang==='zh'?'出租':'For Rent');
+
+  // ── Highlight pills — from data.highlights array (TEXT[]) ──
+  // Falls back to auto-generating district pill if no highlights stored.
+  var highlightPillsHtml='';
+  var pillSources=[];
+  if(Array.isArray(data.highlights)&&data.highlights.length){
+    pillSources=data.highlights.filter(Boolean);
+  } else if(resolvedDistrict){
+    // Minimal fallback: just the district name so the pill strip isn't empty
+    pillSources=[data['district_'+lang]||data.district_en].filter(Boolean);
+  }
+  if(pillSources.length){
+    highlightPillsHtml='<div class="highlight-pills">';
+    // resolveLabel handles both normalized keys ("embassy_district") and
+    // legacy display strings ("Embassy District") — backward compatible
+    pillSources.slice(0,6).forEach(function(h){
+      var label=resolveLabel(h,HIGHLIGHTS,lang);
+      highlightPillsHtml+='<span class="highlight-pill">'+esc(label)+'</span>';
+    });
+    highlightPillsHtml+='</div>';
+  }
+
+  // ── Sidebar neighborhood insight — language-specific, falls back to shared field ──
+  var sidebarInsightHtml='';
+  var insightText=data['neighborhood_insight_'+lang]||data.neighborhood_insight_en||data.neighborhood_description||data.area_insight||'';
+  if(insightText&&insightText.trim()){
+    sidebarInsightHtml='<div class="sidebar-insight">'+esc(insightText.trim())+'</div>';
+  }
+
+  // ── Buyer Contact (always rendered — who the buyer should actually call,
+  // independent of whether a Pintag Agent Profile is linked below) ──
+  var contact=data.contacts||null;
+  var contactPhone=contact?(contact.whatsapp||contact.phone||''):'';
+  var cleanPhone=String(contactPhone).replace(/[^0-9]/g,'');
+  // Localized pre-filled WhatsApp message — {{PLACEHOLDER}} template per
+  // language so word order can differ freely (Chinese puts location before
+  // property type; Lao has no article). Property type name reuses the same
+  // PROPERTY_TYPES registry (terminology.js) admin.html/listings.html
+  // already use, so it's never translated in two different places.
+  var waPropertyType=(typeof PROPERTY_TYPES!=='undefined' && PROPERTY_TYPES[data.property_type] && PROPERTY_TYPES[data.property_type][lang]) || data.property_type || '';
+  var waDistrictRaw=data['district_'+lang] || data.district_en || '';
+  var waLocation=resolvedVillage ? (resolvedVillage+', '+waDistrictRaw) : waDistrictRaw;
+  var waCanonicalUrl=getCanonicalListingUrl(data);
+  var waMessage=encodeURIComponent(waCanonicalUrl
+    ? fillTemplate(WA_MESSAGE_TEMPLATES[lang]||WA_MESSAGE_TEMPLATES.en, {
+        CANONICAL_LISTING_URL: waCanonicalUrl
+      })
+    : fillTemplate(WA_MESSAGE_TEMPLATES_FALLBACK[lang]||WA_MESSAGE_TEMPLATES_FALLBACK.en, {
+        PROPERTY_TYPE: waPropertyType,
+        LOCATION: waLocation,
+        REFERENCE: data.id || ''
+      }));
+  var waUrl=cleanPhone?'https://wa.me/'+cleanPhone+'?text='+waMessage:'#';
+  var CONTACT_ROLE_LABELS={
+    owner:{lo:'ເຈົ້າຂອງ',en:'Owner',zh:'业主'},
+    agent:{lo:'ຕົວແທນ',en:'Agent',zh:'代理'},
+    property_manager:{lo:'ຜູ້ຈັດການອາຄານ',en:'Property Manager',zh:'物业经理'},
+    reception:{lo:'ພະນັກງານຕ້ອນຮັບ',en:'Reception',zh:'前台'},
+    sales_office:{lo:'ຫ້ອງການຂາຍ',en:'Sales Office',zh:'销售处'},
+    developer:{lo:'ຜູ້ພັດທະນາ',en:'Developer',zh:'开发商'},
+    family_representative:{lo:'ຕົວແທນຄອບຄົວ',en:'Family Representative',zh:'家庭代表'},
+    other:{lo:'ຜູ້ຕິດຕໍ່',en:'Contact',zh:'联系人'}
+  };
+  var roleLabel=CONTACT_ROLE_LABELS[contact&&contact.role]||CONTACT_ROLE_LABELS.other;
+  var callBtn=(contact&&contact.phone)?'<a href="tel:'+esc(contact.phone)+'" class="btn-primary btn-call" data-track="contact-phone" data-track-type="cta" data-track-label="Call" onclick="trackLead(\''+esc(data.id||'')+'\',\''+esc(data.managed_by_party_id||'')+'\',\'call_click\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 10.5 19.79 19.79 0 0 1 1.07 2.18 2 2 0 0 1 3.05 0h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 7.91a16 16 0 0 0 6.06 6.06l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span class="lo-i">'+L.call.lo+'</span><span class="en-i">'+L.call.en+'</span><span class="zh-i">'+L.call.zh+'</span></a>':'';
+  var contactHtml=(
+    '<div class="agent-band" id="agent-band-anchor">'+
+    '<div><p class="agent-presented"><span class="lo-i">'+roleLabel.lo+'</span><span class="en-i">'+roleLabel.en+'</span><span class="zh-i">'+roleLabel.zh+'</span></p>'+
+    '<div class="agent-identity">'+
+    '<div><div class="agent-name-en">'+esc((contact&&contact.name)||roleLabel.en)+'</div></div>'+
+    '</div></div>'+
+    '<div class="agent-ctas">'+
+    '<a href="'+esc(waUrl)+'" target="_blank" rel="noopener noreferrer" class="btn-primary btn-wa" data-track="contact-whatsapp" data-track-type="cta" data-track-label="WhatsApp" onclick="trackLead(\''+esc(propertyContext&&propertyContext.id||'')+'\',\''+esc(propertyContext&&propertyContext.managed_by_party_id||'')+'\',\'whatsapp_click\')">'+WA_SVG+'<span>'+L.wa[lang]+'</span></a>'+
+    callBtn+
+    '</div></div>'
+  );
+
+  // ── Agent Profile card (additional — only when this listing is linked to
+  // a real Pintag Agent Profile; never shown for owner/reception/sales-office
+  // contacts, so buyers can tell they're not talking to Pintag) ──
+  var agentProfileHtml='';
+  var party=data.parties||null;
+  if(party&&party.type==='agent'){
+    // Standardized via renderAgentPreview() -- now also surfaces the
+    // verified badge and bio (both newly selected below), which the old
+    // hand-rolled markup here never showed at all. No WhatsApp button:
+    // contactHtml above already provides the buyer's one WhatsApp CTA for
+    // whoever the listed contact is; a second one here would be redundant.
+    // listingCount is intentionally omitted (no listing-count query exists
+    // on this page) -- the graceful-placeholder rule means it's simply not
+    // shown, not faked.
+    agentProfileHtml = renderAgentPreview(party, { lang: lang, showButtons: true }).outerHTML;
+  }
+  var agentHtml=contactHtml+agentProfileHtml+'<div id="sp-fomo" class="sp-fomo-agent" style="display:none;"></div>';
+
+  // ════════════════════════════════════════════════════════════════
+  // COLUMN 1 — Overview: description + amenity icon row
+  // Amenities come from data.amenities TEXT[] e.g. ["pool","security"]
+  // ════════════════════════════════════════════════════════════════
+  var amenityRowHtml='';
+  if(Array.isArray(data.amenities)&&data.amenities.filter(Boolean).length){
+    // Not collapsible in this build (static list, no expand/collapse
+    // control) — tracked at the section level rather than per-toggle.
+    amenityRowHtml='<div class="amenity-row" data-track="amenities-section" data-track-type="section" data-track-label="Amenities section">';
+    data.amenities.filter(Boolean).forEach(function(am){
+      var resAm=resolveAmenityData(am,lang);
+      amenityRowHtml+='<div class="amenity-item"><div class="amenity-icon">'+resAm.icon+'</div>'+esc(resAm.label)+'</div>';
+    });
+    amenityRowHtml+='</div>';
+  }
+
+  var overviewColHtml=(
+    '<div>'+
+    '<span class="section-label">'+L.overview[lang]+'</span>'+
+    '<p class="body-narrative">'+resolvedDesc+'</p>'+
+    amenityRowHtml+
+    pdetailHtml+
+    '</div>'
+  );
+
+  // ════════════════════════════════════════════════════════════════
+  // COLUMN 2 — Features list
+  // Comes from data.features JSONB[] e.g. [{label_en:"Pool",label_lo:"ສະລອຍ"}]
+  // Also supports flat string arrays e.g. ["Spacious Living Room","European Kitchen"]
+  // ════════════════════════════════════════════════════════════════
+  var featuresColHtml='';
+  if(Array.isArray(data.features)&&data.features.filter(Boolean).length){
+    featuresColHtml='<div><span class="section-label">'+L.features[lang]+'</span><div class="features-list">';
+    data.features.filter(Boolean).forEach(function(ft){
+      if(!ft)return;
+      var label='';
+      if(typeof ft==='string'){
+        // Resolves normalized keys ("pool","smart_home") AND legacy strings ("Pool")
+        label=esc(resolveLabel(ft,FEATURES,lang));
+      } else {
+        // Legacy JSONB objects: {label_en, label_lo, label_zh} or {key, name}
+        var rawKey=ft.key||ft.name||ft.label_en||ft.label||'';
+        label=esc(ft['label_'+lang]||ft.label_en||resolveLabel(rawKey,FEATURES,lang)||'');
+      }
+      if(!label)return;
+      featuresColHtml+=(
+        '<div class="feature-item">'+
+        '<div class="feature-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>'+
+        label+
+        '</div>'
+      );
+    });
+    featuresColHtml+='</div>';
+    featuresColHtml+='<a href="#" class="view-all-features" onclick="return false;">'+L.viewFt[lang]+' '+I.chev+'</a>';
+    featuresColHtml+='</div>';
+  }
+  if(!featuresColHtml)featuresColHtml='<div></div>';
+
+  // ════════════════════════════════════════════════════════════════
+  // COLUMN 3 — Location: map + nearby places
+  // Map: uses data.map_embed_url (custom) or data.latitude+data.longitude
+  //      Falls back to district-level embed — never a static city default.
+  // Nearby: rendered from data.nearby_places JSONB[]
+  //   Schema: [{name:string, icon:string, distance:string, category?:string}]
+  // ════════════════════════════════════════════════════════════════
+  // maps.app.goo.gl and goo.gl/maps are share links — they block iframe embedding.
+  // Only google.com/maps/embed URLs are safe to iframe.
+  // Extract lat/lng from any Google Maps URL format:
+  // google.com/maps/place/Name/@lat,lng,zoom  or  ?q=lat,lng  or  maps.app.goo.gl (no coords)
+  function extractMapCoords(url){
+    if(!url) return null;
+    // google.com/maps/place/Name/@lat,lng,zoom  or  /lat,lng
+    var m=url.match(/[@/](-?\d{1,3}\.\d+),(-?\d{1,3}\.\d+)/);
+    if(m) return {lat:m[1],lng:m[2]};
+    // ?q=lat,lng or &q=lat,lng
+    m=url.match(/[?&]q=(-?\d{1,3}\.\d+),(-?\d{1,3}\.\d+)/);
+    if(m) return {lat:m[1],lng:m[2]};
+    // google.com/maps/embed?pb=...!2d<lng>...!3d<lat>
+    var lng2=url.match(/!2d(-?\d{1,3}\.\d+)/);
+    var lat3=url.match(/!3d(-?\d{1,3}\.\d+)/);
+    if(lng2&&lat3) return {lat:lat3[1],lng:lng2[1]};
+    return null;
+  }
+
+  var mapSrc='';
+  var gmapsHref='';
+
+  var coords=extractMapCoords(data.map_embed_url);
+
+  // Build Open in Maps href
+  if(coords){
+    gmapsHref='https://www.google.com/maps?q='+coords.lat+','+coords.lng;
+  } else if(isSafeUrl(data.map_embed_url)){
+    gmapsHref=data.map_embed_url;
+  } else if(data.district_en){
+    gmapsHref='https://www.google.com/maps/search/'+encodeURIComponent(data.district_en+', Vientiane, Laos');
+  }
+
+  // Only build iframe when coords are known — avoids showing district when link opens exact pin
+  if(coords){
+    mapSrc='https://maps.google.com/maps?q='+coords.lat+','+coords.lng+'&t=&z=16&ie=UTF8&iwloc=&output=embed';
+  }
+
+  var mapHtml='';
+  if(gmapsHref){
+    mapHtml=(
+      (mapSrc?'<div class="map-frame" data-track="map-embed" data-track-type="map"><iframe src="'+esc(mapSrc)+'" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>':'')+
+      '<a href="'+esc(gmapsHref)+'" target="_blank" rel="noopener noreferrer" class="map-open-link" data-track="map-open-link" data-track-type="cta" data-track-label="Open in Google Maps">'+L.mapOpen[lang]+' '+I.ext+'</a>'
+    );
+  }
+
+  // Nearby places — from data.nearby_places JSONB[]
+  var nearbyHtml='';
+  if(Array.isArray(data.nearby_places)&&data.nearby_places.filter(Boolean).length){
+    nearbyHtml='<div class="nearby-list">';
+    data.nearby_places.filter(Boolean).slice(0,6).forEach(function(place){
+      if(!place)return;
+      var pName=esc(place['name_'+lang]||place.name||'');
+      var pDist=esc(place.distance||'');
+      var pIcon=esc(place.icon||'📍');
+      if(!pName)return;
+      nearbyHtml+=(
+        '<div class="nearby-item">'+
+        '<div class="nearby-icon">'+pIcon+'</div>'+
+        '<span class="nearby-name">'+pName+'</span>'+
+        (pDist?'<span class="nearby-dist">'+pDist+'</span>':'')+
+        '</div>'
+      );
+    });
+    nearbyHtml+='</div>';
+  }
+
+  var locationColHtml=(
+    '<div>'+
+    '<span class="section-label">'+L.location[lang]+'</span>'+
+    mapHtml+
+    nearbyHtml+
+    '</div>'
+  );
+
+  // ── Video ──
+  var mediaHtml='';
+  var _vc1 = classifyVideoUrl(data.video_embed_url||data.video_url||'');
+  var _vc2 = classifyVideoUrl(data.facebook_video_url||'');
+  var videoBlocks='';
+
+  function watchCard(rawUrl, platform){
+    var icons={
+      tiktok:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.09a8.16 8.16 0 004.77 1.52V7.16a4.85 4.85 0 01-1-.47z"/></svg>',
+      facebook:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>'
+    };
+    var labels={
+      tiktok:{lo:'ເບິ່ງໃນ TikTok',en:'Watch on TikTok',zh:'在TikTok观看'},
+      facebook:{lo:'ເບິ່ງໃນ Facebook',en:'Watch on Facebook',zh:'在Facebook观看'}
+    };
+    var colors={tiktok:'#010101',facebook:'#1877F2'};
+    var L2=labels[platform]||{lo:'ເບິ່ງວິດີໂອ',en:'Watch Video',zh:'观看视频'};
+    var icon=icons[platform]||I.play;
+    return '<div style="background:var(--warm);border:1px solid var(--border-mid);border-radius:12px;padding:28px 20px;text-align:center;margin-top:14px;">'
+      +'<div style="font-size:13px;color:var(--ink-muted);margin-bottom:14px;line-height:1.6;">'
+      +'<span class="lo-i">ວິດີໂອນຳຊົມ — ກົດເບິ່ງ</span>'
+      +'<span class="en-i">Property walk-through — tap to watch</span>'
+      +'<span class="zh-i">实景视频 — 点击观看</span>'
+      +'</div>'
+      +'<a href="'+esc(rawUrl)+'" target="_blank" rel="noopener noreferrer" '
+      +'style="display:inline-flex;align-items:center;gap:9px;background:'+colors[platform]+';color:#fff;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;">'
+      +icon+' <span class="lo-i">'+L2.lo+'</span><span class="en-i">'+L2.en+'</span><span class="zh-i">'+L2.zh+'</span>'
+      +'</a></div>';
+  }
+
+  // Primary video (TikTok/YouTube/other)
+  if(_vc1.type==='youtube'&&_vc1.embed){
+    videoBlocks+='<div class="asset-iframe-wrapper"><iframe src="'+esc(_vc1.embed)+'" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe></div>';
+  } else if(_vc1.type==='tiktok'){
+    videoBlocks+=watchCard(_vc1.raw,'tiktok');
+  } else if(_vc1.type==='other'&&_vc1.embed){
+    videoBlocks+='<div class="asset-iframe-wrapper"><iframe src="'+esc(_vc1.embed)+'" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe></div>';
+  }
+
+  // Facebook video
+  if(_vc2.type==='facebook'){
+    videoBlocks+=watchCard(_vc2.raw,'facebook');
+  }
+
+  if(videoBlocks){
+    mediaHtml=(
+      '<div class="media-section">'+
+      '<span class="section-label">'+I.play+' '+L.video[lang]+'</span>'+
+      videoBlocks+
+      '</div>'
+    );
+  }
+
+  // ── Final layout assembly ──
+  var propertyHighlightHtml = resolvedHighlight
+    ? '<p class="property-highlight">'+esc(resolvedHighlight)+'</p>'
+    : '';
+
+  // ════════════════════════════════════════════════════════════════
+  // EDITORIAL PRESENTATION LAYER
+  // Atmospheric copy (intro + quote) is generic and tone-only — never
+  // states unverified facts. Highlights are derived ONLY from real data.
+  // ════════════════════════════════════════════════════════════════
+  var STYLE_LABELS = {
+    family:{lo:'ຄອບຄົວ',en:'Family',zh:'家庭'},
+    modern:{lo:'ທັນສະໄໝ',en:'Modern',zh:'现代'},
+    minimalist:{lo:'ມິນິມໍ',en:'Minimalist',zh:'简约'},
+    luxury:{lo:'ຫຼູຫຼາ',en:'Luxury',zh:'豪华'},
+    resort:{lo:'ລີສອດ',en:'Resort',zh:'度假'},
+    colonial:{lo:'ໂຄໂລເນຍລ',en:'Colonial',zh:'殖民'},
+    investment:{lo:'ລົງທຶນ',en:'Investment',zh:'投资'}
+  };
+  var styleRaw = String(data.property_style||'').trim();
+  var styleKey = styleRaw.toLowerCase().replace(/[\s&\/\-]+/g,'_').replace(/^_|_$/g,'');
+
+  // Emotional intro — tone selected by style, place-agnostic (safe)
+  var INTRO = {
+    family:{lo:'ອອກແບບເພື່ອຕອນເຊົ້າທີ່ສະຫງົບ ແລະ ຊີວິດຄອບຄົວທີ່ປະນີດ.',en:'Designed for slower mornings and refined family living.',zh:'为悠然的清晨与精致的家庭生活而设计。'},
+    modern:{lo:'ບ່ອນທີ່ເສັ້ນສາຍອັນສະອາດ ພົບກັບການຢູ່ອາໄສທີ່ສະຫງົບ.',en:'Where clean lines meet quiet, considered living.',zh:'简洁的线条，遇见沉静而考究的生活。'},
+    luxury:{lo:'ບ່ອນພັກຜ່ອນສ່ວນຕົວ ບໍ່ໄກຈາກຈັງຫວະຂອງຕົວເມືອງ.',en:'A private retreat, moments from the rhythm of the city.',zh:'私享静所，离城市脉动仅咫尺之遥。'},
+    _default:{lo:'ບ່ອນທີ່ຄວາມເປັນສ່ວນຕົວ ແລະ ຊີວິດໃນເມືອງ ຢູ່ຮ່ວມກັນຢ່າງສົມດຸນ.',en:'Where privacy and city living exist in quiet balance.',zh:'私密与都会生活，在静谧中取得平衡。'}
+  };
+  var introSet = INTRO[styleKey] || (styleKey==='minimalist'?INTRO.modern:null) || (styleKey==='resort'?INTRO.luxury:null) || INTRO._default;
+  var emotionalIntroHtml = '<div class="emotional-intro"><p class="emotional-statement">'+esc(introSet[lang]||introSet.en)+'</p></div>';
+
+  // Cinematic quote — short, iconic, by transaction type, place-agnostic
+  var QUOTE = {
+    sale:{lo:'ຄວາມຫຼູຫຼາທີ່ສະຫງົບ ສ້າງມາເພື່ອການຢູ່ອາໄສ.',en:'Quiet luxury, made to be lived in.',zh:'静奢之境，为生活而生。'},
+    rent:{lo:'ວິທີທີ່ສະຫງົບກວ່າ ໃນການເອີ້ນເມືອງນີ້ວ່າບ້ານ.',en:'A calmer way to call the city home.',zh:'以更从容的方式，安居都会之间。'}
+  };
+  var quoteSet = isSale ? QUOTE.sale : QUOTE.rent;
+  var cinematicBreakHtml = '<div class="cinematic-break"><blockquote class="cinematic-quote">'+esc(quoteSet[lang]||quoteSet.en)+'</blockquote></div>';
+
+  // Property highlights — kicker/value, derived ONLY from real fields
+  var KICK = {
+    location:{lo:'ສະຖານທີ່',en:'Location',zh:'位置'},
+    setting :{lo:'ຮູບແບບ',en:'Setting',zh:'格调'},
+    space   :{lo:'ພື້ນທີ່ໃຊ້ສອຍ',en:'Living Space',zh:'使用面积'},
+    layout  :{lo:'ໂຄງສ້າງ',en:'Layout',zh:'格局'}
+  };
+  var hi = [];
+  var hiLoc = resolvedVillage || resolvedDistrict;
+  if(hiLoc) hi.push({k:KICK.location[lang]||KICK.location.en, v:esc(hiLoc)});
+  if(styleRaw){
+    var sLbl = STYLE_LABELS[styleKey] ? (STYLE_LABELS[styleKey][lang]||STYLE_LABELS[styleKey].en) : styleRaw;
+    hi.push({k:KICK.setting[lang]||KICK.setting.en, v:esc(sLbl)});
+  }
+  if(data.sqm) hi.push({k:KICK.space[lang]||KICK.space.en, v:esc(String(data.sqm))+' m²'});
+  if(data.bedrooms){
+    var bedWord = lang==='lo'?' ຫ້ອງນອນ':lang==='zh'?' 间卧室':(data.bedrooms>1?' Bedrooms':' Bedroom');
+    hi.push({k:KICK.layout[lang]||KICK.layout.en, v:esc(String(data.bedrooms))+bedWord});
+  }
+  var propertyHighlightsHtml = '';
+  if(hi.length >= 2){
+    var hiItems = hi.slice(0,4);
+    propertyHighlightsHtml = '<div class="property-highlights" style="--ph-cols:'+hiItems.length+'">';
+    hiItems.forEach(function(it){
+      propertyHighlightsHtml += '<div class="highlight-item"><span class="highlight-kicker">'+it.k+'</span><span class="highlight-value">'+it.v+'</span></div>';
+    });
+    propertyHighlightsHtml += '</div>';
+  }
+
+  // Mobile-only amenity icon row, positioned ahead of Contact/Agent/
+  // Description (see target hierarchy in the mobile media query below).
+  // Reuses the same amenityRowHtml string also emitted inside
+  // overviewColHtml for desktop — one computation, two toggled slots
+  // (`.detail-grid .amenity-row` vs `.mobile-amenities-slot`), not
+  // duplicated amenity-building logic.
+  var mobileAmenitiesSlotHtml = amenityRowHtml
+    ? '<div class="mobile-amenities-slot">'+amenityRowHtml+'</div>'
+    : '';
+
+  var layout=(
+    // Gallery first in source order — on mobile this is the only visible
+    // gallery (.hero-right/.desktop-gallery are display:none there); on
+    // desktop .mobile-gallery is display:none so this moved position has
+    // zero visual effect there.
+    mobileGalleryMarkup+
+    '<div class="hero-section">'+
+    '<div class="hero-left">'+
+    '<a href="listings.html" class="back-link">'+I.back+' <span class="lo-i">ກັບຄືນ</span><span class="en-i">Back</span><span class="zh-i">返回</span></a>'+
+    '<p class="hero-location">'+I.pin+' '+locationLabel+'</p>'+
+    '<h1 class="info-title">'+resolvedTitle+'</h1>'+
+    propertyHighlightHtml+
+    '<div class="hero-badges-row" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">'+
+    '<span class="tx-badge'+(isSor?' tx-badge-sor':'')+'" style="margin-bottom:0;">'+esc(typeBadgeText)+'</span>'+
+    statusBadgeHtml+
+    '</div>'+
+    '<div id="sp-badges" class="sp-badges-row"></div>'+
+    '<div class="price-block">'+resolvedPriceHtml+'</div>'+
+    '<div class="sp-metrics-row"><span class="sp-metric" id="sp-views" style="display:none;"></span><span class="sp-metric" id="sp-inquiries" style="display:none;"></span></div>'+
+    (specsHtml?'<div class="spec-grid">'+specsHtml+'</div>':'')+
+    highlightPillsHtml+
+    sidebarInsightHtml+
+    '<div class="left-actions">'+
+    '<button class="action-link" data-track="favorite-property" data-track-type="button" data-track-label="Save property">'+I.heart+' <span class="lo-i">ບັນທຶກ</span><span class="en-i">Save property</span><span class="zh-i">收藏房源</span></button>'+
+    '<button class="action-link" id="share-btn" data-track="share-property" data-track-type="button" data-track-label="Share" onclick="handleShare(this)">'+I.share+' <span class="lo-i">ແຊຣ໌</span><span class="en-i">Share</span><span class="zh-i">分享</span></button>'+
+    '<span class="pintag-verified">'+L.verified[lang]+'</span>'+
+    '</div></div>'+
+    '<div class="hero-right">'+desktopGalleryMarkup+'</div>'+
+    '</div>'+
+    mobileAmenitiesSlotHtml+
+    agentHtml+
+    emotionalIntroHtml+
+    '<div class="detail-wrap">'+
+    propertyHighlightsHtml+
+    '<div class="detail-grid">'+
+    overviewColHtml+
+    featuresColHtml+
+    locationColHtml+
+    '</div></div>'+
+    mediaHtml+
+    cinematicBreakHtml
+  );
+
+  container.innerHTML=layout;
+
+  // Mobile CTA bar
+  var mCtaBar=document.getElementById('mobile-cta-bar');
+  if(mCtaBar){
+    var mPriceDisplay=isSor?(data.sale_price||data.rent_price||data.price_display):data.price_display;
+    var mPriceHtml=mPriceDisplay?'<span class="mcta-price-value">'+esc(mPriceDisplay)+'</span>':'<span class="mcta-price-req">'+L.inquire[lang]+'</span>';
+    mCtaBar.innerHTML=(
+      '<div class="mcta-inner">'+
+      '<div class="mcta-price-wrap"><span class="mcta-price-label">'+esc(typeBadgeText)+'</span>'+mPriceHtml+'</div>'+
+      '<a href="'+esc(waUrl)+'" target="_blank" rel="noopener noreferrer" class="mcta-btn">'+WA_SVG+'<span>'+L.wa[lang]+'</span></a>'+
+      '</div>'
+    );
+  }
+
+  wireGalleryLightbox();
+  wireMobileGalleryTrack();
+  PT.log('Layout rendered');
+}
+
+// ── buildDesktopGallery ──────────────────────────────────────────
+function buildDesktopGallery(images){
+  var clean=(Array.isArray(images)?images:[]).filter(function(u){return u&&typeof u==='string';});
+  if(!clean.length)return '<div class="desktop-gallery"><div class="dg-hero"><div class="sim-no-img"></div></div></div>';
+  var thumbsHtml='';
+  var maxThumbs=5;
+  for(var i=0;i<maxThumbs;i++){
+    var cls=i===0?'active':'';
+    if(i<clean.length){
+      if(i===maxThumbs-1&&clean.length>maxThumbs){
+        var remaining=clean.length-maxThumbs;
+        thumbsHtml+='<div class="dg-thumb '+cls+'" data-thumb-idx="'+i+'" data-track="gallery-thumbnail" data-track-type="thumbnail" data-track-label="Thumbnail '+(i+1)+'" data-track-meta=\'{"index":'+i+'}\'><img src="'+esc(clean[i])+'" alt="" loading="lazy" decoding="async" onerror="handleImageError(this)"><div class="dg-thumb-overflow"><span class="dg-thumb-overflow-n">+'+(remaining+1)+'</span><span class="dg-thumb-overflow-lbl">PHOTOS</span></div></div>';
+      }else{
+        thumbsHtml+='<div class="dg-thumb '+cls+'" data-thumb-idx="'+i+'" data-track="gallery-thumbnail" data-track-type="thumbnail" data-track-label="Thumbnail '+(i+1)+'" data-track-meta=\'{"index":'+i+'}\'><img src="'+esc(clean[i])+'" alt="" loading="lazy" decoding="async" onerror="handleImageError(this)"></div>';
+      }
+    }else{
+      thumbsHtml+='<div class="dg-thumb" style="cursor:default;opacity:0.12;"><div style="width:100%;height:100%;background:var(--warm-deep);"></div></div>';
+    }
+  }
+  return(
+    '<div class="desktop-gallery" id="dg-hero-frame" data-track="gallery-hero-image" data-track-type="image" data-track-label="Hero image">'+
+    '<div class="dg-hero" id="dg-hero-box">'+
+    '<img src="'+esc(clean[0])+'" id="dg-hero-img" alt="" decoding="async" onerror="handleImageError(this)">'+
+    '<span class="dg-coord" id="dg-coord-lbl">01 / '+String(clean.length).padStart(2,'0')+'</span>'+
+    '<button class="dg-view-all" id="dg-view-all-btn" data-track="gallery-view-all" data-track-type="button" data-track-label="View all photos">'+
+    '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 0h7v7h-7z"/></svg>'+
+    '<span class="lo-i">ເບິ່ງທັງຫມົດ</span><span class="en-i">View all</span><span class="zh-i">查看全部</span>'+
+    '</button>'+
+    '</div>'+
+    '<div class="dg-rail">'+thumbsHtml+'</div>'+
+    '</div>'
+  );
+}
+
+function syncDesktopHero(idx,thumbEl){
+  if(!propertyContext||!Array.isArray(propertyContext.images))return;
+  var clean=propertyContext.images.filter(function(u){return u&&typeof u==='string';});
+  if(!clean[idx])return;
+  var heroImg=document.getElementById('dg-hero-img');
+  var coordLbl=document.getElementById('dg-coord-lbl');
+  var heroBox=document.getElementById('dg-hero-box');
+  if(heroImg){
+    if(_heroTimer){clearTimeout(_heroTimer);_heroTimer=null;}
+    heroImg.style.opacity='0';
+    var capturedSrc=clean[idx];
+    _heroTimer=setTimeout(function(){
+      _heroTimer=null;
+      heroImg.src=capturedSrc;
+      if(heroImg.decode){heroImg.decode().then(function(){heroImg.style.opacity='1';}).catch(function(){heroImg.style.opacity='1';});}
+      else{requestAnimationFrame(function(){heroImg.style.opacity='1';});}
+      if(heroBox)checkSmartFitLayout(capturedSrc,heroBox);
+    },100);
+  }
+  if(coordLbl)coordLbl.textContent=String(idx+1).padStart(2,'0')+' / '+String(clean.length).padStart(2,'0');
+  document.querySelectorAll('.dg-thumb').forEach(function(b){b.classList.remove('active');});
+  if(thumbEl)thumbEl.classList.add('active');
+}
+
+function buildMobileGallery(images, statusBadgeHtml){
+  var clean=(Array.isArray(images)?images:[]).filter(function(u){return u&&typeof u==='string';});
+  if(!clean.length)return '<div class="mobile-gallery">'+(statusBadgeHtml?'<div class="mg-status-wrap">'+statusBadgeHtml+'</div>':'')+'<div class="mg-track"><div class="mg-slide"><div class="sim-no-img"></div></div></div></div>';
+  var slidesHtml='',dotsHtml='';
+  clean.forEach(function(img,i){
+    var loading=i===0?'eager':'lazy';
+    slidesHtml+='<div class="mg-slide" data-idx="'+i+'" data-track="gallery-mobile-slide" data-track-type="image" data-track-label="Photo '+(i+1)+'" data-track-meta=\'{"index":'+i+'}\'><img src="'+esc(img)+'" alt="" loading="'+loading+'" decoding="async" onerror="handleImageError(this)"></div>';
+    dotsHtml+='<div class="mg-dot '+(i===0?'active':'')+'" data-dot-idx="'+i+'" data-track="gallery-mobile-dot" data-track-type="dot" data-track-label="Dot '+(i+1)+'" data-track-meta=\'{"index":'+i+'}\'></div>';
+  });
+  var overlayHtml=statusBadgeHtml?'<div class="mg-status-wrap">'+statusBadgeHtml+'</div>':'';
+  return '<div class="mobile-gallery">'+overlayHtml+'<div class="mg-track" id="mg-track-el">'+slidesHtml+'</div><div class="mg-dots" id="mg-dots-box">'+dotsHtml+'</div></div>';
+}
+
+function jumpMobileGallerySlide(idx){var t=document.getElementById('mg-track-el');if(!t)return;t.scrollTo({left:idx*t.offsetWidth,behavior:'smooth'});}
+
+function wireMobileGalleryTrack(){
+  var track=document.getElementById('mg-track-el');
+  var dotsBox=document.getElementById('mg-dots-box');
+  if(!track)return;
+  if(dotsBox){dotsBox.onclick=function(e){var d=e.target.closest('[data-dot-idx]');if(d)jumpMobileGallerySlide(parseInt(d.getAttribute('data-dot-idx'),10));};}
+  var scrollDebounce=null;
+  track.addEventListener('scroll',function(){
+    if(scrollDebounce)clearTimeout(scrollDebounce);
+    scrollDebounce=setTimeout(function(){
+      scrollDebounce=null;
+      var w=track.offsetWidth;if(!w)return;
+      var idx=Math.round(track.scrollLeft/w);
+      var dots=track.parentElement?track.parentElement.querySelectorAll('.mg-dot'):[];
+      dots.forEach(function(d,i){d.classList.toggle('active',i===idx);});
+      if(propertyContext&&Array.isArray(propertyContext.images)){
+        var c=propertyContext.images.filter(Boolean);
+        var slides=track.querySelectorAll('.mg-slide');
+        if(slides[idx]&&c[idx])checkSmartFitLayout(c[idx],slides[idx]);
+      }
+    },60);
+  },{passive:true});
+}
+
+function checkSmartFitLayout(){}
+
+var WA_SVG='<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
+
+// Pre-filled WhatsApp contact message, per language. {{PLACEHOLDER}} tokens
+// (filled via fillTemplate(), see above) rather than string concatenation.
+//
+// Primary template: kept short — just a greeting/interest line plus the
+// canonical listing URL. Production's existing Cloudflare setup already
+// generates the rich WhatsApp link preview (image/title/description) for
+// that URL, so the message itself doesn't need to restate the property's
+// type/location/reference; the preview card carries that. Requires a real
+// slug — see WA_MESSAGE_TEMPLATES_FALLBACK below for when one isn't
+// available.
+var WA_MESSAGE_TEMPLATES={
+  lo:'ສະບາຍດີ,\n\nຂ້ອຍສົນໃຈຊັບສິນນີ້. ຂໍລາຍລະອຽດເພີ່ມແນ່.\n\n{{CANONICAL_LISTING_URL}}',
+  en:'Hello,\n\nI\'m interested in this property. Could you provide more details?\n\n{{CANONICAL_LISTING_URL}}',
+  zh:'您好，\n\n我对这处房产很感兴趣，请提供更多详细信息。\n\n{{CANONICAL_LISTING_URL}}'
+};
+
+// Fallback template: used only when getCanonicalListingUrl() returns null
+// (a listing with no slug — shouldn't happen in practice since the page
+// itself is loaded by slug, but handled rather than sending a dead link).
+// Falls back to describing the property inline instead, same as the
+// message content before the URL-based version above.
+var WA_MESSAGE_TEMPLATES_FALLBACK={
+  lo:'ສະບາຍດີ, ຂ້ອຍສົນໃຈຊັບສິນນີ້.\n\n{{PROPERTY_TYPE}}\n📍 {{LOCATION}}\n\nຂໍລາຍລະອຽດເພີ່ມແນ່.\n\nRef: {{REFERENCE}}',
+  en:'Hello,\n\nI\'m interested in this property.\n\n{{PROPERTY_TYPE}}\n📍 {{LOCATION}}\n\nCould you provide more details?\n\nRef: {{REFERENCE}}',
+  zh:'您好，\n\n我对这处房产很感兴趣。\n\n{{PROPERTY_TYPE}}\n📍 {{LOCATION}}\n\n请提供更多详细信息，谢谢！\n\nRef: {{REFERENCE}}'
+};
+
+// ── Lightbox ─────────────────────────────────────────────────────
+var LB={
+  images:[],idx:0,
+  open:function(arr,startIdx){
+    if(!arr||!Array.isArray(arr))return;
+    var clean=arr.filter(function(u){return u&&typeof u==='string';});
+    if(!clean.length)return;
+    this.images=clean;this.idx=Math.max(0,Math.min(startIdx||0,clean.length-1));
+    this.buildDots();this.show(this.idx,false);
+    var overlay=document.getElementById('lb-overlay');
+    if(overlay)overlay.classList.add('lb-open');
+    document.body.style.overflow='hidden';
+  },
+  close:function(){
+    var overlay=document.getElementById('lb-overlay');
+    if(overlay)overlay.classList.remove('lb-open');
+    document.body.style.overflow='';
+  },
+  show:function(idx,animate){
+    var img=document.getElementById('lb-img');
+    if(!img||!this.images.length)return;
+    this.idx=((idx%this.images.length)+this.images.length)%this.images.length;
+    var capturedSrc=this.images[this.idx];
+    if(_lbTimer){clearTimeout(_lbTimer);_lbTimer=null;img.classList.remove('lb-fade');}
+    if(animate){
+      img.classList.add('lb-fade');
+      _lbTimer=setTimeout(function(){_lbTimer=null;img.src=capturedSrc;img.classList.remove('lb-fade');},160);
+    }else{img.src=capturedSrc;}
+    document.querySelectorAll('.lb-dot').forEach(function(d,i){d.classList.toggle('active',i===LB.idx);});
+    var self=this;
+    [this.idx+1,this.idx-1].forEach(function(pi){
+      var si=((pi%self.images.length)+self.images.length)%self.images.length;
+      if(si!==self.idx&&self.images[si]){var pre=new Image();pre.src=self.images[si];}
+    });
+  },
+  prev:function(){this.show(this.idx-1,true);},
+  next:function(){this.show(this.idx+1,true);},
+  buildDots:function(){
+    var wrap=document.getElementById('lb-dots');if(!wrap)return;wrap.innerHTML='';if(this.images.length>15)return;
+    var self=this;
+    this.images.forEach(function(_,i){var d=document.createElement('div');d.className='lb-dot'+(i===self.idx?' active':'');d.onclick=function(){self.show(i,true);};wrap.appendChild(d);});
+  }
+};
+
+(function(){
+  var overlay=document.getElementById('lb-overlay');if(!overlay)return;
+  var closeBtn=document.getElementById('lb-close');
+  var prevBtn=document.getElementById('lb-prev');
+  var nextBtn=document.getElementById('lb-next');
+  if(closeBtn)closeBtn.onclick=function(){LB.close();};
+  if(prevBtn)prevBtn.onclick=function(e){e.stopPropagation();LB.prev();};
+  if(nextBtn)nextBtn.onclick=function(e){e.stopPropagation();LB.next();};
+  overlay.onclick=function(e){if(e.target===overlay||e.target.classList.contains('lb-stage'))LB.close();};
+  document.addEventListener('keydown',function(e){
+    if(!overlay.classList.contains('lb-open'))return;
+    if(e.key==='Escape')LB.close();
+    if(e.key==='ArrowLeft')LB.prev();
+    if(e.key==='ArrowRight')LB.next();
+  });
+  var _tsX=0;
+  overlay.addEventListener('touchstart',function(e){_tsX=e.touches[0].clientX;},{passive:true});
+  overlay.addEventListener('touchend',function(e){var dx=_tsX-e.changedTouches[0].clientX;if(Math.abs(dx)>50){dx>0?LB.next():LB.prev();}},{passive:true});
+})();
+
+function wireGalleryLightbox(){
+  var frame=document.getElementById('dg-hero-frame');
+  var viewAll=document.getElementById('dg-view-all-btn');
+  var images=(propertyContext&&Array.isArray(propertyContext.images))?propertyContext.images.filter(function(u){return u&&typeof u==='string';}):[];
+  if(!images.length)return;
+  if(viewAll){viewAll.onclick=function(e){e.stopPropagation();LB.open(images,0);};}
+  document.querySelectorAll('.dg-thumb').forEach(function(thumb,i){
+    thumb.onclick=function(e){
+      e.stopPropagation();
+      if(!!e.target.closest('.dg-thumb-overflow')){LB.open(images,i);}
+      else{syncDesktopHero(i,thumb);}
+    };
+  });
+  if(frame){
+    frame.style.cursor='pointer';
+    frame.onclick=function(){
+      var heroImg=document.getElementById('dg-hero-img');
+      var currentSrc=heroImg?heroImg.src:(images[0]||'');
+      var startIdx=images.indexOf(currentSrc);
+      if(startIdx<0)startIdx=0;
+      LB.open(images,startIdx);
+    };
+  }
+}
+
+function handleImageError(img){
+  img.onerror=null;
+  img.style.opacity='0';
+  if(img.parentElement)img.parentElement.style.background='var(--warm-deep)';
+}
+</script>
+</body>
+</html>
